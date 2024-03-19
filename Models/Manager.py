@@ -3,10 +3,13 @@ import pandas as pd
 
 class Manager:
     instance = None
-    lecturer_list = list()
-    classRoom_list = list()
-    course_unit_list = list()
-    lecture_courseUnit_list = dict()
+
+    def __init__(self):
+
+        self.lecturer_list = list()
+        self.classRoom_list = list()
+        self.course_unit_list = list()
+        self.lecture_courseUnit_dict = dict()
 
     def __new__(cls, *args, **kwargs):
         if not isinstance(cls.instance, cls):
@@ -28,12 +31,19 @@ class Manager:
     def get_class_room_list(self):
         return self.classRoom_list
 
+    def get_lecture_courseUnit_dict(self, func_l_list, func_cu_list):
+
+        for i in range(len(func_l_list)):
+
+            self.lecture_courseUnit_dict[func_cu_list[i]] = func_l_list[i]
+        return self.lecture_courseUnit_dict
+
     def get_courseUnit_list(self):
         return self.course_unit_list
 
     def load_data(self, data_path, destination, targetcolumn):
         df = pd.read_excel(data_path)
-        print(len(df[targetcolumn]))
+        # print(len(df[targetcolumn]))
         col_length = len(df[targetcolumn])
         if destination == 'ClassRoom':
             for i in range(col_length):
@@ -44,4 +54,4 @@ class Manager:
         if destination == 'Lecturer':
             for i in range(col_length):
                 self.Add_to_lecture_list(str(df[targetcolumn][i]))
-        print("done")
+        # print("done")

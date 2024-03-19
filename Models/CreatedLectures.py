@@ -1,9 +1,5 @@
 class CreatedLecture:
-    lectureID = ""
-    lectureName = ""
-    lectureInstructor = ""
-    lectureLocation = ""
-    lectureTime = ""
+
 
     def __init__(self):
         print("a lecture has been created")
