@@ -4,6 +4,7 @@ Pick a course unit check then pick dateTime if the lecturer is not occupied in o
 
 """
 import random
+import re
 
 
 class TtGenerator:
@@ -14,7 +15,7 @@ class TtGenerator:
             cls.instance = object.__new__(cls)
         return cls.instance
 
-    def __init__(self, timeslots, created_lectures_details, class_rooms,lecturer_dicts):
+    def __init__(self, timeslots, created_lectures_details, class_rooms, lecturer_dicts):
         self.TimeTable = {
             "MON": [],
             "TUE": [],
@@ -25,8 +26,8 @@ class TtGenerator:
             "SUN": [],
         }
         self.timeSlotObject = timeslots
-        self.lecturer_dicts=lecturer_dicts
-        self.class_rooms=class_rooms
+        self.lecturer_dicts = lecturer_dicts
+        self.class_rooms = class_rooms
         self.created_lectures_details = created_lectures_details
         self.edit_TimeTable_days()
         self.random_generator()
@@ -35,19 +36,24 @@ class TtGenerator:
         countCreatedLectures = len(self.created_lectures_details)
 
         for i in range(countCreatedLectures):
-            #TODO this is where if a lecturer has already got or picked time first priority
-            #if the rooms are over go get a brand new class rooms
+            # TODO this is where if a lecturer has already got or picked time first priority
+            # if the rooms are over go get a brand new class rooms
             genL = random.choice(list(self.created_lectures_details))
             key, val = random.choice(list(self.timeSlotObject.items()))
             className, classCapacity = random.choice(list(self.class_rooms.items()))
 
-            lecturer=None
-            for value, key_ in self.lecturer_dicts.items():
-                print(f'lecturer = {key_} / {genL}')
+            lecturer = None
 
-                if key_ == genL:
-                    lecturer=key_
-                    print(f'lecturer = {lecturer}')
+            #TODO what if lecturer_dicts equates to zero when popis done
+            for key_, value in self.lecturer_dicts.items():
+                # print(f'lecturer = {key_}/ {value} / {genL}')
+
+                if value == genL:
+                    lecturer = key_
+                    # print(f'lecturer = {lecturer}')
+                    # print(f'lecturer = {key_}/ {value} / {genL}')
+                    # print(self.lecturer_dicts)
+                    self.lecturer_dicts.pop(key_)
                     break
 
             if (len(list(self.timeSlotObject[key])) == 0):
@@ -58,6 +64,8 @@ class TtGenerator:
 
             genTime = random.choice(list(self.timeSlotObject[key]))
             self.TimeTable[key].append(str(f'<{genL}><{className}><{lecturer}><{genTime}>'))
+            words_between_angle_brackets = re.findall(r'<(.*?)>', str(f'<{genL}><{className}><{lecturer}><{genTime}>'))
+            print(words_between_angle_brackets)
             self.timeSlotObject[key].remove(genTime)
             self.created_lectures_details.remove(genL)
             self.class_rooms.pop(className)

@@ -30,7 +30,7 @@ class Lecturers:
         # val = list(new_clas_room.values())
         # self.Lecturers_[key[0]] = val[0]
 
-    def get_classrooms_list(self):
+    def get_Lecturers_list(self):
         return self.Lecturers_
 
 
@@ -47,4 +47,4 @@ class Lecturer_Model:
         # print(self.classRoomModel_dict)
 
     def getlecturerDetails(self):
-        return self.classRoomModel_dict
+        return self.lecturer_dict

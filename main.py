@@ -16,8 +16,10 @@ if __name__ == '__main__':
     manager.load_data('./files/ROOMS.xlsx', "ClassRoom", 'Room Number')
     manager.load_data('./files/LECTURER DETAILS.xlsx', "CourseUnit", 'Course Unit Name')
     manager.load_data('./files/LECTURER DETAILS.xlsx', "Lecturer", 'Name')
+    # print(manager.get_lecturer_list()[:10])
     lect_cu_details=manager.get_lecture_courseUnit_dict(manager.get_courseUnit_list()[:10] ,manager.get_lecturer_list()[:10])
     class_roomZ=ClassRooms()
+    # print(manager.get_lecture_courseUnit_dict(manager.get_courseUnit_list()[:10] ,manager.get_lecturer_list()[:10]))
 
 
     # print(manager.get_courseUnit_list()[:5])
