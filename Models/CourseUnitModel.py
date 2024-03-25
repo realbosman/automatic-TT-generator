@@ -1,13 +1,18 @@
-'''
-This is a Cousre Unit Model that holds all the information
-about a Couurse Unit Model
-'''
-
 class CourseUnitModel:
-    CourseUnitName = ""
-    CourseUnitFaculty = ""
+    '''
+    This class creates a new CourseUnitModel
+    '''
+    instance = None
+    def __new__(cls, *args, **kwargs):
+        if not isinstance(cls.instance, cls):
+            cls.instance = object.__new__(cls)
+        return cls.instance
+
+
 
     def __init__(self, course_unit_name, course_unit_faculty):
+        self.CourseUnitName = ""
+        self.CourseUnitFaculty = ""
         self.CourseUnitName = course_unit_name
         self.CourseUnitFaculty = course_unit_faculty
 
@@ -17,5 +22,8 @@ class CourseUnitModel:
     def getCourseUnitDetails(self):
         return [self.CourseUnitName, self.CourseUnitFaculty]
 
-    def printLecturerDetails(self):
+    def printCourseDetails(self):
         print(f'Lecturer {self.CourseUnitName}  and Faculty {self.CourseUnitFaculty}')
+
+
+

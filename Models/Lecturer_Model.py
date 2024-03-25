@@ -1,8 +1,8 @@
 class Lecturers:
+    '''
+       This is a class shows a Tutor with the necessary info about them
+       '''
     instance = None
-
-
-
     def __init__(self):
         self.Lecturers_ = {
 
@@ -36,7 +36,7 @@ class Lecturers:
 
 class Lecturer_Model:
     '''
-     make the attributes in the  __init__ to be for only one class
+      This is a class shows a list Tutors with the necessary info about them
     '''
 
     def __init__(self, lecturer_name, lecturer_course_unit):

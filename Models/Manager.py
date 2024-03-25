@@ -2,6 +2,9 @@ import pandas as pd
 
 
 class Manager:
+    '''
+    This class manages the resources/ other models ,loads files and adds them to the necessary classes
+    '''
     instance = None
 
     def __init__(self):
@@ -34,12 +37,12 @@ class Manager:
     def get_lecture_courseUnit_dict(self, func_l_list, func_cu_list):
 
         for i in range(len(func_l_list)):
-
             self.lecture_courseUnit_dict[func_cu_list[i]] = func_l_list[i]
         return self.lecture_courseUnit_dict
 
     def get_courseUnit_list(self):
         return self.course_unit_list
+
 
     def load_data(self, data_path, destination, targetcolumn):
         df = pd.read_excel(data_path)

@@ -33,42 +33,43 @@ class TtGenerator:
         self.random_generator()
 
     def random_generator(self):
-        countCreatedLectures = len(self.created_lectures_details)
+        count_created_lectures = len(self.created_lectures_details)
 
-        for i in range(countCreatedLectures):
+        for i in range(count_created_lectures):
             # TODO this is where if a lecturer has already got or picked time first priority
             # if the rooms are over go get a brand new class rooms
-            genL = random.choice(list(self.created_lectures_details))
+            gen_l = random.choice(list(self.created_lectures_details))
             key, val = random.choice(list(self.timeSlotObject.items()))
-            className, classCapacity = random.choice(list(self.class_rooms.items()))
+            class_name, class_capacity = random.choice(list(self.class_rooms.items()))
 
             lecturer = None
 
-            #TODO what if lecturer_dicts equates to zero when popis done
+            # TODO what if lecturer_dicts equates to zero when popis done
             for key_, value in self.lecturer_dicts.items():
-                # print(f'lecturer = {key_}/ {value} / {genL}')
+                # print(f'lecturer = {key_}/ {value} / {gen_l}')
 
-                if value == genL:
+                if value == gen_l:
                     lecturer = key_
                     # print(f'lecturer = {lecturer}')
-                    # print(f'lecturer = {key_}/ {value} / {genL}')
+                    # print(f'lecturer = {key_}/ {value} / {gen_l}')
                     # print(self.lecturer_dicts)
                     self.lecturer_dicts.pop(key_)
                     break
 
-            if (len(list(self.timeSlotObject[key])) == 0):
+            if len(list(self.timeSlotObject[key])) == 0:
                 self.timeSlotObject.pop(key)
                 self.random_generator()
                 print("pop used")
                 break
 
-            genTime = random.choice(list(self.timeSlotObject[key]))
-            self.TimeTable[key].append(str(f'<{genL}><{className}><{lecturer}><{genTime}>'))
-            words_between_angle_brackets = re.findall(r'<(.*?)>', str(f'<{genL}><{className}><{lecturer}><{genTime}>'))
+            gen_time = random.choice(list(self.timeSlotObject[key]))
+            self.TimeTable[key].append(str(f'<{gen_l}><{class_name}><{lecturer}><{gen_time}>'))
+            words_between_angle_brackets = re.findall(r'<(.*?)>',
+                                                      str(f'<{gen_l}><{class_name}><{lecturer}><{gen_time}>'))
             print(words_between_angle_brackets)
-            self.timeSlotObject[key].remove(genTime)
-            self.created_lectures_details.remove(genL)
-            self.class_rooms.pop(className)
+            self.timeSlotObject[key].remove(gen_time)
+            self.created_lectures_details.remove(gen_l)
+            self.class_rooms.pop(class_name)
             # print(f'classes = {self.class_rooms.keys()}')
 
         # print(self.TimeTable)
@@ -95,49 +96,50 @@ class TtGenerator:
               SUN - 7
               None -0
               ''')
-        disabledNone = 0
+        disabled_none = 0
         try:
-            disabledDays = int(input("Enter :"))
-            disabledNone = disabledDays
+            disabled_days = int(input("Enter :"))
+            disabled_none = disabled_days
         except:
             self.edit_TimeTable_days()
 
         # TODO THE TIMESLOTS AND THE LECTURES HAVE TO BE IN SYNC timeslot should not be less
         for i in range(1, 8):
-            indexCount = 0
+            index_count = 0
+            # TODO Learn how to use try block
             try:
-                str(disabledDays).index(str(i))
-                indexCount = 1
+                str(disabled_days).index(str(i))
+                index_count = 1
             except:
-                indexCount = -1
+                index_count = -1
                 pass
-            if (i == 1 and indexCount == 1):
+            if i == 1 and index_count == 1:
                 self.timeSlotObject.pop('MON')
-            if (i == 2 and indexCount == 1):
+            if i == 2 and index_count == 1:
                 self.timeSlotObject.pop('TUE')
-            if (i == 3 and indexCount == 1):
+            if i == 3 and index_count == 1:
                 self.timeSlotObject.pop('WED')
-            if (i == 4 and indexCount == 1):
+            if i == 4 and index_count == 1:
                 self.timeSlotObject.pop('THUR')
-            if (i == 5 and indexCount == 1):
+            if i == 5 and index_count == 1:
                 self.timeSlotObject.pop('FRI')
-            if (i == 6 and indexCount == 1):
+            if i == 6 and index_count == 1:
                 self.timeSlotObject.pop('SAT')
-            if (i == 7 and indexCount == 1):
+            if i == 7 and index_count == 1:
                 self.timeSlotObject.pop('SUN')
 
-        if (disabledNone == 0):
+        if disabled_none == 0:
             pass
         else:
             try:
-                str(disabledNone).index("8")
-                disabledNone = 0
+                str(disabled_none).index("8")
+                disabled_none = 0
                 self.edit_TimeTable_days()
             except:
                 pass
             try:
-                str(disabledNone).index("9")
-                disabledNone = 0
+                str(disabled_none).index("9")
+                disabled_none = 0
                 self.edit_TimeTable_days()
             except:
                 pass

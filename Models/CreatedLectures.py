@@ -1,4 +1,7 @@
 class CreatedLecture:
+    '''
+    This is a class shows a Lecture with the necessary info about them
+    '''
 
 
     def __init__(self):
@@ -20,8 +23,13 @@ class CreatedLecture:
 
 
 class CreatedLectures:
+    '''
+       This is a class shows a list of Lectures with the necessary info about them
+       '''
     instance = None
-    createdLectureSet = set()
+
+    def __init__(self):
+       self.createdLectureSet = set()
 
     def __new__(cls, *args, **kwargs):
         if not isinstance(cls.instance, cls):

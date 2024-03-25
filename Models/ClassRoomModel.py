@@ -1,4 +1,7 @@
 class ClassRooms:
+    '''
+    This class holds all the class rooms
+    '''
     instance = None
 
     def __init__(self):
@@ -49,7 +52,7 @@ class ClassRooms:
 
 class ClassRoomModel:
     '''
-     make the attributes in the  __init__ to be for only one class
+     This class creates  a class room
     '''
 
     def __init__(self, class_room_name, class_room_capacity):

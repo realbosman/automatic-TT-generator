@@ -29,3 +29,5 @@ class TimeDimension:
 
     def get_time_slots(self):
         return self.TimeSlotsDict
+
+# TODO ADD BREAK POINTS
