@@ -1,7 +1,7 @@
 import time
 import tkinter as tk
 from tkinter import ttk
-import openpyxl
+# import openpyxl
 
 # -------------------------- DEFINING GLOBAL VARIABLES -------------------------
 
@@ -12,7 +12,7 @@ visualisation_frame_color = "#2B2B2B"
 TEXT_COLOR = '#AFB1B3'
 
 
-class RoomsClassesSpace(tk.Frame):
+class SessionsList(tk.Frame):
     """
     The RoomsClassesSpace class provides a way to view and edit the space.
     """
@@ -21,10 +21,7 @@ class RoomsClassesSpace(tk.Frame):
         tk.Frame.__init__(self, parent)
         # TODO change color
         self.config(bg=visualisation_frame_color,)
-        self.style = ttk.Style(self)
-        self.tk.call("source", "forest-light.tcl")
-        self.tk.call("source", "forest-dark.tcl")
-        self.style.theme_use("forest-dark")
+
 
         # TODO: call all the  methods here to show up when th ui is created
 
@@ -53,7 +50,7 @@ class RoomsClassesSpace(tk.Frame):
         self.checkbutton = ttk.Checkbutton(self.widgets_frame, text="Employed", variable=self.a)
         self.checkbutton.grid(row=3, column=0, padx=5, pady=5, sticky="nsew")
 
-        self.button = ttk.Button(self.widgets_frame, text="Insert", command=self.insert_row)
+        self.button = ttk.Button(self.widgets_frame, text="Insert", command=self.just_print)
         self.button.grid(row=4, column=0, padx=5, pady=5, sticky="nsew")
 
         self.separator = ttk.Separator(self.widgets_frame)
@@ -80,7 +77,7 @@ class RoomsClassesSpace(tk.Frame):
         self.treeview.pack(expand=tk.TRUE,fill=tk.BOTH,side=tk.LEFT)
         self.treeScroll.config(command=self.treeview.yview)
 
-        self.load_data()
+        # self.load_data()
 
 
         # # //////////////////////////////////////////////////////////////////
@@ -89,49 +86,52 @@ class RoomsClassesSpace(tk.Frame):
 
     #     TODO put all the functions here that are gonna help manage
 
-    def load_data(self):
-        self.path = "./people.xlsx"
-        self.workbook = openpyxl.load_workbook(self.path)
-        self.sheet = self.workbook.active
-
-        self.list_values = list(self.sheet.values)
-        print(self.list_values)
-        for col_name in self.list_values[0]:
-            self.treeview.heading(col_name, text=col_name)
-
-        for value_tuple in self.list_values[1:]:
-            self.treeview.insert('', tk.END, values=value_tuple)
-
-    def insert_row(self):
-        self.name = self.name_entry.get()
-        self.age = int(self.age_spinbox.get())
-        self.subscription_status = self.status_combobox.get()
-        self.employment_status = "Employed" if self.a.get() else "Unemployed"
-
-        print(self.name, self.age, self.subscription_status, self.employment_status)
-
-        # Insert row into Excel sheet
-        path = "./people.xlsx"
-        workbook = openpyxl.load_workbook(path)
-        sheet = workbook.active
-        row_values = [self.name, self.age, self.subscription_status, self.employment_status]
-        sheet.append(row_values)
-        workbook.save(path)
-
-        # Insert row into treeview
-        self.treeview.insert('', tk.END, values=row_values)
-
-        # Clear the values
-        self.name_entry.delete(0, "end")
-        self.name_entry.insert(0, "Name")
-        self.age_spinbox.delete(0, "end")
-        self.age_spinbox.insert(0, "Age")
-        self.status_combobox.set(self.combo_list[0])
-        self.checkbutton.state(["!selected"])
+    # def load_data(self):
+    #     self.path = "roooo.xls"
+    #     self.workbook = openpyxl.load_workbook(self.path)
+    #     self.sheet = self.workbook.active
+    #
+    #     self.list_values = list(self.sheet.values)
+    #     print(self.list_values)
+    #     for col_name in self.list_values[0]:
+    #         self.treeview.heading(col_name, text=col_name)
+    #
+    #     for value_tuple in self.list_values[1:]:
+    #         self.treeview.insert('', tk.END, values=value_tuple)
+    #
+    # def insert_row(self):
+    #     self.name = self.name_entry.get()
+    #     self.age = int(self.age_spinbox.get())
+    #     self.subscription_status = self.status_combobox.get()
+    #     self.employment_status = "Employed" if self.a.get() else "Unemployed"
+    #
+    #     print(self.name, self.age, self.subscription_status, self.employment_status)
+    #
+    #     # Insert row into Excel sheet
+    #     path = "roooo.xls"
+    #     workbook = openpyxl.load_workbook(path)
+    #     sheet = workbook.active
+    #     row_values = [self.name, self.age, self.subscription_status, self.employment_status]
+    #     sheet.append(row_values)
+    #     workbook.save(path)
+    #
+    #     # Insert row into treeview
+    #     self.treeview.insert('', tk.END, values=row_values)
+    #
+    #     # Clear the values
+    #     self.name_entry.delete(0, "end")
+    #     self.name_entry.insert(0, "Name")
+    #     self.age_spinbox.delete(0, "end")
+    #     self.age_spinbox.insert(0, "Age")
+    #     self.status_combobox.set(self.combo_list[0])
+    #     self.checkbutton.state(["!selected"])
 
     def toggle_mode(self):
         if self.mode_switch.instate(["selected"]):
             self.style.theme_use("forest-light")
         else:
             self.style.theme_use("forest-dark")
+
+    def just_print(self):
+        print("Ok")
 
