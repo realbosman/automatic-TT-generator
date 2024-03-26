@@ -50,6 +50,7 @@ class TkinterApp(tk.Tk):
 
         # Initialise the classes Here
         self.timeDimension=TimeDimension()
+        self.timeDimension_space = TimeDimension()
         self.space_=ClassRooms()
         self.lectures_=Lectures()
         self.courses___=Courses()
@@ -136,7 +137,7 @@ class TkinterApp(tk.Tk):
             command=lambda: self.show_frame(TimeSlots, "Create TimeSlots",cls=self.timeDimension)
         )
         resource_submenu.options["Classroom/Room/Space"].config(
-            command=lambda: self.show_frame(Space, "Create Classroom/Room/Space",cls=self.timeDimension)
+            command=lambda: self.show_frame(Space, "Create Classroom/Room/Space",cls=self.timeDimension_space)
         )
         resource_submenu.options["Instructor/Lecturer/Tutor"].config(
             command=lambda: self.show_frame(Tutor, "Instructor/Lecturer/Tutor",cls=self.lectures_)

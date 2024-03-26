@@ -117,7 +117,7 @@ class TimeSlots(tk.Frame):
         self.timeDimension_.tuple_time_slot()
         self.treeview.insert('', tk.END, values=self.timeDimension_.get_tuple_list_list(-1))
 
-        # self.updateUI()
+        self.updateUI()
 
     def updateUI(self):
         self.treeview.heading(0, text="MON")

@@ -1,6 +1,6 @@
 class TimeDimension:
     instance = None
-
+    countInstance = 0
     # TOD Make this  dynamic for the user (timeslots)
     '''
     This is a default timeslots dictionary
@@ -22,6 +22,12 @@ class TimeDimension:
     def __new__(cls, *args, **kwargs):
         if not isinstance(cls.instance, cls):
             cls.instance = object.__new__(cls)
+            cls.countInstance += 1
+            print(cls.countInstance)
+        else:
+
+            print(cls.countInstance)
+
         return cls.instance
 
     def edit_time_slots(self, new_time_slots_object):
@@ -60,21 +66,45 @@ class TimeDimension:
 
         print(self.tupleList)
 
+    '''
+    Use this method to edit the TimeDict 
+    '''
 
-    def add_to_tuple_time_slot(self, new_tuple):
+    def edit_dict_time_slot(self, new_tuple, index_):
         new_tuple_ = new_tuple
-        for i in range(1):
-            lzt = ListCreator()
-            for k in range(6):
-                lzt.add_to_list(new_tuple_[k])
-            self.tupleList.append(lzt.get_list())
-        print(new_tuple_)
 
-    def edit_tuple_time_slot(self, new_tuple,index):
-        new_tuple_ = new_tuple
-        self.tupleList[index]=new_tuple_
-        self.tupleList=self.tupleList
-        print(">>>>>>",self.tupleList)
+        for index, key in enumerate(self.TimeSlotsDict.keys()):
+            tempLzt = self.TimeSlotsDict[key]
+            print(index_, len(tempLzt), key)
+
+            if index_ >= len(tempLzt):
+                if (new_tuple_[index] != '--------'):
+                    tempLzt.append(new_tuple_[index])
+                    self.TimeSlotsDict[key] = tempLzt
+                else:
+                    pass
+
+            else:
+                if (new_tuple_[index] != '--------'):
+                    tempLzt[index_] = new_tuple_[index]
+                    self.TimeSlotsDict[key] = tempLzt
+                else:
+                    pass
+        print(self.TimeSlotsDict, "<><><><><")
+
+        print(">>>>>>", self.tupleList)
+
+    def remove_row_(self,row_to_remove):
+
+        for index, key in enumerate(self.TimeSlotsDict.keys()):
+            if row_to_remove >= len(self.TimeSlotsDict[key]):
+                pass
+            else:
+                list_=self.TimeSlotsDict[key]
+                list_.pop(row_to_remove)
+                self.TimeSlotsDict[key]=list_
+        print(">>>>> Removed Row",self.TimeSlotsDict)
+
 
 
 
@@ -96,6 +126,8 @@ class TimeDimension:
             "SAT": [],
             "SUN": []
         }
+
+
 
 
 # TODO ADD BREAK POINTS

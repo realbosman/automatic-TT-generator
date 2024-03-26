@@ -39,7 +39,7 @@ class Space(tk.Frame):
         self.widgets_frame = ttk.LabelFrame(self, text="Current TimeSlots")
         self.widgets_frame.pack(expand=1, fill='x')
 
-        self.label1 = ttk.Button(self.widgets_frame, text="Add Session",command=self.add_new_session)
+        self.label1 = ttk.Button(self.widgets_frame, text="Add Row", command=self.add_new_session)
         self.label1.pack(expand=0, fill='y', side=tk.LEFT)
 
         self.separator = ttk.Separator(self.widgets_frame, orient='vertical')
@@ -47,6 +47,9 @@ class Space(tk.Frame):
 
         self.label2 = ttk.Button(self.widgets_frame, text="Save")
         self.label2.pack(expand=0, fill='y', side=tk.LEFT)
+
+        self.label3 = ttk.Button(self.widgets_frame, text="Delete selected Row", command=self.delete_row_)
+        self.label3.pack(expand=0, fill='y', side=tk.RIGHT)
 
         self.separator = ttk.Separator(self)
         self.separator.pack()
@@ -90,6 +93,7 @@ class Space(tk.Frame):
         self.timeDimension__.edit_time_slot(day, setTime)
         # Insert row into treeview
         self.timeDimension__.tuple_time_slot()
+
         self.treeview.insert('', tk.END, values=self.timeDimension__.get_tuple_list_list(-1))
 
         # self.updateUI()
@@ -109,8 +113,9 @@ class Space(tk.Frame):
     def add_new_session(self):
         self.treeview.insert('', tk.END, values=['--------', '--------', '--------', '--------', '--------', '--------',
                                                  '--------'])
-        self.timeDimension__.add_to_tuple_time_slot(
-            ['--------', '--------', '--------', '--------', '--------', '--------', '--------'])
+        # self.timeDimension__.add_to_tuple_time_slot(
+        #     ['--------', '--------', '--------', '--------', '--------', '--------', '--------'])
+        # self.timeDimension__.tuple_time_slot()
 
     def on_double_clicked(self, event):
         region_clicked = self.treeview.identify_region(event.x, event.y)
@@ -122,6 +127,7 @@ class Space(tk.Frame):
             return
 
         column = self.treeview.identify_column(event.x)
+        # print(self.treeview.selection(),"///")
         columnIndex = int(column[1:]) - 1
         selected_iid = self.treeview.focus()
         selected_values = self.treeview.item(selected_iid)
@@ -148,20 +154,36 @@ class Space(tk.Frame):
         entry_edit.bind("<FocusOut>", self.onFocusOut)
         entry_edit.bind("<Return>", self.on_enter_press)
 
-        print(column_box)
+
+
+    # TODO I got work to do  regarding with the iceasing number in the fiirst print below
+    def delete_row_(self):
+
+        print(type(self.treeview.focus()),int(self.treeview.focus()[1:]))
+        if str(self.treeview.focus()) != '':
+            self.timeDimension__.remove_row_(int(self.treeview.focus()[1:]))
+            for item in self.treeview.get_children():
+                self.treeview.delete(item)
+            self.treeview.update()
+            self.updateUI()
+            print("selection ==", self.treeview.focus())
 
     def on_enter_press(self, e):
         new_text = e.widget.get()
-        selected_iid = e.widget.editing_item_iid
-        column_index = e.widget.editing_column_index
-        current_values = self.treeview.item(selected_iid).get("values")
-        current_values[column_index] = new_text
-        self.treeview.item(selected_iid, values=current_values)
-        e.widget.destroy()
-        self.timeDimension__.edit_tuple_time_slot(current_values, int(selected_iid[1:]) - 1)
 
-        print(current_values)
+        if new_text == '':
+            print('Object is None ')
 
+        else:
+            selected_iid = e.widget.editing_item_iid
+            column_index = e.widget.editing_column_index
+            current_values = self.treeview.item(selected_iid).get("values")
+            current_values[column_index] = new_text
+            self.treeview.item(selected_iid, values=current_values)
+            e.widget.destroy()
+            self.timeDimension__.edit_dict_time_slot(current_values, int(selected_iid[1:]) - 1)
+
+        # print(current_values)
 
     def onFocusOut(self, e):
         print("running")
