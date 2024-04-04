@@ -1,39 +1,3 @@
-class Lecturers:
-    '''
-       This is a class shows a Tutor with the necessary info about them
-       '''
-    instance = None
-    def __init__(self):
-        self.Lecturers_ = {
-
-        }
-
-
-    def __new__(cls, *args, **kwargs):
-        if not isinstance(cls.instance, cls):
-            cls.instance = object.__new__(cls)
-        return cls.instance
-
-    # This takes in a dictionary that holds lecturers with their specifics
-    def __getitem__(self, items):
-        self.Lecturers_.clear()
-        for i in range(len(items)):
-            key = list(items[i].keys())
-            val = list(items[i].values())
-            print(f'key {key} {val}')
-            self.Lecturers_[key[0]] = val[0]
-
-    def edit_Lecturers_dict(self, new_lecturer_object):
-        pass
-        # self.Lecturers_.clear()
-        # key = list(new_clas_room.keys())
-        # val = list(new_clas_room.values())
-        # self.Lecturers_[key[0]] = val[0]
-
-    def get_Lecturers_list(self):
-        return self.Lecturers_
-
-
 class Lecturer_Model:
     '''
       This is a class shows a list Tutors with the necessary info about them
@@ -48,3 +12,70 @@ class Lecturer_Model:
 
     def getlecturerDetails(self):
         return self.lecturer_dict
+
+
+class TutorsManager:
+    '''
+       This class manages the space
+       '''
+
+    instance = None
+    countInstance = 0
+
+    def __init__(self):
+        self.Headers = {
+            "headers": ["Name","Session", "Faculty" ]
+        }
+
+        self.Space_List = [
+
+            [ "Mr.Kasozi", "OOP","Science"],
+            [ "Mr.TONY","PYTHON", "Science"],
+            [ "Mr.REAGAN","POP", "Science"],
+            [ "Madam MIREMBE","WEB", "Science"]
+
+        ]
+
+    def __new__(cls, *args, **kwargs):
+        if not isinstance(cls.instance, cls):
+            cls.instance = object.__new__(cls)
+            cls.countInstance += 1
+            print(cls.countInstance)
+        else:
+
+            print(cls.countInstance)
+
+        return cls.instance
+
+    def get_column_headers(self):
+        return self.Headers["headers"]
+
+    def get_tutors(self) -> list:
+        return self.Space_List
+
+    def get_tutors_length(self) -> int:
+        return int(len(self.Space_List))
+
+    def edit_tutors(self, index, new_session):
+        self.Space_List[index] = new_session
+
+    def delete_tutor(self, index):
+        self.Space_List.pop(index)
+
+    def add_new_tutor(self, new_session,index=None):
+        if index is None:
+            self.Space_List.append(new_session)
+        else:
+            self.Space_List[index]=new_session
+
+
+
+
+    def get_algo_reources(self) -> list:
+        algo_list = list()
+        for lst in self.Space_List:
+            if lst[0] == '--------':
+                pass
+            else:
+                algo_list.append(f'{lst[0]}')
+        return algo_list

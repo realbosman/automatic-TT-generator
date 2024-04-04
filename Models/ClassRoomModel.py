@@ -1,55 +1,3 @@
-class ClassRooms:
-    '''
-    This class holds all the class rooms
-    '''
-    instance = None
-
-    def __init__(self):
-        self.ClassRooms_ = {
-            "Room A": [30],
-            "Room B": [30],
-            "Room C": [30],
-            "Room D": [30],
-            "Room E": [30],
-            "Room F": [30],
-            "Room G": [30],
-            "Room H": [30],
-            "Room I": [30],
-            "Room J": [30],
-            "Room K": [30],
-            "Room L": [30],
-            "Room M": [30],
-            "Room N": [30],
-            "Room O": [30],
-            "Room P": [30],
-            "Room  ONLINE": ["ANY"],
-        }
-
-    def __new__(cls, *args, **kwargs):
-        if not isinstance(cls.instance, cls):
-            cls.instance = object.__new__(cls)
-        return cls.instance
-
-    # This takes in a dictionary that holds classes with their specifics
-    def __getitem__(self, items):
-        self.ClassRooms_.clear()
-        for i in range(len(items)):
-            key = list(items[i].keys())
-            val = list(items[i].values())
-            print(f'key {key} {val}')
-            self.ClassRooms_[key[0]] = val[0]
-
-    def edit_class_rooms(self, new_clas_room):
-        pass
-        # self.ClassRooms_.clear()
-        # key = list(new_clas_room.keys())
-        # val = list(new_clas_room.values())
-        # self.ClassRooms_[key[0]] = val[0]
-
-    def get_classrooms_list(self):
-        return self.ClassRooms_
-
-
 class ClassRoomModel:
     '''
      This class creates  a class room
@@ -66,15 +14,69 @@ class ClassRoomModel:
     def getClassRoomDetails(self):
         return self.classRoomModel_dict
 
-# mylist = [ClassRoomModel("Room AAAAAA", "3000").getClassRoomDetails(),
-#           ClassRoomModel("Room AAAAAA2", "3000").getClassRoomDetails(),
-#           ClassRoomModel("Room AAAAAA3", "3000").getClassRoomDetails()]
-#
-# classRoomz = ClassRooms()
-# # TODO how to do [for i in ranae] in a list
-# classRoomz[mylist]
-#
-# print(classRoomz.get_classrooms_list())
-# # my_list = [i for i in range(10)]
-# print(list(classRoomz.ClassRooms_.keys()))
-#
+
+class SpaceManager:
+    '''
+       This class manages the space
+       '''
+
+    instance = None
+    countInstance = 0
+
+    def __init__(self):
+        self.Headers = {
+            "headers": ["Name", "Faculty", "Capacity"]
+        }
+
+        self.Space_List = [
+
+            ["Room A", "Science", "50"],
+            ["Room B", "Science", "50"],
+            ["Room C", "Science", "50"],
+            ["Room D", "Science", "50"],
+            ["Room E", "Science", "50"],
+            ["Room F", "Science", "50"],
+            ["Room G", "Science", "50"],
+            ["Room H", "Science", "50"],
+            ["Room I", "Science", "50"],
+            ["Room J", "Science", "50"]
+
+        ]
+
+    def __new__(cls, *args, **kwargs):
+        if not isinstance(cls.instance, cls):
+            cls.instance = object.__new__(cls)
+            cls.countInstance += 1
+            print(cls.countInstance)
+        else:
+
+            print(cls.countInstance)
+
+        return cls.instance
+
+    def get_column_headers(self):
+        return self.Headers["headers"]
+
+    def get_sessions(self) -> list:
+        return self.Space_List
+
+    def get_sessions_length(self) -> int:
+        return int(len(self.Space_List))
+
+    def edit_session(self, index, new_session):
+        self.Space_List[index] = new_session
+
+    def delete_session(self, index):
+        self.Space_List.pop(index)
+
+    def add_new_session(self, new_session):
+        self.Space_List.append(new_session)
+
+    def get_algo_reources(self) -> list:
+        algo_list = list()
+        for lst in self.Space_List:
+            if lst[0] == '--------':
+                pass
+            else:
+                algo_list.append(f'{lst[0]}')
+        return algo_list

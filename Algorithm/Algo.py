@@ -5,6 +5,8 @@ Pick a course unit check then pick dateTime if the lecturer is not occupied in o
 """
 import random
 import re
+from Pdf_Generator.pdf_generator import  main as generate_pdf_schedule
+
 
 
 class TtGenerator:
@@ -15,7 +17,7 @@ class TtGenerator:
             cls.instance = object.__new__(cls)
         return cls.instance
 
-    def __init__(self, timeslots, created_lectures_details, class_rooms, lecturer_dicts):
+    def __init__(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst):
         self.TimeTable = {
             "MON": [],
             "TUE": [],
@@ -25,54 +27,42 @@ class TtGenerator:
             "SAT": [],
             "SUN": [],
         }
-        self.timeSlotObject = timeslots
-        self.lecturer_dicts = lecturer_dicts
-        self.class_rooms = class_rooms
-        self.created_lectures_details = created_lectures_details
-        self.edit_TimeTable_days()
+        self.list_ = list()
+        self.timeslots_lst = timeslots_lst
+        self.class_rooms_lst = class_rooms_lst
+        self.created_lectures_details_lst = created_lectures_details_lst
+        # self.edit_TimeTable_days()
         self.random_generator()
+        self.cleanPrint()
+
+        # TODO this generates the pdf file
+        generate_pdf_schedule(self.get__pdf_resources())
 
     def random_generator(self):
-        count_created_lectures = len(self.created_lectures_details)
+        self.list_.clear()
+        count_created_lectures = len(self.created_lectures_details_lst)
 
         for i in range(count_created_lectures):
             # TODO this is where if a lecturer has already got or picked time first priority
-            # if the rooms are over go get a brand new class rooms
-            gen_l = random.choice(list(self.created_lectures_details))
-            key, val = random.choice(list(self.timeSlotObject.items()))
-            class_name, class_capacity = random.choice(list(self.class_rooms.items()))
+            # TODO if the rooms are over go get a brand new class rooms
+            lecture_picked = random.choice(self.created_lectures_details_lst)
+            time_picked = random.choice(self.timeslots_lst)
+            space_picked = random.choice(self.class_rooms_lst)
 
-            lecturer = None
+            # TODO what if lecturer_dicts equates to zero when pop is done
 
-            # TODO what if lecturer_dicts equates to zero when popis done
-            for key_, value in self.lecturer_dicts.items():
-                # print(f'lecturer = {key_}/ {value} / {gen_l}')
-
-                if value == gen_l:
-                    lecturer = key_
-                    # print(f'lecturer = {lecturer}')
-                    # print(f'lecturer = {key_}/ {value} / {gen_l}')
-                    # print(self.lecturer_dicts)
-                    self.lecturer_dicts.pop(key_)
-                    break
-
-            if len(list(self.timeSlotObject[key])) == 0:
-                self.timeSlotObject.pop(key)
-                self.random_generator()
-                print("pop used")
+            # TODO MANAGE TIME
+            if len(self.timeslots_lst) == 0:
+                print("Overlapping IN TIME ")
                 break
+            # TODO if the rooms are over go get a brand new class rooms
 
-            gen_time = random.choice(list(self.timeSlotObject[key]))
-            self.TimeTable[key].append(str(f'<{gen_l}><{class_name}><{lecturer}><{gen_time}>'))
-            words_between_angle_brackets = re.findall(r'<(.*?)>',
-                                                      str(f'<{gen_l}><{class_name}><{lecturer}><{gen_time}>'))
-            print(words_between_angle_brackets)
-            self.timeSlotObject[key].remove(gen_time)
-            self.created_lectures_details.remove(gen_l)
-            self.class_rooms.pop(class_name)
-            # print(f'classes = {self.class_rooms.keys()}')
+            self.TimeTable[re.findall(r'<(.*?)>', time_picked)[0]].append(
+                str(f'<{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[1]}>'))
 
-        # print(self.TimeTable)
+            self.timeslots_lst.remove(time_picked)
+            self.created_lectures_details_lst.remove(lecture_picked)
+            self.class_rooms_lst.remove(space_picked)
 
     def cleanPrint(self):
         print(f'MON = {self.TimeTable["MON"]}')
@@ -114,19 +104,19 @@ class TtGenerator:
                 index_count = -1
                 pass
             if i == 1 and index_count == 1:
-                self.timeSlotObject.pop('MON')
+                self.timeslots_lst.pop('MON')
             if i == 2 and index_count == 1:
-                self.timeSlotObject.pop('TUE')
+                self.timeslots_lst.pop('TUE')
             if i == 3 and index_count == 1:
-                self.timeSlotObject.pop('WED')
+                self.timeslots_lst.pop('WED')
             if i == 4 and index_count == 1:
-                self.timeSlotObject.pop('THUR')
+                self.timeslots_lst.pop('THUR')
             if i == 5 and index_count == 1:
-                self.timeSlotObject.pop('FRI')
+                self.timeslots_lst.pop('FRI')
             if i == 6 and index_count == 1:
-                self.timeSlotObject.pop('SAT')
+                self.timeslots_lst.pop('SAT')
             if i == 7 and index_count == 1:
-                self.timeSlotObject.pop('SUN')
+                self.timeslots_lst.pop('SUN')
 
         if disabled_none == 0:
             pass
@@ -143,3 +133,36 @@ class TtGenerator:
                 self.edit_TimeTable_days()
             except:
                 pass
+
+    def get__pdf_resources(self) -> list:
+        # TODO I HAVE A PROBLEM WITH THE DAY / PDF MAPPING
+        for key in self.TimeTable:
+            day = None
+            if key == "MON":
+                day = "Monday"
+            elif key == "TUE":
+                day = "Tuesday"
+            elif key == "WED":
+                day = "Wednesday"
+            elif key == "THUR":
+                day = "Thursday"
+            elif key == "FRI":
+                day = "Friday"
+            elif key == "SAT":
+                day = "Saturday"
+            elif key == "SUN":
+                day = "Sunday"
+            else:
+                day = None
+
+            for i in range(len(self.TimeTable[key])):
+                dict_ = {
+                }
+                a, b, c, d = re.findall(r'<(.*?)>', self.TimeTable[key][i])
+                name=a +" "+ b +" " + c
+                dict_['name'] = name
+                dict_['days'] = day
+                dict_['time'] = d
+                dict_['color'] = "FF94EF"
+                self.list_.append(dict_)
+        return  self.list_

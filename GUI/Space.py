@@ -20,7 +20,7 @@ class Space(tk.Frame):
 
     def __init__(self, parent, cls):
         ttk.Frame.__init__(self, parent)
-        self.timeDimension__ = cls
+        self.space__ = cls
         # self.config(bg=visualisation_frame_color)
         self.combo = tk.StringVar()
         self.combo2 = tk.StringVar()
@@ -39,17 +39,20 @@ class Space(tk.Frame):
         self.widgets_frame = ttk.LabelFrame(self, text="Current TimeSlots")
         self.widgets_frame.pack(expand=1, fill='x')
 
-        self.label1 = ttk.Button(self.widgets_frame, text="Add Row", command=self.add_new_session)
+        self.label1 = ttk.Label(self.widgets_frame, text="Add Row")
         self.label1.pack(expand=0, fill='y', side=tk.LEFT)
+        self.label1.bind("<Button-1>", self.add_new_session)
 
         self.separator = ttk.Separator(self.widgets_frame, orient='vertical')
         self.separator.pack(expand=0, fill='y', side=tk.LEFT, padx=10)
 
-        self.label2 = ttk.Button(self.widgets_frame, text="Save")
+        self.label2 = ttk.Label(self.widgets_frame, text="Save")
         self.label2.pack(expand=0, fill='y', side=tk.LEFT)
+        self.label2.bind("<Button-1>", self.on_save)
 
-        self.label3 = ttk.Button(self.widgets_frame, text="Delete selected Row", command=self.delete_row_)
-        self.label3.pack(expand=0, fill='y', side=tk.RIGHT)
+        self.label3 = ttk.Label(self.widgets_frame, text="Delete selected Row")
+        self.label3.pack(expand=0, fill='y', side=tk.RIGHT, padx=10)
+        self.label3.bind("<Button-1>", self.delete_row_)
 
         self.separator = ttk.Separator(self)
         self.separator.pack()
@@ -66,56 +69,45 @@ class Space(tk.Frame):
         # Define a custom style for the treeview
         self.style = ttk.Style()
         self.style.configure("Custom.Treeview", rowheight=30)  # Set your desired row height here
-        cols = ("MON", "TUE", "WED", "THUR", "FRI", "SAT", "SUN")
-        self.treeview = ttk.Treeview(self.treeFrame, show="headings",
+
+        cols = self.space__.get_column_headers()
+        print(cols)
+        self.treeview = ttk.Treeview(self.treeFrame, show="headings", columns=cols,
                                      xscrollcommand=self.treeScroll_x.set,
-                                     yscrollcommand=self.treeScroll.set, columns=cols, height=20)
+                                     yscrollcommand=self.treeScroll.set, height=20)
         self.treeview.configure(style="Custom.Treeview")
-        self.treeview.column("MON", width=50)
-        self.treeview.column("TUE", width=50)
-        self.treeview.column("WED", width=50)
-        self.treeview.column("THUR", width=50)
-        self.treeview.column("FRI", width=50)
-        self.treeview.column("SAT", width=50)
-        self.treeview.column("SUN", width=50)
-        # self.treeview.rowconfigure
+
+        # TODO to check and update the size of the column
+
+        self.treeview['columns'] = self.space__.get_column_headers()
 
         self.treeview.pack(expand=tk.TRUE, fill=tk.BOTH, side=tk.LEFT)
         self.treeScroll.config(command=self.treeview.yview)
         self.treeScroll_x.config(command=self.treeview.xview)
         self.treeview.bind("<Double-1>", self.on_double_clicked)
 
+        #     TODO this needs to run in a thread
         self.updateUI()
 
-    def getData(self):
-        day = self.status_combobox.get()
-        setTime = f'{self.status_combobox2.get()}:{self.status_combobox2_1.get()}-{self.status_combobox3.get()}:{self.status_combobox3_1.get()}'
-        self.timeDimension__.edit_time_slot(day, setTime)
-        # Insert row into treeview
-        self.timeDimension__.tuple_time_slot()
-
-        self.treeview.insert('', tk.END, values=self.timeDimension__.get_tuple_list_list(-1))
-
-        # self.updateUI()
-
     def updateUI(self):
-        self.treeview.heading(0, text="MON")
-        self.treeview.heading(1, text="TUE")
-        self.treeview.heading(2, text="WED")
-        self.treeview.heading(3, text="THUR")
-        self.treeview.heading(4, text="FRI")
-        self.treeview.heading(5, text="SAT")
-        self.treeview.heading(6, text="SUN")
-        self.timeDimension__.tuple_time_slot()
-        for i in range(self.timeDimension__.get_tuple_list_length()):
-            self.treeview.insert('', tk.END, values=self.timeDimension__.get_tuple_list_list(i))
 
-    def add_new_session(self):
-        self.treeview.insert('', tk.END, values=['--------', '--------', '--------', '--------', '--------', '--------',
-                                                 '--------'])
-        # self.timeDimension__.add_to_tuple_time_slot(
-        #     ['--------', '--------', '--------', '--------', '--------', '--------', '--------'])
-        # self.timeDimension__.tuple_time_slot()
+        headings = self.space__.get_column_headers()
+
+        print("heads", headings)
+        for col_ in headings:
+            self.treeview.column(col_,width=50,anchor='c')
+            self.treeview.heading(col_,text=col_)
+
+        for i in range(int(self.space__.get_sessions_length())):
+            self.treeview.insert('', tk.END, values=self.space__.get_sessions()[i])
+
+    def add_new_session(self, event):
+        values_lst = list()
+        for i in range(len(self.space__.get_column_headers())):
+            values_lst.append('--------')
+
+        self.treeview.insert('', tk.END, values=values_lst)
+        self.space__.add_new_session(values_lst)
 
     def on_double_clicked(self, event):
         region_clicked = self.treeview.identify_region(event.x, event.y)
@@ -154,37 +146,71 @@ class Space(tk.Frame):
         entry_edit.bind("<FocusOut>", self.onFocusOut)
         entry_edit.bind("<Return>", self.on_enter_press)
 
-
-
     # TODO I got work to do  regarding with the iceasing number in the fiirst print below
-    def delete_row_(self):
+    def delete_row_(self, event):
+        index_to_delete = None
+        for index, child in enumerate(self.treeview.get_children()):
+            if child == self.treeview.focus():
+                index_to_delete = index - 1
+                break
 
-        print(type(self.treeview.focus()),int(self.treeview.focus()[1:]))
         if str(self.treeview.focus()) != '':
-            self.timeDimension__.remove_row_(int(self.treeview.focus()[1:]))
-            for item in self.treeview.get_children():
-                self.treeview.delete(item)
-            self.treeview.update()
-            self.updateUI()
-            print("selection ==", self.treeview.focus())
+            if int(self.space__.get_sessions_length()) == 1:
+                values_lst = list()
+                for i in range(len(self.space__.get_column_headers())):
+                    values_lst.append('--------')
+
+                self.space__.add_new_session(values_lst)
+                self.treeview.insert('', tk.END,
+                                     values=values_lst)
+                self.space__.delete_session(index_to_delete)
+
+                self.treeview.delete(self.treeview.focus())
+                # self.updateUI()
+                print(self.treeview.get_children())
+                print(self.space__.get_sessions())
+
+
+            else:
+
+                self.space__.delete_session(index_to_delete)
+                self.treeview.delete(self.treeview.focus())
+
+                print(self.treeview.get_children())
+                # print(self.treeview.item(*self.treeview.get_children()))
+                print(self.space__.get_sessions())
+
+
+
+        else:
+            print("Else:", self.treeview.focus())
 
     def on_enter_press(self, e):
         new_text = e.widget.get()
 
         if new_text == '':
+            # TODO add a popup to alert tyhe user that this field in blank either fill it or leave it
             print('Object is None ')
+            new_text = '--------'
 
-        else:
-            selected_iid = e.widget.editing_item_iid
-            column_index = e.widget.editing_column_index
-            current_values = self.treeview.item(selected_iid).get("values")
-            current_values[column_index] = new_text
-            self.treeview.item(selected_iid, values=current_values)
-            e.widget.destroy()
-            self.timeDimension__.edit_dict_time_slot(current_values, int(selected_iid[1:]) - 1)
+        selected_iid = e.widget.editing_item_iid
+        column_index = e.widget.editing_column_index
+        current_values = self.treeview.item(selected_iid).get("values")
+        current_values[column_index] = new_text
+        self.treeview.item(selected_iid, values=current_values)
+        index_to_add = None
+        for index, child in enumerate(self.treeview.get_children()):
+            if child == selected_iid:
+                index_to_add = index
+                break
+        e.widget.destroy()
+        self.space__.edit_session(index_to_add, current_values)
 
         # print(current_values)
 
     def onFocusOut(self, e):
         print("running")
         e.widget.destroy()
+
+    def on_save(self, event):
+        print("Save clicked")

@@ -2,19 +2,24 @@ import threading
 import time
 import tkinter as tk
 from pathlib import Path
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 # -------------------------- DEFINING GLOBAL VARIABLES -------------------------
-from GUI import TimeslotsList
+from Algorithm.Algo import TtGenerator
+from Algorithm.TimetableMetaData import TimetableMetaData
+from GUI import TimeslotsList, Tutor
+from GUI.Home import Home
 from GUI.Session import Session
 from GUI.SessionsList import SessionsList
 from GUI.Space import Space
 from GUI.SpaceList import SpaceList
 from GUI.TimeSlots import TimeSlots
-from GUI.TimeslotsList import TimeslotsList
 from GUI.Tutor import Tutor
+from GUI.TimeslotsList import TimeslotsList
 from GUI.TutorsList import TutorsList
-from Models.ClassRoomModel import ClassRooms
+from Models.ClassRoomModel import SpaceManager
+from Models.CourseUnitModel import SessionManager
+from Models.Lecturer_Model import TutorsManager
 from Models.TimeDimension import TimeDimension
 
 selectionbar_color = '#3C3F3F'
@@ -23,10 +28,10 @@ header_color = '#3C3F3F'
 visualisation_frame_color = "#2B2B2B"
 TEXT_COLOR = '#eeeeee'
 
-
 PATH = Path(__file__).parent / 'images'
 PATH_ = Path(__file__).parent / 'forest-light.tcl'
 PATH__ = Path(__file__).parent / 'forest-dark.tcl'
+
 
 # ------------------------------- ROOT WINDOW ----------------------------------
 
@@ -49,17 +54,16 @@ class TkinterApp(tk.Tk):
         tk.Tk.__init__(self)
 
         # Initialise the classes Here
-        self.timeDimension=TimeDimension()
-        self.timeDimension_space = TimeDimension()
-        self.space_=ClassRooms()
-        self.lectures_=Lectures()
-        self.courses___=Courses()
+        self.TimetableMetadata = TimetableMetaData()
+        self.timeDimension = TimeDimension()
+        self.space_ = SpaceManager()
+        self.lectures_ = SessionManager()
+        self.lecturers_ = TutorsManager()
 
-
-
+        self.algorithm_ = None
 
         self.style = ttk.Style(self)
-        self.call("source",PATH_)
+        self.call("source", PATH_)
         self.call("source", PATH__)
         self.style.theme_use("forest-dark")
         self.title("Automatic Timetable Generator")
@@ -71,7 +75,7 @@ class TkinterApp(tk.Tk):
         # self.geometry()
         self.resizable(True, True)
         self.config(background=selectionbar_color)
-        icon = tk.PhotoImage(file=PATH /'LU_logo.png')
+        icon = tk.PhotoImage(file=PATH / 'LU_logo.png')
         self.iconphoto(True, icon)
 
         # fake title bar
@@ -79,10 +83,20 @@ class TkinterApp(tk.Tk):
         self.title_bar.place(relx=0, rely=0, relwidth=1, relheight=0.05)
         # bind title bar
         self.title_bar.bind("<ButtonPress>", self.start_move)
-        self.title_bar.bind("<B1-Motion>", self.move_window)
 
-        self.title_label = tk.Label(self.title_bar, text='Automatic Timetable Generator', bg=header_color,
-                                    fg=TEXT_COLOR)
+        self.label1 = ttk.Label(self.title_bar, text="File" ,background=header_color)
+        self.label1.pack(expand=0, fill='y', side=tk.LEFT)
+        self.label1.bind("<Button-1>",  lambda x:print("File"))
+
+        self.label1 = ttk.Label(self.title_bar, text="Home"  ,background=header_color)
+        self.label1.pack(expand=0, fill='y', side=tk.LEFT,padx=20)
+        self.label1.bind("<Button-1>", lambda x: self.show_frame(Home, "Time table Metadata", cls=self.TimetableMetadata))
+
+
+        # self.title_bar.bind("<B1-Motion>", self.move_window)
+        #
+        # self.title_label = tk.Label(self.title_bar, text='Automatic Timetable Generator', bg=header_color,
+        #                             fg=TEXT_COLOR)
         # self.title_label.place(relx=0, rely=0, relwidth=.16, relheight=1)
         # self.title_label.pack(side=tk.LEFT, fill=tk.Y)
         #
@@ -95,7 +109,6 @@ class TkinterApp(tk.Tk):
         # self.mode_switch = ttk.Checkbutton(
         #     self.title_bar, text="Mode", style="Switch", command=self.toggle_mode)
         # self.mode_switch.pack(side=tk.RIGHT, fill=tk.Y,padx=5)
-
 
         # self.gripper=ttk.Sizegrip()
         # self.gripper.place(relx=1,rely=1,anchor='se')
@@ -123,53 +136,53 @@ class TkinterApp(tk.Tk):
         # , List MANAGEMENT)
 
         # # Add to Resources Submenu
-        self.submenu_frame = tk.Frame(self.sidebar, bg=sidebar_color, relief='raised')
+        self.submenu_frame = tk.Frame(self.sidebar, bg=sidebar_color, relief='raised', bd=None)
         self.submenu_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
         resource_submenu = SidebarSubMenu(self.submenu_frame,
-                                          sub_menu_heading='Add Resources',
+                                          sub_menu_heading='Resources',
                                           sub_menu_options=["TimeSlots",
                                                             "Classroom/Room/Space",
-                                                            "Instructor/Lecturer/Tutor",
-                                                            "Course/Class/Session"
+                                                            "Course/Class/Session",
+                                                            "Instructor/Lecturer/Tutor"
+
                                                             ]
+
                                           )
         resource_submenu.options["TimeSlots"].config(
-            command=lambda: self.show_frame(TimeSlots, "Create TimeSlots",cls=self.timeDimension)
+            command=lambda: self.show_frame(TimeSlots, "Create TimeSlots", cls=self.timeDimension)
         )
         resource_submenu.options["Classroom/Room/Space"].config(
-            command=lambda: self.show_frame(Space, "Create Classroom/Room/Space",cls=self.timeDimension_space)
+            command=lambda: self.show_frame(Space, "Create Classroom/Room/Space", cls=self.space_)
         )
         resource_submenu.options["Instructor/Lecturer/Tutor"].config(
-            command=lambda: self.show_frame(Tutor, "Instructor/Lecturer/Tutor",cls=self.lectures_)
+            command=lambda: self.show_frame(Tutor, "Instructor/Lecturer/Tutor", cls=self.lecturers_)
         )
         resource_submenu.options["Course/Class/Session"].config(
-            command=lambda: self.show_frame(Session, "Course/Class/Session",cls=self.courses___)
+            command=lambda: self.show_frame(Session, "Course/Class/Session", cls=self.lectures_)
         )
 
         resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=0.3)
 
-        list_submenu = SidebarSubMenu(self.submenu_frame,
-                                      sub_menu_heading='View/Edit Resource Lists',
-                                      sub_menu_options=["Timeslots",
-                                                        "Classrooms/Rooms/Space",
-                                                        "Instructors/Lecturers/Tutors",
-                                                        "Courses/Classes/Sessions"
-                                                        ]
-                                      )
-        list_submenu.options["Timeslots"].config(
-            command=lambda: self.show_frame(TimeslotsList, "TimeSlots",cls=self.timeDimension)
+        Generator_time_table = SidebarSubMenu(self.submenu_frame,
+                                              sub_menu_heading='Time Table',
+                                              sub_menu_options=["Generate Time Table",
+                                                                "Edit Time Table",
+                                                                "Generate PDF",
+                                                                ]
+
+                                              )
+
+        Generator_time_table.options["Generate Time Table"].config(
+            command=lambda: self.start_time_table_generation()
         )
-        list_submenu.options["Classrooms/Rooms/Space"].config(
-            command=lambda: self.show_frame(SpaceList, "Classrooms/Rooms/Spaces - List",cls=self.timeDimension)
+        Generator_time_table.options["Edit Time Table"].config(
+            command=lambda: print("Edit Time Table")
         )
-        list_submenu.options["Instructors/Lecturers/Tutors"].config(
-            command=lambda: self.show_frame(TutorsList, "Instructors/Lecturers/Tutors - List",cls=self.lectures_)
-        )
-        list_submenu.options["Courses/Classes/Sessions"].config(
-            command=lambda: self.show_frame(SessionsList, "Courses/Classes/Sessions - List",cls=self.courses___)
+        Generator_time_table.options["Generate PDF"].config(
+            command=lambda: print("Generate PDF")
         )
 
-        list_submenu.place(relx=0, rely=0.4, relwidth=1, relheight=0.3)
+        Generator_time_table.place(relx=0, rely=0.4, relwidth=1, relheight=0.3)
 
         # --------------------  MULTI PAGE SETTINGS ----------------------------
 
@@ -179,20 +192,28 @@ class TkinterApp(tk.Tk):
 
         self.frames = {}
 
+        self.show_frame(Home, "Time table Metadata", cls=self.TimetableMetadata)
 
     ''''
     This function below calls the clases and passes in them these parameters cls is the model class created at the beginning of the initialisation
     '''
 
-    def on_call_create(self,F,cls):
-        frame = F(self.container,cls)
+    def start_time_table_generation(self):
+        isTrue = ShowMsg().pop_msg()
+        if isTrue:
+            self.algorithm_ = TtGenerator(self.timeDimension.get_algo_reources(),
+                                          self.lectures_.get_algo_reources(),
+                                          self.space_.get_algo_reources())
+        else:
+            print(' Generation faild')
+
+    def on_call_create(self, F, cls):
+        for w in self.container.winfo_children():
+            w.destroy()
+
+        frame = F(self.container, cls)
 
         frame.place(relx=0, rely=0, relwidth=1, relheight=1)
-
-
-
-
-
 
     def move_app(self, e):
         self.geometry(f'+{e.x_root - self.winfo_x()}+{e.y_root - self.winfo_y()}')
@@ -221,7 +242,7 @@ class TkinterApp(tk.Tk):
         else:
             self.style.theme_use("forest-dark")
 
-    def show_frame(self, cont, title,cls):
+    def show_frame(self, cont, title, cls):
         """
         The function 'show_frame' is used to raise a specific frame (page) in
         the tkinter application and update the title displayed in the header.
@@ -246,7 +267,7 @@ class TkinterApp(tk.Tk):
                          font=("Helvetica", 13),
                          bg=header_color,
                          fg=TEXT_COLOR)
-        self.on_call_create(cont,cls=cls)
+        self.on_call_create(cont, cls=cls)
         label.pack(side=tk.LEFT, padx=0, fill='both')
         # frame.tkraise()
 
@@ -443,6 +464,28 @@ class SidebarSubMenu(tk.Frame):
                                         fg=TEXT_COLOR
                                         )
             self.options[x].place(x=30, y=45 * (n + 1), anchor="w")
+
+
+class ShowMsg:
+
+    def pop_msg(self) -> bool:
+        """
+       Msg show
+        """
+        generate = messagebox.askyesno(
+            "Automatic Timetable Generator",
+            "Continue to generate time table"
+        )
+
+        if (generate == True):
+            print("Generating.......")
+
+
+        else:
+            print("xxxxxxxxxx")
+
+        # messagebox.showinfo(title=None, message="Generated")
+        return generate
 
 
 app = TkinterApp()
