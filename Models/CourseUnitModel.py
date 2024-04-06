@@ -34,12 +34,12 @@ class SessionManager:
 
         self.tutor = TutorsManager()
         self.Headers = {
-            "headers": ["Name","Tutor", "Faculty" ]
+            "headers": ["Name","Tutor", "Faculty","Group"]
         }
 
         self.Session_List = [
 
-            ["OOP",  "Mr.Kasozi","Science"],
+            ["OOP",  "Mr.Kasozi","Science",],
             ["PYTHON",  "Mr.TONY","Science"],
             ["POP", "Mr.REAGAN","Science"],
             ["WEB",  "Madam MIREMBE","Science"]
