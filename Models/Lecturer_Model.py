@@ -60,7 +60,7 @@ class TutorsManager:
         self.Space_List[index] = new_session
 
     def delete_tutor(self, index):
-        self.Space_List.pop(index)
+        self.Space_List.pop(index+1)
 
     def add_new_tutor(self, new_session,index=None):
         if index is None:

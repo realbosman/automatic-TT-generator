@@ -32,7 +32,6 @@ class Session(tk.Frame):
 
         #     TODO put all the functions here that are gonna help manage the  time slot
 
-
         self.widgets_frame = ttk.LabelFrame(self, text="Current TimeSlots")
         self.widgets_frame.pack(expand=1, fill='x')
 
@@ -92,8 +91,8 @@ class Session(tk.Frame):
 
         print("heads", headings)
         for col_ in headings:
-            self.treeview.column(col_,width=50,anchor='c')
-            self.treeview.heading(col_,text=col_)
+            self.treeview.column(col_, width=50, anchor='c')
+            self.treeview.heading(col_, text=col_)
 
         for i in range(int(self.session__.get_sessions_length())):
             self.treeview.insert('', tk.END, values=self.session__.get_sessions()[i])
@@ -116,32 +115,54 @@ class Session(tk.Frame):
             return
 
         column = self.treeview.identify_column(event.x)
-        # print(self.treeview.selection(),"///")
+        print(self.treeview.selection(), "///", )
         columnIndex = int(column[1:]) - 1
         selected_iid = self.treeview.focus()
         selected_values = self.treeview.item(selected_iid)
         selected_text = selected_values.get("values")
-
+        print(self.treeview.selection(), "///", selected_values)
         column_box = self.treeview.bbox(selected_iid, column)
+        print(self.treeview.selection(), "///", column_box)
 
-        entry_edit = ttk.Entry(self.treeview, width=column_box[2])
-        # record the column index and id
-        entry_edit.editing_column_index = columnIndex
-        entry_edit.editing_item_iid = selected_iid
-        entry_edit.insert(0, selected_text[columnIndex])
-        print(selected_text[columnIndex])
-        entry_edit.select_range(0, tk.END)
+        # TODO Test this with bigger row tex to ensure that this below stands out
+        if ((1307 / column_box[0]) > 2.3):
+            entry_edit = ttk.Entry(self.treeview, width=column_box[2])
+            # record the column index and id
+            entry_edit.editing_column_index = columnIndex
+            entry_edit.editing_item_iid = selected_iid
+            entry_edit.insert(0, selected_text[columnIndex])
+            print(selected_text[columnIndex])
+            entry_edit.select_range(0, tk.END)
 
-        entry_edit.focus()
+            entry_edit.focus()
 
-        entry_edit.place(x=column_box[0],
-                         y=column_box[1],
-                         w=column_box[2],
-                         h=column_box[3],
-                         )
+            entry_edit.place(x=column_box[0],
+                             y=column_box[1],
+                             w=column_box[2],
+                             h=column_box[3],
+                             )
 
-        entry_edit.bind("<FocusOut>", self.onFocusOut)
-        entry_edit.bind("<Return>", self.on_enter_press)
+            entry_edit.bind("<FocusOut>", self.onFocusOut)
+            entry_edit.bind("<Return>", self.on_enter_press)
+        else:
+            entry_edit = ttk.Combobox(self.treeview, width=column_box[2],values=["BSC IT 1","BSC CS 1"])
+            # record the column index and id
+            entry_edit.editing_column_index = columnIndex
+            entry_edit.editing_item_iid = selected_iid
+            entry_edit.insert(0, selected_text[columnIndex])
+            print(selected_text[columnIndex])
+            entry_edit.select_range(0, tk.END)
+
+            entry_edit.focus()
+
+            entry_edit.place(x=column_box[0],
+                             y=column_box[1],
+                             w=column_box[2],
+                             h=column_box[3],
+                             )
+
+            entry_edit.bind("<FocusOut>", self.onFocusOut)
+            entry_edit.bind("<Return>", self.on_enter_press)
 
     # TODO I got work to do  regarding with the iceasing number in the fiirst print below
     def delete_row_(self, event):

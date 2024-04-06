@@ -17,19 +17,19 @@ TEXT_COLOR = '#AFB1B3'
 
 class Home(tk.Frame):
     """
-    The RoomsClassesSpace class provides a way to view and edit the space.
+    The Home class provides a way to view and edit the time table metadata.
     """
 
     def __init__(self, parent, cls):
         ttk.Frame.__init__(self, parent)
         self.timeTableMetaData__ = cls
 
-        self.project_name__=""
-        self.project_creator__=""
-        self.institute_name__=""
-        self.email__=""
-        self.days__=list()
-        self.preference_lst__=list()
+        self.project_name__ = ""
+        self.project_creator__ = ""
+        self.institute_name__ = ""
+        self.email__ = ""
+        self.days__ = list()
+        self.preference_lst__ = list()
 
         self.project_name_var = tk.StringVar(value="Time table name")
         self.project_creator_var = tk.StringVar(value="Creator")
@@ -196,6 +196,29 @@ class Home(tk.Frame):
 
         #############################################################################
 
+        self.updateUI()
+        #############################################################################
+
+    def updateUI(self):
+        if self.timeTableMetaData__.get_is_info_set():
+            # print(self.timeTableMetaData__.time_table_name)
+            # print(self.timeTableMetaData__.preferences_list[0])
+            self.project_name_var.set(self.timeTableMetaData__.time_table_name)
+            self.project_creator_var.set(self.timeTableMetaData__.creator_name)
+            self.project_email_var.set(self.timeTableMetaData__.creators_email)
+            self.project_institute_var.set(self.timeTableMetaData__.institute_name)
+            self.mon_status_var.set(self.timeTableMetaData__.days_list[0])
+            self.tue_status_var.set(self.timeTableMetaData__.days_list[1])
+            self.wed_status_var.set(self.timeTableMetaData__.days_list[2])
+            self.thur_status_var.set(self.timeTableMetaData__.days_list[3])
+            self.fri_status_var.set(self.timeTableMetaData__.days_list[4])
+            self.sat_status_var.set(self.timeTableMetaData__.days_list[5])
+            self.sun_status_var.set(self.timeTableMetaData__.days_list[6])
+
+            self.space_status_var.set(self.timeTableMetaData__.preferences_list[0])
+            self.session_status_var.set(self.timeTableMetaData__.preferences_list[1])
+            self.tutor_status_var.set(self.timeTableMetaData__.preferences_list[2])
+
     def save_information(self):
         self.project_name__ = self.project_name_var.get()
         self.project_creator__ = self.project_creator_var.get()
@@ -210,12 +233,12 @@ class Home(tk.Frame):
         self.days__.append(self.sat_status_var.get())
         self.days__.append(self.sun_status_var.get())
 
-
-        self.preference_lst__: list = [self.space_status_var,
-                                self.session_status_var,
-                                self.tutor_status_var]
+        self.preference_lst__.append(self.space_status_var.get())
+        self.preference_lst__.append(self.session_status_var.get())
+        self.preference_lst__.append(self.tutor_status_var.get())
 
         self.timeTableMetaData__.set_timetable_information(
+            True,
             self.project_name__,
             self.project_creator__,
             self.institute_name__,
@@ -223,6 +246,7 @@ class Home(tk.Frame):
             self.days__,
             self.preference_lst__
         )
+        self.updateUI()
 
 
     def Check_Queue(self, e):

@@ -54,12 +54,12 @@ class TkinterApp(tk.Tk):
         tk.Tk.__init__(self)
 
         # Initialise the classes Here
-        self.TimetableMetadata = TimetableMetaData()
+
         self.timeDimension = TimeDimension()
         self.space_ = SpaceManager()
         self.lectures_ = SessionManager()
         self.lecturers_ = TutorsManager()
-
+        self.TimetableMetadata = TimetableMetaData(self.timeDimension)
         self.algorithm_ = None
 
         self.style = ttk.Style(self)
@@ -138,9 +138,12 @@ class TkinterApp(tk.Tk):
         # # Add to Resources Submenu
         self.submenu_frame = tk.Frame(self.sidebar, bg=sidebar_color, relief='raised', bd=None)
         self.submenu_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
+
+        # TODO : Rectife this so that it can be handle the list items
         resource_submenu = SidebarSubMenu(self.submenu_frame,
                                           sub_menu_heading='Resources',
                                           sub_menu_options=["TimeSlots",
+                                                            "Groups",
                                                             "Classroom/Room/Space",
                                                             "Course/Class/Session",
                                                             "Instructor/Lecturer/Tutor"
@@ -242,7 +245,7 @@ class TkinterApp(tk.Tk):
         else:
             self.style.theme_use("forest-dark")
 
-    def show_frame(self, cont, title, cls):
+    def show_frame(self, cont, title, cls,cls2=None):
         """
         The function 'show_frame' is used to raise a specific frame (page) in
         the tkinter application and update the title displayed in the header.

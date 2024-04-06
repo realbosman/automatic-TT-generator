@@ -67,7 +67,7 @@ class SpaceManager:
         self.Space_List[index] = new_session
 
     def delete_session(self, index):
-        self.Space_List.pop(index)
+        self.Space_List.pop(index+1)
 
     def add_new_session(self, new_session):
         self.Space_List.append(new_session)

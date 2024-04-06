@@ -38,12 +38,10 @@ class SessionManager:
         }
 
         self.Session_List = [
-
-            ["OOP",  "Mr.Kasozi","Science",],
-            ["PYTHON",  "Mr.TONY","Science"],
-            ["POP", "Mr.REAGAN","Science"],
-            ["WEB",  "Madam MIREMBE","Science"]
-
+            ["OOP",  "Mr.Kasozi","Science","BSC IT 1"],
+            ["PYTHON",  "Mr.TONY","Science","BSC IT 1"],
+            ["POP", "Mr.REAGAN","Science","BSC CS 1"],
+            ["WEB",  "Madam MIREMBE","Science","BSC IT 1,BSC CS 1"]
         ]
 
     def __new__(cls, *args, **kwargs):
@@ -84,7 +82,7 @@ class SessionManager:
 
 
     def delete_session(self, index):
-        self.Session_List.pop(index)
+        self.Session_List.pop(index+1)
 
     def add_new_session(self, new_session):
         self.Session_List.append(new_session)
