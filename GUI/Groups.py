@@ -24,7 +24,7 @@ class Groups(tk.Frame):
     The RoomsClassesSpace class provides a way to view and edit the space.
     """
 
-    def __init__(self, parent, cls):
+    def __init__(self, parent, cls,cls_=None):
         ttk.Frame.__init__(self, parent)
         cf = CollapsingFrame(self)
         cf.pack(fill=BOTH)

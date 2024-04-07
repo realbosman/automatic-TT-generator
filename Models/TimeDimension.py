@@ -1,6 +1,8 @@
 from threading import Thread
 
 
+
+
 class TimeDimension:
     instance = None
     countInstance = 0
@@ -9,8 +11,8 @@ class TimeDimension:
     This is a default timeslots dictionary
     '''
 
-    def __init__(self):
-
+    def __init__(self,cls=None):
+        self.timetable_metadata=cls
         self.Days = {
             "headers": ["MON", "TUE", "WED", "THUR", "FRI", "SAT", "SUN"]
         }
@@ -64,53 +66,96 @@ class TimeDimension:
                     algo_list.append(f'<{self.Days["headers"][index]}><{item}>')
         return algo_list
 
-
-
     def set_from_metadata_thread(self, lzt_: list):
-        print("Threading started")
-        new_thread = Thread(target=self.set_from_metadata, daemon=True,args=(lzt_,))  # I can pass args = "any" for the target
-        new_thread.start()
-
+        self.set_from_metadata(lzt_)
 
     def set_from_metadata(self, lzt: list):
-        correction_index = 0
-        number_of_days_current =len(self.Days)
-        for index, day in enumerate(lzt):
-            dy = day.split("_")
-            print(dy, "//[]", len(dy))
-            if len(dy) > 1:
-                try:
-                    self.Days["headers"].pop(index - correction_index)
-                except:
-                    print(day, "already has been deleted !")
 
-                for i, lst in enumerate(self.Sessions_List):
-                    try:
-                        lst.pop(index - correction_index)
-                    except:
-                        print("Time slot elemnt already deleted")
-                    # print(self.Sessions_List)
-                correction_index += 1
+        for index, day in enumerate(lzt):
+            correction_index = 0
+            dy = day.split("_")
+            anyDelete= False
+            # print(dy, "//[]", len(dy))
+            if len(dy) > 1:
+
+               if day[-1] == "_":
+
+                   try:
+                       for d_i , d_d in  enumerate(self.Days["headers"]):
+                           if dy[0] == d_d:
+                               correction_index = d_i
+                               print(dy[0], "=======", self.Days["headers"][correction_index])
+                               self.Days["headers"].pop(d_i)
+                               daylist = self.Days["headers"]
+                               self.Days["headers"] = daylist
+                               print(day, " has been deleted !")
+                               print(self.Days["headers"], " list now !")
+
+                               anyDelete = True
+                   except:
+                       pass
+                    # print(day, "already has been deleted !")
+
+                   if anyDelete:
+                       for i, lst in enumerate(self.Sessions_List):
+                           try:
+                               lst.pop(correction_index)
+                           except:
+                               pass
+                               # print("Time slot elemnt already deleted")
+                           # print(self.Sessions_List)
+
 
             else:
-                self.Days["headers"].append(dy[0])
-                set_1 =set(self.Days["headers"])
-                self.Days["headers"],set_2 = self.sort_days(self.Days["headers"])
-                if number_of_days_current == len(set_2):
-                    print("No added days")
-                elif number_of_days_current > len(set_2):
-                    num=int(number_of_days_current - len(set_2))
-                    print(num,"dayz removed")
-                elif number_of_days_current < len(set_2):
-                    num=int(len(set_2)-number_of_days_current)
-                    print(int(num),"dayz added")
+                isDayin = False
+                for check_dy in self.Days["headers"]:
+                    if dy[0] == check_dy:
+                        # print("day already in",self.Days,dy[0])
+                        isDayin = True
+                        break
+                if isDayin == False:
+                    self.Days["headers"].append(dy[0])
+                    self.Days["headers"], index_to_add_in_lsts = self.sort_days(self.Days["headers"],dy[0])
+                    print("index_to_add_in_lst,",index_to_add_in_lsts,len(self.Sessions_List[0]))
+                    # print("day inserted in",self.Days,dy[0])
+
+                    for index_to_add, lst___ in enumerate(self.Sessions_List):
+                        if index_to_add_in_lsts == 0:
+                            temp_lst=lst___
+                            temp_lst2=list()
+                            temp_lst2.append('--------')
+                            for item in temp_lst:
+                                temp_lst2.append(item)
+                            self.Sessions_List[index_to_add]=temp_lst2
+                        elif (index_to_add_in_lsts+1) > len(self.Sessions_List[0]):
+                                temp_lst_ = lst___
+                                temp_lst_.append('--------')
+                                self.Sessions_List[index_to_add] = temp_lst_
+                        elif (index_to_add_in_lsts+1) > len(self.Sessions_List[1]):
+                                temp_lst_ = lst___
+                                temp_lst_.append('--------')
+                                self.Sessions_List[index_to_add] = temp_lst_
+                        elif (index_to_add_in_lsts+1) > len(self.Sessions_List[2]):
+                                temp_lst_ = lst___
+                                temp_lst_.append('--------')
+                                self.Sessions_List[index_to_add] = temp_lst_
+                        else:
+                            temp_lst_1=lst___[index_to_add_in_lsts :]
+                            print(temp_lst_1)
+                            temp_lst_2 = lst___[: index_to_add_in_lsts]
+                            print(temp_lst_2)
+                            var_='--------'
+                            new_temp_lst_ =[x for x in temp_lst_2]+[var_]+[x for x in temp_lst_1]
+                            print(new_temp_lst_)
+                            self.Sessions_List[index_to_add] = new_temp_lst_
 
 
 
-    def sort_days(self, lzt: list) -> list:
+    def sort_days(self, lzt: list,day_insert:str):
         mySet = set(lzt)
         print(mySet)
         list_ = list()
+        index_to_add_in_lst=0
         for n, l in enumerate(mySet):
             list_.append(l)
         for index, day in enumerate(list_):
@@ -128,7 +173,7 @@ class TimeDimension:
                 list_[index] = 6
             if day == "SUN":
                 list_[index] = 7
-        print("My list =", list_)
+        # print("My list =", list_)
         list_.sort()
         for index_, day_ in enumerate(list_):
             if day_ == 1:
@@ -145,9 +190,37 @@ class TimeDimension:
                 list_[index_] = "SAT"
             if day_ == 7:
                 list_[index_] = "SUN"
-        print("My sorted list =", list_)
-        set2=set(list_)
+        # print("My sorted list =", list_)
+        for z_, z in enumerate(list_):
+            if z==day_insert:
+                index_to_add_in_lst=z_
 
-        return list_,set2
+
+        return list_,index_to_add_in_lst
+
+    def refresh_list_Home_timetable_metadata(self)->list:
+        myList=["MON","TUE", "WED","THUR","FRI","SAT","SUN"]
+        list_two=list()
+        for _day in myList:
+            isdayIn=False
+            for index, day in enumerate(self.Days["headers"]):
+                if _day==day:
+                    isdayIn=True
+                    break
+            if isdayIn == True:
+                str_=_day
+                list_two.append(str_)
+            else:
+                str_ = _day + "_"
+                list_two.append(str_)
+
+        return  list_two
+
+
+
+
+
+
+
 
 # TODO LEFT WITH  TIME  EXPRESSIONS TRANSFORM INTO REAL TIME TO VALIDATE IT

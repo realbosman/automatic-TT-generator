@@ -20,10 +20,12 @@ class Home(tk.Frame):
     The Home class provides a way to view and edit the time table metadata.
     """
 
-    def __init__(self, parent, cls):
+    def __init__(self, parent, cls,cls_):
         ttk.Frame.__init__(self, parent)
-        self.timeTableMetaData__ = cls
 
+
+        self.timeTableMetaData__ = cls
+        self.td = cls_
         self.project_name__ = ""
         self.project_creator__ = ""
         self.institute_name__ = ""
@@ -31,10 +33,22 @@ class Home(tk.Frame):
         self.days__ = list()
         self.preference_lst__ = list()
 
+
         self.project_name_var = tk.StringVar(value="Time table name")
         self.project_creator_var = tk.StringVar(value="Creator")
         self.project_email_var = tk.StringVar(value="example@example.com")
         self.project_institute_var = tk.StringVar(value="institute")
+        self.mon_status_var = tk.StringVar(value="MON")
+        self.tue_status_var = tk.StringVar(value="TUE")
+        self.wed_status_var = tk.StringVar(value="WED")
+        self.thur_status_var = tk.StringVar(value="THUR")
+        self.fri_status_var = tk.StringVar(value="FRI")
+        self.sat_status_var = tk.StringVar(value="SAT_")
+        self.sun_status_var = tk.StringVar(value="SUN_")
+        self.tutor_status_var = tk.StringVar(value="Instructor")
+        self.session_status_var = tk.StringVar(value="CourseUnit")
+        self.space_status_var = tk.StringVar(value="Classroom")
+        self.update_thread()
 
         #############################################################################
         self.width__ = 87
@@ -91,31 +105,33 @@ class Home(tk.Frame):
         self.courses_frame.grid(row=1, column=0, sticky="news", padx=20, pady=10)
 
         self.days_label = ttk.Label(self.courses_frame, text="Days in a Week")
-        self.mon_status_var = tk.StringVar(value="MON")
+
         self.mon_check = ttk.Checkbutton(self.courses_frame, text="MON",
                                          variable=self.mon_status_var, onvalue="MON", offvalue="MON_")
 
-        self.tue_status_var = tk.StringVar(value="TUE")
+
         self.tue_check = ttk.Checkbutton(self.courses_frame, text="TUE",
                                          variable=self.tue_status_var, onvalue="TUE", offvalue="TUE_")
 
-        self.wed_status_var = tk.StringVar(value="WED")
+
         self.wed_check = ttk.Checkbutton(self.courses_frame, text="WED",
                                          variable=self.wed_status_var, onvalue="WED", offvalue="WED_")
 
-        self.thur_status_var = tk.StringVar(value="THUR")
+
         self.thur_check = ttk.Checkbutton(self.courses_frame, text="THUR",
                                           variable=self.thur_status_var, onvalue="THUR", offvalue="THUR_")
 
-        self.fri_status_var = tk.StringVar(value="FRI")
+
         self.fri_check = ttk.Checkbutton(self.courses_frame, text="FRI",
                                          variable=self.fri_status_var, onvalue="FRI", offvalue="FRI_")
-        self.sat_status_var = tk.StringVar(value="SAT_")
+
         self.sat_check = ttk.Checkbutton(self.courses_frame, text="SAT",
                                          variable=self.sat_status_var, onvalue="SAT", offvalue="SAT_")
-        self.sun_status_var = tk.StringVar(value="SUN_")
+
         self.sun_check = ttk.Checkbutton(self.courses_frame, text="SUN",
                                          variable=self.sun_status_var, onvalue="SUN", offvalue="SUN_")
+
+        print(self.sun_status_var.get())
 
         self.days_label.grid(row=0, column=0, sticky='w')
         self.mon_check.grid(row=1, column=0)
@@ -127,7 +143,7 @@ class Home(tk.Frame):
         self.sun_check.grid(row=1, column=6, sticky='w')
 
         self.space_label = ttk.Label(self.courses_frame, text="Classroom/Room/Space")
-        self.space_status_var = tk.StringVar(value="Classroom")
+
         self.classroom_check = ttk.Checkbutton(self.courses_frame, text="Classroom",
                                                variable=self.space_status_var, onvalue="Classroom",
                                                offvalue="Classroom_")
@@ -144,7 +160,7 @@ class Home(tk.Frame):
         self.space_check.grid(row=3, column=2)
 
         self.session_label = ttk.Label(self.courses_frame, text="CourseUnit/Class/Session/Subject")
-        self.session_status_var = tk.StringVar(value="CourseUnit")
+
         self.course_unit_check = ttk.Checkbutton(self.courses_frame, text="CourseUnit",
                                                  variable=self.session_status_var, onvalue="CourseUnit",
                                                  offvalue="CourseUnit_")
@@ -164,7 +180,7 @@ class Home(tk.Frame):
         self.subject_check.grid(row=5, column=3)
 
         self.tutor_label = ttk.Label(self.courses_frame, text="Instructor/Lecturer/Tutor")
-        self.tutor_status_var = tk.StringVar(value="Instructor")
+
         self.instructor_unit_check = ttk.Checkbutton(self.courses_frame, text="Instructor",
                                                      variable=self.tutor_status_var, onvalue="Instructor",
                                                      offvalue="Instructor_")
@@ -191,12 +207,12 @@ class Home(tk.Frame):
         self.terms_check.grid(row=0, column=0)
 
         # Button
-        button = ttk.Button(self.frame_, text="Save Information", command=self.save_information)
+        button = ttk.Button(self.frame_, text="Save Information", command=self.save_thread)
         button.grid(row=3, column=0, sticky="news", padx=20, pady=10)
 
         #############################################################################
 
-        self.updateUI()
+        # self.updateUI()
         #############################################################################
 
     def updateUI(self):
@@ -207,19 +223,23 @@ class Home(tk.Frame):
             self.project_creator_var.set(self.timeTableMetaData__.creator_name)
             self.project_email_var.set(self.timeTableMetaData__.creators_email)
             self.project_institute_var.set(self.timeTableMetaData__.institute_name)
-            self.mon_status_var.set(self.timeTableMetaData__.days_list[0])
-            self.tue_status_var.set(self.timeTableMetaData__.days_list[1])
-            self.wed_status_var.set(self.timeTableMetaData__.days_list[2])
-            self.thur_status_var.set(self.timeTableMetaData__.days_list[3])
-            self.fri_status_var.set(self.timeTableMetaData__.days_list[4])
-            self.sat_status_var.set(self.timeTableMetaData__.days_list[5])
-            self.sun_status_var.set(self.timeTableMetaData__.days_list[6])
-
             self.space_status_var.set(self.timeTableMetaData__.preferences_list[0])
             self.session_status_var.set(self.timeTableMetaData__.preferences_list[1])
             self.tutor_status_var.set(self.timeTableMetaData__.preferences_list[2])
 
+        mylist=self.refresh_list_Home_timetable_metadata(self.td.Days)
+        print("myyy-",mylist)
+        self.mon_status_var.set(mylist[0])
+        self.tue_status_var.set(mylist[1])
+        self.wed_status_var.set(mylist[2])
+        self.thur_status_var.set(mylist[3])
+        self.fri_status_var.set(mylist[4])
+        self.sat_status_var.set(mylist[5])
+        self.sun_status_var.set(mylist[6])
+
     def save_information(self):
+        self.days__.clear()
+        self.preference_lst__.clear()
         self.project_name__ = self.project_name_var.get()
         self.project_creator__ = self.project_creator_var.get()
         self.email__ = self.project_email_var.get()
@@ -246,7 +266,38 @@ class Home(tk.Frame):
             self.days__,
             self.preference_lst__
         )
-        self.updateUI()
+
+
+    def save_thread(self):
+        print("Threading started")
+        new_thread = Thread(target=self.save_information, daemon=True,
+                            )  # I can pass args = "any" for the target
+        new_thread.start()
+    def update_thread(self):
+        print("Threading started")
+        new_thread = Thread(target=self.updateUI, daemon=True,
+                            )  # I can pass args = "any" for the target
+        new_thread.start()
+
+
+
+    def refresh_list_Home_timetable_metadata(self,dict_:dict)->list:
+        myList=["MON","TUE", "WED","THUR","FRI","SAT","SUN"]
+        list_two=list()
+        for _day in myList:
+            isdayIn=False
+            for index, day in enumerate(dict_["headers"]):
+                if _day==day:
+                    isdayIn=True
+                    break
+            if isdayIn == True:
+                str_=_day
+                list_two.append(str_)
+            else:
+                str_ = _day + "_"
+                list_two.append(str_)
+
+        return  list_two
 
 
     def Check_Queue(self, e):
@@ -262,6 +313,8 @@ class Home(tk.Frame):
             self.treeview.heading(msg.ticket_value[0], text=msg.ticket_value[0])
 
 
+
+
 # Ticketing system call
 class TicketPurpose(Enum):
     UPDATE_PROGRESS_TEXT = auto()
@@ -273,3 +326,5 @@ class Ticket:
                  ticket_value: list):
         self.ticket_type = ticket_type
         self.ticket_value = ticket_value
+
+

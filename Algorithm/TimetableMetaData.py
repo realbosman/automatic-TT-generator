@@ -13,13 +13,14 @@ class TimetableMetaData:
 
     instance = None
 
-    def __init__(self,cls):
+    def __init__(self,cls=None):
         self.isInfoSet=False
         self.time_table_name = ""
         self.creator_name = ""
         self.institute_name = ""
         self.timeDimension__=cls
-        self.days_list = list()
+
+
         self.creators_email = " "
         self.preferences_list =list()
 
@@ -42,11 +43,11 @@ class TimetableMetaData:
         self.time_table_name = time_table_name
         self.creator_name = creator_name
         self.institute_name = institute_name
-        self.days_list = days_list
         self.creators_email = creators_email
         self.preferences_list = preferences_list
-        print("Running")
-        self.timeDimension__.set_from_metadata_thread(self.days_list)
+        self.timeDimension__.set_from_metadata_thread(days_list)
+        # self.days_list=self.timeDimension__.refresh_list_Home_timetable_metadata()
+
 
     def get_is_info_set(self)->bool:
         return self.isInfoSet

@@ -3,6 +3,10 @@ import time
 import tkinter as tk
 from pathlib import Path
 from tkinter import ttk, messagebox
+from threading import Thread
+from queue import Queue
+from enum import Enum, auto
+
 
 # -------------------------- DEFINING GLOBAL VARIABLES -------------------------
 from Algorithm.Algo import TtGenerator
@@ -17,6 +21,7 @@ from GUI.TimeSlots import TimeSlots
 from GUI.Tutor import Tutor
 from GUI.TimeslotsList import TimeslotsList
 from GUI.TutorsList import TutorsList
+from GUI.variables_ import Global_variables
 from Models.ClassRoomModel import SpaceManager
 from Models.CourseUnitModel import SessionManager
 from Models.Lecturer_Model import TutorsManager
@@ -55,11 +60,14 @@ class TkinterApp(tk.Tk):
 
         # Initialise the classes Here
 
-        self.timeDimension = TimeDimension()
+
+
         self.space_ = SpaceManager()
         self.lectures_ = SessionManager()
         self.lecturers_ = TutorsManager()
-        self.TimetableMetadata = TimetableMetaData(self.timeDimension)
+
+        self.timeDimension = TimeDimension()
+        self.timetableMetadata = TimetableMetaData(self.timeDimension)
         self.algorithm_ = None
 
         self.style = ttk.Style(self)
@@ -68,6 +76,9 @@ class TkinterApp(tk.Tk):
         self.style.theme_use("forest-dark")
         self.title("Automatic Timetable Generator")
         # # self.overrideredirect(True)
+
+
+
 
         # ------------- BASIC APP LAYOUT -----------------
 
@@ -90,7 +101,7 @@ class TkinterApp(tk.Tk):
 
         self.label1 = ttk.Label(self.title_bar, text="Home"  ,background=header_color)
         self.label1.pack(expand=0, fill='y', side=tk.LEFT,padx=20)
-        self.label1.bind("<Button-1>", lambda x: self.show_frame(Home, "Time table Metadata", cls=self.TimetableMetadata))
+        self.label1.bind("<Button-1>", lambda x: self.show_frame(Home, "Time table Metadata", cls=self.timetableMetadata,cls1=self.timeDimension))
 
 
         # self.title_bar.bind("<B1-Motion>", self.move_window)
@@ -195,11 +206,14 @@ class TkinterApp(tk.Tk):
 
         self.frames = {}
 
-        self.show_frame(Home, "Time table Metadata", cls=self.TimetableMetadata)
+        self.show_frame(Home, "Time table Metadata", cls=self.timetableMetadata,cls1=self.timeDimension)
 
     ''''
     This function below calls the clases and passes in them these parameters cls is the model class created at the beginning of the initialisation
     '''
+
+
+
 
     def start_time_table_generation(self):
         isTrue = ShowMsg().pop_msg()
@@ -210,11 +224,11 @@ class TkinterApp(tk.Tk):
         else:
             print(' Generation faild')
 
-    def on_call_create(self, F, cls):
+    def on_call_create(self, F, cls ,cls_=None):
         for w in self.container.winfo_children():
             w.destroy()
 
-        frame = F(self.container, cls)
+        frame = F(self.container, cls,cls_)
 
         frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
@@ -245,7 +259,7 @@ class TkinterApp(tk.Tk):
         else:
             self.style.theme_use("forest-dark")
 
-    def show_frame(self, cont, title, cls,cls2=None):
+    def show_frame(self, cont, title, cls,cls1=None):
         """
         The function 'show_frame' is used to raise a specific frame (page) in
         the tkinter application and update the title displayed in the header.
@@ -270,7 +284,7 @@ class TkinterApp(tk.Tk):
                          font=("Helvetica", 13),
                          bg=header_color,
                          fg=TEXT_COLOR)
-        self.on_call_create(cont, cls=cls)
+        self.on_call_create(cont, cls=cls,cls_=cls1)
         label.pack(side=tk.LEFT, padx=0, fill='both')
         # frame.tkraise()
 
@@ -489,6 +503,9 @@ class ShowMsg:
 
         # messagebox.showinfo(title=None, message="Generated")
         return generate
+
+
+
 
 
 app = TkinterApp()
