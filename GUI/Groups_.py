@@ -1,9 +1,11 @@
-import time
+# import time
 import tkinter as tk
 from tkinter import ttk
 from pathlib import Path
-from ttkbootstrap.constants import *
+import re
 
+from tk import *
+#
 
 
 IMG_PATH = Path(__file__).parent / 'assets'
@@ -19,33 +21,42 @@ visualisation_frame_color = "#2B2B2B"
 TEXT_COLOR = '#AFB1B3'
 
 
-class Groups(tk.Frame):
+class Groups_(tk.Frame):
     """
-    The RoomsClassesSpace class provides a way to view and edit the space.
+    The Groups class provides a way to view  the groups in the timetable.
     """
-
     def __init__(self, parent, cls,cls_=None):
+
         ttk.Frame.__init__(self, parent)
-        cf = CollapsingFrame(self)
-        cf.pack(fill=BOTH)
+        self.session_manager=cls
+        self.cf = CollapsingFrame(self)
+        self.cf.pack(fill=tk.BOTH)
+        print(IMG_PATH)
 
         # option group 1
-        group1 = ttk.Frame(cf, padding=10)
-        for x in range(5):
-            ttk.Checkbutton(group1, text=f'Option {x + 1}').pack(fill=X)
-        cf.add(child=group1, title='Option Group 1')
 
-        # option group 2
-        group2 = ttk.Frame(cf, padding=10)
-        for x in range(5):
-            ttk.Checkbutton(group2, text=f'Option {x + 1}').pack(fill=X)
-        cf.add(group2, title='Option Group 2', bootstyle=DANGER)
+        self.frame_list=list()
+        self.render_groups()
 
-        # option group 3
-        group3 = ttk.Frame(cf, padding=10)
-        for x in range(5):
-            ttk.Checkbutton(group3, text=f'Option {x + 1}').pack(fill=X)
-        cf.add(group3, title='Option Group 3', bootstyle=SUCCESS)
+    def render_groups(self):
+        self.frame_list.clear()
+
+        for i , faculty in enumerate(self.session_manager.get_faculty_cu()):
+            self.frame_list.append(ttk.Frame(self.cf, padding=10))
+            print(self.session_manager.get_sub_groups(),self.session_manager.get_faculty_cu())
+            for j,sub_group in enumerate(self.session_manager.get_sub_groups()):
+                print(re.findall(r"<(.*?)>", sub_group)[0]," ",  faculty)
+                if re.findall(r"<(.*?)>", sub_group)[0] ==  faculty:
+                    ttk.Checkbutton(self.frame_list[i], text=f'{re.findall(r"<(.*?)>", sub_group)[1]}').pack(fill=tk.X)
+            self.cf.add(child=self.frame_list[i], title=f'{faculty}')
+
+
+
+
+
+
+
+
 
 
 class CollapsingFrame(ttk.Frame):
@@ -58,11 +69,14 @@ class CollapsingFrame(ttk.Frame):
 
         # widget images
         self.images = [
-            ttk.PhotoImage(file=IMG_PATH / 'icons8_double_up_24px.png'),
-            ttk.PhotoImage(file=IMG_PATH / 'icons8_double_right_24px.png')
+            tk.PhotoImage(file=IMG_PATH / 'icons8_double_up_24px.png'),
+            tk.PhotoImage(file=IMG_PATH / 'icons8_double_right_24px.png')
         ]
 
-    def add(self, child, title="", bootstyle=PRIMARY, **kwargs):
+
+
+
+    def add(self, child, title="", bootstyle=None, **kwargs):
         """Add a child to the collapsible frame
 
         Parameters:
@@ -84,17 +98,17 @@ class CollapsingFrame(ttk.Frame):
 
         # style_color = Bootstyle.ttkstyle_widget_color(bootstyle)
         frm = ttk.Frame(self)
-        frm.grid(row=self.cumulative_rows, column=0, sticky=EW)
+        frm.grid(row=self.cumulative_rows, column=0, sticky=tk.EW)
 
         # header title
         header = ttk.Label(
             master=frm,
             text=title,
-            bootstyle=( INVERSE)
+
         )
         if kwargs.get('textvariable'):
             header.configure(textvariable=kwargs.get('textvariable'))
-        header.pack(side=LEFT, fill=BOTH, padx=10)
+        header.pack(side=tk.LEFT, fill=tk.BOTH, padx=10)
 
         # header toggle button
         def _func(c=child):
@@ -106,11 +120,11 @@ class CollapsingFrame(ttk.Frame):
 
             command=_func
         )
-        btn.pack(side=RIGHT)
+        btn.pack(side=tk.RIGHT)
 
         # assign toggle button to child so that it can be toggled
         child.btn = btn
-        child.grid(row=self.cumulative_rows + 1, column=0, sticky=NSEW)
+        child.grid(row=self.cumulative_rows + 1, column=0, sticky=tk.NSEW)
 
         # increment the row assignment
         self.cumulative_rows += 2

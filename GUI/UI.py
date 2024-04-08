@@ -12,6 +12,8 @@ from enum import Enum, auto
 from Algorithm.Algo import TtGenerator
 from Algorithm.TimetableMetaData import TimetableMetaData
 from GUI import TimeslotsList, Tutor
+from GUI.GenerateTimeTable import GenerateTimeTable
+from GUI.Groups_ import Groups_
 from GUI.Home import Home
 from GUI.Session import Session
 from GUI.SessionsList import SessionsList
@@ -40,13 +42,6 @@ PATH__ = Path(__file__).parent / 'forest-dark.tcl'
 
 # ------------------------------- ROOT WINDOW ----------------------------------
 
-
-class Lectures:
-    pass
-
-
-class Courses:
-    pass
 
 
 class TkinterApp(tk.Tk):
@@ -99,31 +94,15 @@ class TkinterApp(tk.Tk):
         self.label1.pack(expand=0, fill='y', side=tk.LEFT)
         self.label1.bind("<Button-1>",  lambda x:print("File"))
 
-        self.label1 = ttk.Label(self.title_bar, text="Home"  ,background=header_color)
-        self.label1.pack(expand=0, fill='y', side=tk.LEFT,padx=20)
-        self.label1.bind("<Button-1>", lambda x: self.show_frame(Home, "Time table Metadata", cls=self.timetableMetadata,cls1=self.timeDimension))
+        self.label2 = ttk.Label(self.title_bar, text="Home"  ,background=header_color)
+        self.label2.pack(expand=0, fill='y', side=tk.LEFT,padx=20)
+        self.label2.bind("<Button-1>", lambda x: self.show_frame(Home, "Time table Metadata", cls=self.timetableMetadata,cls1=self.timeDimension))
+
+        self.changeOnHover(self.label1, visualisation_frame_color, sidebar_color)
+        self.changeOnHover(self.label2, visualisation_frame_color, sidebar_color)
 
 
-        # self.title_bar.bind("<B1-Motion>", self.move_window)
-        #
-        # self.title_label = tk.Label(self.title_bar, text='Automatic Timetable Generator', bg=header_color,
-        #                             fg=TEXT_COLOR)
-        # self.title_label.place(relx=0, rely=0, relwidth=.16, relheight=1)
-        # self.title_label.pack(side=tk.LEFT, fill=tk.Y)
-        #
-        # self.closeApp = tk.Label(self.title_bar, text='X', padx=8, bg=header_color, fg='red', font='bold',
-        #                          relief='raised')
-        #
-        # self.closeApp.pack(side=tk.RIGHT, fill=tk.Y)
-        # self.closeApp.bind('<Button-1>', self.quiter)
 
-        # self.mode_switch = ttk.Checkbutton(
-        #     self.title_bar, text="Mode", style="Switch", command=self.toggle_mode)
-        # self.mode_switch.pack(side=tk.RIGHT, fill=tk.Y,padx=5)
-
-        # self.gripper=ttk.Sizegrip()
-        # self.gripper.place(relx=1,rely=1,anchor='se')
-        # self.gripper.lift()
 
         # ---------------- HEADER ------------------------
 
@@ -164,6 +143,7 @@ class TkinterApp(tk.Tk):
                                           )
         resource_submenu.options["TimeSlots"].config(
             command=lambda: self.show_frame(TimeSlots, "Create TimeSlots", cls=self.timeDimension)
+
         )
         resource_submenu.options["Classroom/Room/Space"].config(
             command=lambda: self.show_frame(Space, "Create Classroom/Room/Space", cls=self.space_)
@@ -174,8 +154,18 @@ class TkinterApp(tk.Tk):
         resource_submenu.options["Course/Class/Session"].config(
             command=lambda: self.show_frame(Session, "Course/Class/Session", cls=self.lectures_)
         )
+        resource_submenu.options["Groups"].config(
+            command=lambda: self.show_frame(Groups_, "Groups", cls=self.lectures_)
+        )
 
-        resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=0.3)
+
+        self.changeOnHover(resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(resource_submenu.options["Classroom/Room/Space"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(resource_submenu.options["Instructor/Lecturer/Tutor"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(resource_submenu.options["Course/Class/Session"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(resource_submenu.options["Groups"], visualisation_frame_color, sidebar_color)
+
+        resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
 
         Generator_time_table = SidebarSubMenu(self.submenu_frame,
                                               sub_menu_heading='Time Table',
@@ -187,7 +177,7 @@ class TkinterApp(tk.Tk):
                                               )
 
         Generator_time_table.options["Generate Time Table"].config(
-            command=lambda: self.start_time_table_generation()
+            command=lambda: self.start_time_table_generation()                #self.start_time_table_generation()
         )
         Generator_time_table.options["Edit Time Table"].config(
             command=lambda: print("Edit Time Table")
@@ -196,12 +186,17 @@ class TkinterApp(tk.Tk):
             command=lambda: print("Generate PDF")
         )
 
+        self.changeOnHover(Generator_time_table.options["Generate Time Table"], visualisation_frame_color,
+                           sidebar_color)
+        self.changeOnHover( Generator_time_table.options["Edit Time Table"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(Generator_time_table.options["Generate PDF"], visualisation_frame_color, sidebar_color)
+
         Generator_time_table.place(relx=0, rely=0.4, relwidth=1, relheight=0.3)
 
         # --------------------  MULTI PAGE SETTINGS ----------------------------
 
-        self.container = ttk.Frame(self, relief="sunken")
-        # self.container.config(highlightbackground=visualisation_frame_color, highlightthickness=0.5)
+        self.container = tk.Frame(self, relief="sunken")
+
         self.container.place(relx=0.2, rely=0.105, relwidth=0.8, relheight=0.9)
 
         self.frames = {}
@@ -212,15 +207,25 @@ class TkinterApp(tk.Tk):
     This function below calls the clases and passes in them these parameters cls is the model class created at the beginning of the initialisation
     '''
 
+    # function to change properties of button on hover
+    def changeOnHover(self,view, colorOnHover, colorOnLeave):
+
+        # adjusting backgroung of the widget
+        # background on entering widget
+        view.bind("<Enter>", func=lambda e: view.config(
+            background=colorOnHover))
+
+        # background color on leving widget
+        view.bind("<Leave>", func=lambda e: view.config(
+            background=colorOnLeave))
 
 
 
     def start_time_table_generation(self):
         isTrue = ShowMsg().pop_msg()
         if isTrue:
-            self.algorithm_ = TtGenerator(self.timeDimension.get_algo_reources(),
-                                          self.lectures_.get_algo_reources(),
-                                          self.space_.get_algo_reources())
+
+            self.show_frame(GenerateTimeTable, "Generate Time Table", cls=None)
         else:
             print(' Generation faild')
 
@@ -507,6 +512,41 @@ class ShowMsg:
 
 
 
+class Splash(tk.Tk):
+    """
+     The class creates a header and sidebar for the application. Also creates
+    resources in the sidebar,
+    """
+
+    def __init__(self):
+        tk.Tk.__init__(self)
+
+        # Initialise the classes Here
+
+        self.style = ttk.Style(self)
+        self.call("source", PATH_)
+        self.call("source", PATH__)
+        self.style.theme_use("forest-dark")
+        self.title("Automatic Timetable Generator")
+        # # self.overrideredirect(True)
+
+
+
+        # ------------- BASIC APP LAYOUT -----------------
+
+        self.geometry("1100x700")
+        # self.geometry()
+        self.resizable(True, True)
+        self.config(background=selectionbar_color)
+        # icon = tk.PhotoImage(file=PATH / 'LU_logo.png')
+        # self.iconphoto(True, icon)
+
+
+
+# splash_=Splash()
 
 app = TkinterApp()
+
+
+# splash_.after(3000,app)
 app.mainloop()

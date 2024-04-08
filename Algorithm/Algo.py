@@ -5,8 +5,9 @@ Pick a course unit check then pick dateTime if the lecturer is not occupied in o
 """
 import random
 import re
-from Pdf_Generator.pdf_generator import  main as generate_pdf_schedule
+import time
 
+from Pdf_Generator.pdf_generator import main as generate_pdf_schedule
 
 
 class TtGenerator:
@@ -17,7 +18,8 @@ class TtGenerator:
             cls.instance = object.__new__(cls)
         return cls.instance
 
-    def __init__(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst):
+    def __init__(self):
+        self.progress_var = 0
         self.TimeTable = {
             "MON": [],
             "TUE": [],
@@ -28,17 +30,18 @@ class TtGenerator:
             "SUN": [],
         }
         self.list_ = list()
+        self.timeslots_lst = list()
+        self.class_rooms_lst = list()
+        self.created_lectures_details_lst = list()
+        # self.edit_TimeTable_days()
+
+        # TODO this generates the pdf file
+
+    def random_generator(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst):
+
         self.timeslots_lst = timeslots_lst
         self.class_rooms_lst = class_rooms_lst
         self.created_lectures_details_lst = created_lectures_details_lst
-        # self.edit_TimeTable_days()
-        self.random_generator()
-        self.cleanPrint()
-
-        # TODO this generates the pdf file
-        generate_pdf_schedule(self.get__pdf_resources())
-
-    def random_generator(self):
         self.list_.clear()
         count_created_lectures = len(self.created_lectures_details_lst)
 
@@ -63,6 +66,14 @@ class TtGenerator:
             self.timeslots_lst.remove(time_picked)
             self.created_lectures_details_lst.remove(lecture_picked)
             self.class_rooms_lst.remove(space_picked)
+
+            self.progress_var = (((count_created_lectures - len(
+                self.created_lectures_details_lst)) / count_created_lectures)) * 100
+            print("Progress:", self.progress_var)
+
+            # time.sleep(3)
+        self.cleanPrint()
+        # generate_pdf_schedule(self.get__pdf_resources())
 
     def cleanPrint(self):
         print(f'MON = {self.TimeTable["MON"]}')
@@ -159,10 +170,10 @@ class TtGenerator:
                 dict_ = {
                 }
                 a, b, c, d = re.findall(r'<(.*?)>', self.TimeTable[key][i])
-                name=a +" "+ b +" " + c
+                name = a + " " + b + " " + c
                 dict_['name'] = name
                 dict_['days'] = day
                 dict_['time'] = d
                 dict_['color'] = "FF94EF"
                 self.list_.append(dict_)
-        return  self.list_
+        return self.list_

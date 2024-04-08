@@ -33,16 +33,22 @@ class SessionManager:
     def __init__(self):
 
         self.tutor = TutorsManager()
+        self.Groups_set=set()
+        self.faculty_set = set()
+
         self.Headers = {
             "headers": ["Name","Tutor", "Faculty","Group"]
         }
 
         self.Session_List = [
-            ["OOP",  "Mr.Kasozi","Science","BSC IT 1"],
-            ["PYTHON",  "Mr.TONY","Science","BSC IT 1"],
-            ["POP", "Mr.REAGAN","Science","BSC CS 1"],
-            ["WEB",  "Madam MIREMBE","Science","BSC IT 1,BSC CS 1"]
+            ["OOP",  "Mr.Kasozi","SCIENCE","BSC IT 1"],
+            ["PYTHON",  "Mr.TONY","SCIENCE","BSC IT 1"],
+            ["POP", "Mr.REAGAN","SCIENCE","BSC CS 1"],
+            ["BUZ", "Mr.PETER", "BAM", "BAM 1"],
+            ["WEB",  "Madam MIREMBE","SCIENCE","BSC IT 1,BSC CS 1"]
         ]
+
+        # self.set_groups_cu()
 
     def __new__(cls, *args, **kwargs):
         if not isinstance(cls.instance, cls):
@@ -75,6 +81,28 @@ class SessionManager:
             else:
                 lst_ = [f'{new_session[1]}', f'{new_session[0]}', '--------']
                 self.tutor.add_new_tutor(lst_,index=-1)
+
+
+
+    def set_groups_cu(self):
+        for index , lst in enumerate(self.Session_List):
+            d=lst[3].split(',')
+            if len(d) >1:
+                for i, sub_group in enumerate(d):
+                    self.Groups_set.add(f'<{lst[2]}><{d[i]}>')
+            else:
+                self.Groups_set.add(f'<{lst[2]}><{lst[3]}>')
+        # print(self.Groups_set)
+        # print(self.get_faculty_cu())
+
+    def get_faculty_cu(self):
+        for index , lst in enumerate(self.Session_List):
+            self.faculty_set.add(lst[2])
+        return self.faculty_set
+
+    def get_sub_groups(self):
+        self.set_groups_cu()
+        return self.Groups_set
 
 
 
