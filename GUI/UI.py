@@ -225,7 +225,7 @@ class TkinterApp(tk.Tk):
         isTrue = ShowMsg().pop_msg()
         if isTrue:
 
-            self.show_frame(GenerateTimeTable, "Generate Time Table", cls=None)
+            self.show_frame(GenerateTimeTable, "Generate Time Table", cls=self.timeDimension)
         else:
             print(' Generation faild')
 

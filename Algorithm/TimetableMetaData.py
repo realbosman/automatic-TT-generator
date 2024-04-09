@@ -1,6 +1,5 @@
 from Models.TimeDimension import TimeDimension
 
-
 class TimetableMetaData:
     """
     This TimetableMetaData holds all the information about the created time table project

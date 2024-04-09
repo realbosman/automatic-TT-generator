@@ -91,11 +91,12 @@ class Session(tk.Frame):
 
         print("heads", headings)
         for col_ in headings:
-            self.treeview.column(col_, width=50, anchor='c')
+            self.treeview.column(col_, width=100, anchor='w' ,stretch=tk.YES)
             self.treeview.heading(col_, text=col_)
 
         for i in range(int(self.session__.get_sessions_length())):
             self.treeview.insert('', tk.END, values=self.session__.get_sessions()[i])
+
 
     def add_new_session(self, event):
         values_lst = list()
@@ -232,3 +233,93 @@ class Session(tk.Frame):
 
     def on_save(self, event):
         print("Save clicked")
+
+# def create_format_object(excel_writer, formats):
+#
+# # helper function for a number of formatting functions in this module
+#
+# workbook = excel_writer.book
+#
+# if formats is not None:
+#
+# return workbook.add_format(formats)
+#
+# else:
+#
+# return None
+#
+# def autofit_columns(df, excel_writer, sheet_name, formats_all=None, format_all_but=[]):
+#
+# index_pad = 1
+#
+# pad = 3
+#
+# extra_pad = 2 # for long strings, b/c capitals take up more space
+#
+# col_nums = range(len(df.columns))
+#
+# worksheet = excel_writer.sheets[sheet_name]
+#
+# format_to_apply = create_format_object(excel_writer, formats_all)
+#
+# # first set width on index column
+#
+# index_col_len = df.index.astype(str).map(len).max() + index_pad
+#
+# worksheet.set_column(0, 0, index_col_len)
+#
+# # Iterate through each column and set the width == the max length in that column.
+#
+# for i in col_nums:
+#
+# if i in format_all_but:
+#
+# continue
+#
+# try:
+#
+# col_df = pd.DataFrame(df.iloc[:, i]).astype(str)
+#
+# except UnicodeEncodeError:
+#
+# col_df = pd.DataFrame(df.iloc[:, i])
+#
+# except:
+#
+# print "Unexpected error:", sys.exc_info()[0]
+#
+# raise
+#
+# # filter for header
+#
+# header = col_df.columns.values
+#
+# # Get length of largest word in header (b/c header is wrapped
+#
+# header_len = max([len(s) for s in ''.join(header).split(' ')]) + pad
+#
+# # Get length of column values
+#
+# column_len = col_df.apply(lambda x: x.str.len()).max().max() + pad
+#
+# if column_len > 20:
+#
+# column_len += extra_pad
+#
+# # Choose the greater of the column length or column value length
+#
+# if header_len >= column_len:
+#
+# col_width = header_len
+#
+# else:
+#
+# col_width = column_len
+#
+# if formats_all is None:
+#
+# worksheet.set_column(i, i, col_width) # i+1 to account for index column
+#
+# else:
+#
+# worksheet.set_column(i, i, col_width, format_to_apply) # i+1 to account for index column

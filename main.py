@@ -21,4 +21,4 @@ if __name__ == '__main__':
     time_slots = TimeDimension().get_time_slots()
     Algo = TtGenerator(time_slots, manager.get_courseUnit_list()[:10], class_roomZ.get_classrooms_list(),
                        lect_cu_details)
-    Algo.cleanPrint()
+    # Algo.cleanPrint()

@@ -131,7 +131,6 @@ class Home(tk.Frame):
         self.sun_check = ttk.Checkbutton(self.courses_frame, text="SUN",
                                          variable=self.sun_status_var, onvalue="SUN", offvalue="SUN_")
 
-        print(self.sun_status_var.get())
 
         self.days_label.grid(row=0, column=0, sticky='w')
         self.mon_check.grid(row=1, column=0)
@@ -213,6 +212,7 @@ class Home(tk.Frame):
         #############################################################################
 
         # self.updateUI()
+
         #############################################################################
 
     def updateUI(self):
@@ -236,6 +236,7 @@ class Home(tk.Frame):
         self.fri_status_var.set(mylist[4])
         self.sat_status_var.set(mylist[5])
         self.sun_status_var.set(mylist[6])
+
 
     def save_information(self):
         self.days__.clear()

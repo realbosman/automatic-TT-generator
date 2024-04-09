@@ -84,12 +84,12 @@ class TimeDimension:
                        for d_i , d_d in  enumerate(self.Days["headers"]):
                            if dy[0] == d_d:
                                correction_index = d_i
-                               print(dy[0], "=======", self.Days["headers"][correction_index])
+                               # print(dy[0], "=======", self.Days["headers"][correction_index])
                                self.Days["headers"].pop(d_i)
                                daylist = self.Days["headers"]
                                self.Days["headers"] = daylist
-                               print(day, " has been deleted !")
-                               print(self.Days["headers"], " list now !")
+                               # print(day, " has been deleted !")
+                               # print(self.Days["headers"], " list now !")
 
                                anyDelete = True
                    except:
@@ -116,7 +116,7 @@ class TimeDimension:
                 if isDayin == False:
                     self.Days["headers"].append(dy[0])
                     self.Days["headers"], index_to_add_in_lsts = self.sort_days(self.Days["headers"],dy[0])
-                    print("index_to_add_in_lst,",index_to_add_in_lsts,len(self.Sessions_List[0]))
+                    # print("index_to_add_in_lst,",index_to_add_in_lsts,len(self.Sessions_List[0]))
                     # print("day inserted in",self.Days,dy[0])
 
                     for index_to_add, lst___ in enumerate(self.Sessions_List):
@@ -141,19 +141,21 @@ class TimeDimension:
                                 self.Sessions_List[index_to_add] = temp_lst_
                         else:
                             temp_lst_1=lst___[index_to_add_in_lsts :]
-                            print(temp_lst_1)
+                            # print(temp_lst_1)
                             temp_lst_2 = lst___[: index_to_add_in_lsts]
-                            print(temp_lst_2)
+                            # print(temp_lst_2)
                             var_='--------'
                             new_temp_lst_ =[x for x in temp_lst_2]+[var_]+[x for x in temp_lst_1]
-                            print(new_temp_lst_)
+                            # print(new_temp_lst_)
                             self.Sessions_List[index_to_add] = new_temp_lst_
+        self.Days["headers"]=self.Days["headers"]
+        print("DDDDDAAAYAYAYYA",self.Days["headers"])
 
 
 
     def sort_days(self, lzt: list,day_insert:str):
         mySet = set(lzt)
-        print(mySet)
+        # print(mySet)
         list_ = list()
         index_to_add_in_lst=0
         for n, l in enumerate(mySet):
