@@ -8,7 +8,8 @@ from itertools import cycle
 from threading import Thread
 from queue import Queue
 from enum import Enum, auto
-
+from flask import Flask, send_file
+from pathlib import Path
 import re
 
 from tk import *
@@ -21,6 +22,7 @@ from Models.Lecturer_Model import TutorsManager
 from Models.TimeDimension import TimeDimension
 
 IMG_PATH = Path(__file__).parent / 'assets'
+app = Flask(__name__)
 
 # import openpyxl
 
@@ -37,11 +39,11 @@ class GenerateTimeTable(tk.Frame):
     """
     The Groups class provides a way to view  the groups in the timetable.
     """
-    def __init__(self, parent, cls=None,cls_=None):
+    def __init__(self, parent, cls,cls_=None):
 
         ttk.Frame.__init__(self, parent)
         self.progress_numder=0;
-
+        self.gen_time_dimension=cls
         self.frame_=tk.Frame(self,background="black",)
         self.frame_.pack( fill=tk.BOTH,expand=1,anchor="center")
 
@@ -49,12 +51,10 @@ class GenerateTimeTable(tk.Frame):
         self.bind("<<CheckQueue>>", self.Check_Queue)
         self.txt_var=tk.StringVar(value="Generating TimeTable: 0%")
 
-        self.space_ = SpaceManager()
-        self.lectures_ = SessionManager()
-        self.lecturers_ = TutorsManager()
 
-        self.timeDimension = TimeDimension()
-        self.timetableMetadata = TimetableMetaData(self.timeDimension)
+
+
+
 
 
         self.algorithm_ = TtGenerator()
@@ -116,7 +116,12 @@ class GenerateTimeTable(tk.Frame):
             self.event_generate("<<CheckQueue>>", when="tail")
             time.sleep(.2)  # This delay helps to relieve the  while and the processor
     def gen_process(self):
-        self.algorithm_.random_generator(self.timeDimension.get_algo_reources(),
+        self.space_ = SpaceManager()
+        self.lectures_ = SessionManager()
+        self.lecturers_ = TutorsManager()
+        self.timetableMetadata = TimetableMetaData(self.gen_time_dimension)
+        print("DDDDDAAAYAYAYYA", self.gen_time_dimension.Days["headers"])
+        self.algorithm_.random_generator(self.gen_time_dimension.get_algo_reources(),
                                          self.lectures_.get_algo_reources(),
                                          self.space_.get_algo_reources())
 
@@ -131,6 +136,12 @@ class GenerateTimeTable(tk.Frame):
         self.update_thread()
 
 
+
+    @app.route('/')
+    def index():
+        # Assuming the PDF file is in the same directory as your Python script
+        pdf_path = Path(__file__).parent / 'Generated_Time_Table.pdf'
+        return send_file(pdf_path, as_attachment=False)
 
 
 # Ticketing system call
