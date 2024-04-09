@@ -90,6 +90,7 @@ class Schedule:
             min_time=None,
             max_time=None,
     ):
+        print(f'X:{x} Y:{y}')
         if min_time is None:
             min_time = max(
                 min(time2hours(ev.start_time) for ev in self.all_events()) - 0.5, 0
@@ -125,6 +126,7 @@ class Schedule:
             width - time_width,
             height - day_height,
         )
+
         hour_height = sched.height / (max_time - min_time)
         day_width = sched.width / self.number_of_days
         line_width = floor(day_width / (font_size * EM))
@@ -254,7 +256,7 @@ def parse_time(s):
 
 
 def main(
-        infile,
+        infile:dict,
         color=True,
         outfile=None,
         start_time: time = None,
@@ -291,12 +293,12 @@ def main(
         week = FULL_WEEK_MON_EN
     else:
         week = FULL_WEEK_EN
-    sched = Schedule(week)
-    for ev in read_events(infile, colors=colors):
-        sched.add_event(ev)
+
+
     if outfile is None:
         outfile_name = str(Path('Generated_Time_Table').with_suffix(".pdf"))
         outfile = click.open_file(outfile_name, "wb")
+
     c = Canvas(outfile, (page_width, page_height))
     c.setFont(font_name, font_size)
     if scale is not None:
@@ -306,18 +308,29 @@ def main(
             (1 - factor) * page_height / 2,
         )
         c.scale(factor, factor)
-    sched.render(
-        c,
-        x=inch,
-        y=page_height - inch,
-        width=page_width - 2 * inch,
-        height=page_height - 2 * inch,
-        font_size=font_size,
-        show_times=not no_times,
-        min_time=time2hours(start_time) if start_time is not None else None,
-        max_time=time2hours(end_time) if end_time is not None else None,
-    )
-    c.showPage()
+
+    # print(infile)
+    # print(infile["SCIENCE"].keys())
+    # for i ,key in enumerate(infile["SCIENCE"]):
+    #     # print("{}=",key," ",infile["SCIENCE"][key])
+    for faculty in infile.keys():
+        for sub_group in infile[faculty].keys():
+            sched = Schedule(week)
+            if len(infile[faculty][sub_group]) != 0:
+                for ev in read_events(infile[faculty][sub_group], colors=colors):
+                    sched.add_event(ev)
+                sched.render(
+                    c,
+                    x=inch,
+                    y=page_height - inch,
+                    width=page_width - 2 * inch,
+                    height=page_height - 2 * inch,
+                    font_size=font_size,
+                    show_times=not no_times,
+                    min_time=time2hours(start_time) if start_time is not None else None,
+                    max_time=time2hours(end_time) if end_time is not None else None,
+                )
+                c.showPage()
     c.save()
 
 
