@@ -27,6 +27,7 @@ from GUI.variables_ import Global_variables
 from Models.ClassRoomModel import SpaceManager
 from Models.CourseUnitModel import SessionManager
 from Models.Lecturer_Model import TutorsManager
+from Models.Listener import Listener
 from Models.TimeDimension import TimeDimension
 
 selectionbar_color = '#3C3F3F'
@@ -57,6 +58,7 @@ class TkinterApp(tk.Tk):
 
 
 
+        listener_=Listener()
         self.space_ = SpaceManager()
         self.lectures_ = SessionManager()
         self.lecturers_ = TutorsManager()
@@ -71,6 +73,10 @@ class TkinterApp(tk.Tk):
         self.style.theme_use("forest-dark")
         self.title("Automatic Timetable Generator")
         # # self.overrideredirect(True)
+
+        # self.queue_message = Queue()
+        # self.bind("<<CheckQueue>>", self.Check_Queue)
+        # self.run_after_period_thread()
 
 
 
@@ -207,6 +213,31 @@ class TkinterApp(tk.Tk):
     This function below calls the clases and passes in them these parameters cls is the model class created at the beginning of the initialisation
     '''
 
+    # def run_after_period(self):
+    #     count=1
+    #     while count<5:
+    #         count=count+1
+    #         ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_TEXT,
+    #                         ticket_value=count)
+    #         self.queue_message.put(ticket)
+    #         self.event_generate("<<CheckQueue>>", when="tail")
+    #         time.sleep(1)
+    #
+    # def run_after_period_thread(self):
+    #     new_thread = Thread(target=self.run_after_period, daemon=True,
+    #                         )  # I can pass args = "any"
+    #     new_thread.start()
+
+    def Check_Queue(self, e):
+        """
+       Read the queue
+        """
+        msg: Ticket
+        msg = self.queue_message.get()
+        if msg.ticket_type == TicketPurpose.UPDATE_PROGRESS_TEXT:
+            print(msg.ticket_value)
+
+
     # function to change properties of button on hover
     def changeOnHover(self,view, colorOnHover, colorOnLeave):
 
@@ -279,16 +310,25 @@ class TkinterApp(tk.Tk):
 
         # frame = self.frames[cont]
         for widget in self.header.winfo_children():
-            print("running widget 1")
+            # print("running widget 1")
             widget.destroy()
+
         for page in self.container.winfo_children():
-            print("running widget 2")
+            # print("running widget 2")
             page.destroy()
         label = tk.Label(self.header,
                          text=title,
                          font=("Helvetica", 13),
                          bg=header_color,
                          fg=TEXT_COLOR)
+
+        # if title != "HOME":
+        #     isTrue = ShowMsg().pop_msg("Automatic Timetable Generator","Are you sure you want to continue.")
+        #     if isTrue:
+        #         self.show_frame(GenerateTimeTable, "Generate Time Table", cls=self.timeDimension)
+        #     else:
+        #         print(' Generation faild')
+
         self.on_call_create(cont, cls=cls,cls_=cls1)
         label.pack(side=tk.LEFT, padx=0, fill='both')
         # frame.tkraise()
@@ -490,13 +530,14 @@ class SidebarSubMenu(tk.Frame):
 
 class ShowMsg:
 
-    def pop_msg(self) -> bool:
+    def pop_msg(self,title="Automatic Timetable Generator",qn="Continue to generate time table") -> bool:
         """
        Msg show
         """
         generate = messagebox.askyesno(
-            "Automatic Timetable Generator",
-            "Continue to generate time table"
+            title,
+            qn
+
         )
 
         if (generate == True):
@@ -541,6 +582,18 @@ class Splash(tk.Tk):
         # icon = tk.PhotoImage(file=PATH / 'LU_logo.png')
         # self.iconphoto(True, icon)
 
+
+# Ticketing system call
+class TicketPurpose(Enum):
+    UPDATE_PROGRESS_TEXT = auto()
+    UPDATE_PROGRESS_HEADING = auto()
+
+
+class Ticket:
+    def __init__(self, ticket_type: TicketPurpose,
+                 ticket_value):
+        self.ticket_type = ticket_type
+        self.ticket_value = ticket_value
 
 
 # splash_=Splash()

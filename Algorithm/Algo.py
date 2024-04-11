@@ -268,5 +268,6 @@ class TtGenerator:
                             self.Full_Time_table_dict[faculty][txt_item].append(dict_)
 
 
-
+        print("This fine")
+        print(self.Full_Time_table_dict)
         return self.Full_Time_table_dict

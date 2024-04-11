@@ -23,6 +23,7 @@ class TimeSlots(tk.Frame):
     def __init__(self, parent, cls,cls_=None):
         ttk.Frame.__init__(self, parent)
         self.timeDimension__ = cls
+
         # self.config(bg=visualisation_frame_color)
         self.combo = tk.StringVar()
         self.combo2 = tk.StringVar()
@@ -95,7 +96,7 @@ class TimeSlots(tk.Frame):
 
     def head_tree_view(self):
         headings = self.timeDimension__.get_column_headers()
-        # print("heads", headings)
+        print("heads","ONE", headings)
         for col_ in headings:
             ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_HEADING,
                             ticket_value=[col_])

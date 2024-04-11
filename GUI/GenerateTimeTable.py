@@ -22,7 +22,7 @@ from Models.Lecturer_Model import TutorsManager
 from Models.TimeDimension import TimeDimension
 
 IMG_PATH = Path(__file__).parent / 'assets'
-app = Flask(__name__)
+
 
 # import openpyxl
 
@@ -50,11 +50,6 @@ class GenerateTimeTable(tk.Frame):
         self.queue_message = Queue()
         self.bind("<<CheckQueue>>", self.Check_Queue)
         self.txt_var=tk.StringVar(value="Generating TimeTable: 0%")
-
-
-
-
-
 
 
         self.algorithm_ = TtGenerator()
@@ -120,7 +115,7 @@ class GenerateTimeTable(tk.Frame):
         self.lectures_ = SessionManager()
         self.lecturers_ = TutorsManager()
         self.timetableMetadata = TimetableMetaData(self.gen_time_dimension)
-        print("DDDDDAAAYAYAYYA", self.gen_time_dimension.Days["headers"])
+        # print("DDDDDAAAYAYAYYA", self.gen_time_dimension.Days["headers"])
         self.algorithm_.random_generator(self.gen_time_dimension.get_algo_reources(),
                                          self.lectures_.get_algo_reources(),
                                          self.space_.get_algo_reources())
@@ -136,12 +131,6 @@ class GenerateTimeTable(tk.Frame):
         self.update_thread()
 
 
-
-    @app.route('/')
-    def index():
-        # Assuming the PDF file is in the same directory as your Python script
-        pdf_path = Path(__file__).parent / 'Generated_Time_Table.pdf'
-        return send_file(pdf_path, as_attachment=False)
 
 
 # Ticketing system call
