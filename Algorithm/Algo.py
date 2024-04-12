@@ -45,7 +45,7 @@ class TtGenerator:
 
         # TODO this generates the pdf file
 
-    def random_generator(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst):
+    def random_generator(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst,title,creator):
 
         self.timeslots_lst = timeslots_lst
         self.class_rooms_lst = class_rooms_lst
@@ -93,7 +93,7 @@ class TtGenerator:
 
             # time.sleep(3)
         self.cleanPrint()
-        generate_pdf_schedule(self.get__pdf_resources())
+        generate_pdf_schedule(self.get__pdf_resources(),title=title,creator=creator)
         time.sleep(3)
         self.open_pdf()
 

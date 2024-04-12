@@ -1,8 +1,7 @@
+import os
+
+
 class Listener:
-    '''
-           This class this class listens for any incoming GUI events from other classes,
-           helps to make execution on the Main Thread
-           '''
 
     instance = None
     countInstance = 0
@@ -15,11 +14,27 @@ class Listener:
         else:
             print(cls.countInstance)
 
-    def __init__(self):
+        return cls.instance
+
+    def __init__(self, * args):
         stateHome: bool = False
+        # Get the path to the Documents folder
+        self.documents_folder = os.path.join(os.environ["USERPROFILE"], "Documents")
+
+        # Create a directory within the Documents folder to store your app's documents
+        self.app_documents_folder = os.path.join(self.documents_folder, "Automated TimeTable Generator")
+
+        # Check if the app_documents_folder already exists
+        if not os.path.exists(self.app_documents_folder):
+            # If it doesn't exist, create it
+            os.makedirs(self.app_documents_folder)
 
     def getStateHome(self):
         return self.stateHome
 
     def setStateHome(self, state):
         self.stateHome = state
+
+    def get_app_path(self):
+        return self.app_documents_folder
+

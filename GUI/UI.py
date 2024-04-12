@@ -1,3 +1,4 @@
+import os
 import threading
 import time
 import tkinter as tk
@@ -6,7 +7,6 @@ from tkinter import ttk, messagebox
 from threading import Thread
 from queue import Queue
 from enum import Enum, auto
-
 
 # -------------------------- DEFINING GLOBAL VARIABLES -------------------------
 from Algorithm.Algo import TtGenerator
@@ -44,7 +44,6 @@ PATH__ = Path(__file__).parent / 'forest-dark.tcl'
 # ------------------------------- ROOT WINDOW ----------------------------------
 
 
-
 class TkinterApp(tk.Tk):
     """
      The class creates a header and sidebar for the application. Also creates
@@ -56,9 +55,11 @@ class TkinterApp(tk.Tk):
 
         # Initialise the classes Here
 
+        # Get the path to the Documents folder
 
-
-        listener_=Listener()
+        self.listener_ = Listener()
+        # strr=
+        print("Path to the Documents folder",self.listener_.get_app_path())
         self.space_ = SpaceManager()
         self.lectures_ = SessionManager()
         self.lecturers_ = TutorsManager()
@@ -78,9 +79,6 @@ class TkinterApp(tk.Tk):
         # self.bind("<<CheckQueue>>", self.Check_Queue)
         # self.run_after_period_thread()
 
-
-
-
         # ------------- BASIC APP LAYOUT -----------------
 
         self.geometry("1100x700")
@@ -90,25 +88,44 @@ class TkinterApp(tk.Tk):
         icon = tk.PhotoImage(file=PATH / 'LU_logo.png')
         self.iconphoto(True, icon)
 
+        # Creating Menubar
+        menubar = tk.Menu(self)
+
+        # Adding File Menu and commands
+        file = tk.Menu(menubar, tearoff=0)
+        menubar.add_cascade(label='File', menu=file)
+        file.add_command(label='New File', command=None)
+        file.add_command(label='Open...', command=None)
+        file.add_command(label='Save', command=None)
+        file.add_separator()
+        file.add_command(label='Exit', command=self.destroy)
+
+        # Adding Home Menu
+        menubar.add_command(label='Home',
+                            command=lambda: self.show_frame(Home, "Time table Metadata", cls=self.timetableMetadata,
+                                                            cls1=self.timeDimension))
+        menubar.add_command(label='Edit', command=lambda: print("Edit"))
+        menubar.add_command(label='Help', command=lambda: print("Help"))
+
+        self.config(menu=menubar)
+
         # fake title bar
         self.title_bar = tk.Frame(self, bg=header_color, relief='sunken', padx=7)
         self.title_bar.place(relx=0, rely=0, relwidth=1, relheight=0.05)
         # bind title bar
         self.title_bar.bind("<ButtonPress>", self.start_move)
 
-        self.label1 = ttk.Label(self.title_bar, text="File" ,background=header_color)
-        self.label1.pack(expand=0, fill='y', side=tk.LEFT)
-        self.label1.bind("<Button-1>",  lambda x:print("File"))
-
-        self.label2 = ttk.Label(self.title_bar, text="Home"  ,background=header_color)
-        self.label2.pack(expand=0, fill='y', side=tk.LEFT,padx=20)
-        self.label2.bind("<Button-1>", lambda x: self.show_frame(Home, "Time table Metadata", cls=self.timetableMetadata,cls1=self.timeDimension))
-
-        self.changeOnHover(self.label1, visualisation_frame_color, sidebar_color)
-        self.changeOnHover(self.label2, visualisation_frame_color, sidebar_color)
-
-
-
+        # self.label1 = ttk.Label(self.title_bar, text="File" ,background=header_color)
+        # self.label1.pack(expand=0, fill='y', side=tk.LEFT)
+        # self.label1.bind("<Button-1>",  lambda x:print("File"))
+        #
+        # self.label2 = ttk.Label(self.title_bar, text="Home"  ,background=header_color)
+        # self.label2.pack(expand=0, fill='y', side=tk.LEFT,padx=20)
+        # self.label2.bind("<Button-1>", lambda x: self.show_frame(Home, "Time table Metadata", cls=self.timetableMetadata,cls1=self.timeDimension))
+        #
+        # self.changeOnHover(self.label1, visualisation_frame_color, sidebar_color)
+        # self.changeOnHover(self.label2, visualisation_frame_color, sidebar_color)
+        #
 
         # ---------------- HEADER ------------------------
 
@@ -164,10 +181,10 @@ class TkinterApp(tk.Tk):
             command=lambda: self.show_frame(Groups_, "Groups", cls=self.lectures_)
         )
 
-
         self.changeOnHover(resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
         self.changeOnHover(resource_submenu.options["Classroom/Room/Space"], visualisation_frame_color, sidebar_color)
-        self.changeOnHover(resource_submenu.options["Instructor/Lecturer/Tutor"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(resource_submenu.options["Instructor/Lecturer/Tutor"], visualisation_frame_color,
+                           sidebar_color)
         self.changeOnHover(resource_submenu.options["Course/Class/Session"], visualisation_frame_color, sidebar_color)
         self.changeOnHover(resource_submenu.options["Groups"], visualisation_frame_color, sidebar_color)
 
@@ -183,7 +200,7 @@ class TkinterApp(tk.Tk):
                                               )
 
         Generator_time_table.options["Generate Time Table"].config(
-            command=lambda: self.start_time_table_generation()                #self.start_time_table_generation()
+            command=lambda: self.start_time_table_generation()  # self.start_time_table_generation()
         )
         Generator_time_table.options["Edit Time Table"].config(
             command=lambda: print("Edit Time Table")
@@ -194,7 +211,7 @@ class TkinterApp(tk.Tk):
 
         self.changeOnHover(Generator_time_table.options["Generate Time Table"], visualisation_frame_color,
                            sidebar_color)
-        self.changeOnHover( Generator_time_table.options["Edit Time Table"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(Generator_time_table.options["Edit Time Table"], visualisation_frame_color, sidebar_color)
         self.changeOnHover(Generator_time_table.options["Generate PDF"], visualisation_frame_color, sidebar_color)
 
         Generator_time_table.place(relx=0, rely=0.4, relwidth=1, relheight=0.3)
@@ -207,7 +224,7 @@ class TkinterApp(tk.Tk):
 
         self.frames = {}
 
-        self.show_frame(Home, "Time table Metadata", cls=self.timetableMetadata,cls1=self.timeDimension)
+        self.show_frame(Home, "Time table Metadata", cls=self.timetableMetadata, cls1=self.timeDimension)
 
     ''''
     This function below calls the clases and passes in them these parameters cls is the model class created at the beginning of the initialisation
@@ -237,9 +254,8 @@ class TkinterApp(tk.Tk):
         if msg.ticket_type == TicketPurpose.UPDATE_PROGRESS_TEXT:
             print(msg.ticket_value)
 
-
     # function to change properties of button on hover
-    def changeOnHover(self,view, colorOnHover, colorOnLeave):
+    def changeOnHover(self, view, colorOnHover, colorOnLeave):
 
         # adjusting backgroung of the widget
         # background on entering widget
@@ -250,21 +266,20 @@ class TkinterApp(tk.Tk):
         view.bind("<Leave>", func=lambda e: view.config(
             background=colorOnLeave))
 
-
-
     def start_time_table_generation(self):
         isTrue = ShowMsg().pop_msg()
         if isTrue:
 
-            self.show_frame(GenerateTimeTable, "Generate Time Table", cls=self.timeDimension)
+            self.show_frame(GenerateTimeTable, "Generate Time Table", cls=self.timeDimension,
+                            cls1=self.timetableMetadata)
         else:
             print(' Generation faild')
 
-    def on_call_create(self, F, cls ,cls_=None):
+    def on_call_create(self, F, cls, cls_=None):
         for w in self.container.winfo_children():
             w.destroy()
 
-        frame = F(self.container, cls,cls_)
+        frame = F(self.container, cls, cls_)
 
         frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
@@ -295,7 +310,7 @@ class TkinterApp(tk.Tk):
         else:
             self.style.theme_use("forest-dark")
 
-    def show_frame(self, cont, title, cls,cls1=None):
+    def show_frame(self, cont, title, cls, cls1=None):
         """
         The function 'show_frame' is used to raise a specific frame (page) in
         the tkinter application and update the title displayed in the header.
@@ -329,7 +344,7 @@ class TkinterApp(tk.Tk):
         #     else:
         #         print(' Generation faild')
 
-        self.on_call_create(cont, cls=cls,cls_=cls1)
+        self.on_call_create(cont, cls=cls, cls_=cls1)
         label.pack(side=tk.LEFT, padx=0, fill='both')
         # frame.tkraise()
 
@@ -530,7 +545,7 @@ class SidebarSubMenu(tk.Frame):
 
 class ShowMsg:
 
-    def pop_msg(self,title="Automatic Timetable Generator",qn="Continue to generate time table") -> bool:
+    def pop_msg(self, title="Automatic Timetable Generator", qn="Continue to generate time table") -> bool:
         """
        Msg show
         """
@@ -551,8 +566,6 @@ class ShowMsg:
         return generate
 
 
-
-
 class Splash(tk.Tk):
     """
      The class creates a header and sidebar for the application. Also creates
@@ -570,8 +583,6 @@ class Splash(tk.Tk):
         self.style.theme_use("forest-dark")
         self.title("Automatic Timetable Generator")
         # # self.overrideredirect(True)
-
-
 
         # ------------- BASIC APP LAYOUT -----------------
 
@@ -599,7 +610,6 @@ class Ticket:
 # splash_=Splash()
 
 app = TkinterApp()
-
 
 # splash_.after(3000,app)
 app.mainloop()
