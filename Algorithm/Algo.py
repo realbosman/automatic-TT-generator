@@ -1,20 +1,15 @@
-# TODO develop a time system
-"""
-Pick a course unit check then pick dateTime if the lecturer is not occupied in other course unit 
-
-"""
 import random
 import re
 import time
-import webbrowser
-from pathlib import Path
-
-from flask import Flask, send_file
-
 from Pdf_Generator.pdf_generator import main as generate_pdf_schedule
 
 
 class TtGenerator:
+    """
+    This class generates the actual timetable using the resources passed to it as
+    parameters and also provides methods to do this task.
+    """
+
     instance = None
 
     def __new__(cls, *args, **kwargs):
@@ -23,6 +18,10 @@ class TtGenerator:
         return cls.instance
 
     def __init__(self, *cls):
+        """
+        This is TtGenerator constructor that  accepts n parameters
+        :param cls:
+        """
         self.Groups = None
         for arg in cls:
             self.Groups = arg
@@ -45,12 +44,16 @@ class TtGenerator:
         self.class_rooms_lst = list()
         self.created_lectures_details_lst = list()
 
-        # self.edit_TimeTable_days()
-
-        # TODO this generates the pdf file
-
     def random_generator(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst, title, creator):
-
+        """
+        This method generates the time table through the combiation of the functions in this class
+        :param timeslots_lst:
+        :param created_lectures_details_lst:
+        :param class_rooms_lst:
+        :param title:
+        :param creator:
+        :return None:
+        """
         self.timeslots_lst = timeslots_lst
         self.class_rooms_lst = class_rooms_lst
         self.created_lectures_details_lst = created_lectures_details_lst
@@ -96,7 +99,6 @@ class TtGenerator:
 
             # TODO what if lecturer_dicts equates to zero when pop is done
 
-
             # if len(self.timeslots_lst) == 0:
             #     # print("Overlapping IN TIME ")
             #     break
@@ -114,8 +116,8 @@ class TtGenerator:
             self.TimeTable[re.findall(r'<(.*?)>', time_picked)[0]].append(
                 str(f'<{re.findall(r"<(.*?)>", lecture_picked)[2]}><{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'))
 
-            if is_merge_timeslots == True:
-                self.pop_time_slot(sep_,time_picked)
+            if is_merge_timeslots:
+                self.remove_time_slot(sep_, time_picked)
             else:
                 self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')].remove(time_picked)
 
@@ -129,86 +131,16 @@ class TtGenerator:
             # TODO: Check all the timeslots to see if the list are not empty
 
             # time.sleep(3)
-        # self.cleanPrint()
+
         generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator)
         time.sleep(3)
         self.open_pdf()
 
-    def cleanPrint(self):
-        print(f'MON = {self.TimeTable["MON"]}')
-        print(f'TUE = {self.TimeTable["TUE"]}')
-        print(f'WED = {self.TimeTable["WED"]}')
-        print(f'THUR = {self.TimeTable["THUR"]}')
-        print(f'FRI = {self.TimeTable["FRI"]}')
-        print(f'SAT = {self.TimeTable["SAT"]}')
-        print(f'SUN = {self.TimeTable["SUN"]}')
-
-    def open_pdf(self):
-
-        pass
-
-    # this should be in the model section
-    def edit_TimeTable_days(self):
-        print("Are there any days you want to be idle,then select then or pick no?")
-        print('''
-              MON - 1
-              TUE - 2
-              WED - 3
-              THUR -4
-              FRI - 5 
-              SAT - 6
-              SUN - 7
-              None -0
-              ''')
-        disabled_none = 0
-        try:
-            disabled_days = int(input("Enter :"))
-            disabled_none = disabled_days
-        except:
-            self.edit_TimeTable_days()
-
-        # TODO THE TIMESLOTS AND THE LECTURES HAVE TO BE IN SYNC timeslot should not be less
-        for i in range(1, 8):
-            index_count = 0
-            # TODO Learn how to use try block
-            try:
-                str(disabled_days).index(str(i))
-                index_count = 1
-            except:
-                index_count = -1
-                pass
-            if i == 1 and index_count == 1:
-                self.timeslots_lst.pop('MON')
-            if i == 2 and index_count == 1:
-                self.timeslots_lst.pop('TUE')
-            if i == 3 and index_count == 1:
-                self.timeslots_lst.pop('WED')
-            if i == 4 and index_count == 1:
-                self.timeslots_lst.pop('THUR')
-            if i == 5 and index_count == 1:
-                self.timeslots_lst.pop('FRI')
-            if i == 6 and index_count == 1:
-                self.timeslots_lst.pop('SAT')
-            if i == 7 and index_count == 1:
-                self.timeslots_lst.pop('SUN')
-
-        if disabled_none == 0:
-            pass
-        else:
-            try:
-                str(disabled_none).index("8")
-                disabled_none = 0
-                self.edit_TimeTable_days()
-            except:
-                pass
-            try:
-                str(disabled_none).index("9")
-                disabled_none = 0
-                self.edit_TimeTable_days()
-            except:
-                pass
-
     def get__pdf_resources(self) -> list:
+        """
+        This function generates the PDF resources, after the time table has been created.
+        :return dict():
+        """
         # print(self.Full_Time_table_list)
         for faculty in self.Full_Time_table_list:
             self.Full_Time_table_dict[str(f'{re.findall(r"<(.*?)>", faculty)[1]}')] = dict()  # the faculty dict
@@ -305,6 +237,11 @@ class TtGenerator:
         return self.Full_Time_table_dict
 
     def intersection_of_n_sets(self, list_of_sets):
+        """
+        This method take in  a list of sets in order to get the intersection points
+        :param list_of_sets:
+        :return set():
+        """
         if not list_of_sets:
             return set()  # If there are no sets, return an empty set
 
@@ -320,16 +257,25 @@ class TtGenerator:
         return intersection_set
 
     def set_list_of_sets(self, subgroups):
+        """
+        This method takes in subgroups, gets their corresponding lists from
+        the list_Merged_Time_dict and returns them as a set each,then appends them to a list.
+        :param subgroups:
+        :return list():
+        """
         list_ = list()
         for group in subgroups:
             list_.append(set(self.list_Merged_Time_dict[group]))
         return list_
 
-    def pop_time_slot(self, subgroups, time_slot):
+    def remove_time_slot(self, subgroups, time_slot):
+        """
+        This function removes the time_slot from the list of subgroups
+        :param subgroups:
+        :param time_slot:
+        :return:
+        """
         for group in subgroups:
-            for index,time_slot_ in enumerate(self.list_Merged_Time_dict[group]):
-                if time_slot_==time_slot:
+            for index, time_slot_ in enumerate(self.list_Merged_Time_dict[group]):
+                if time_slot_ == time_slot:
                     self.list_Merged_Time_dict[group].remove(time_slot_)
-
-
-
