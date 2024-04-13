@@ -20,7 +20,7 @@ class TimeSlots(tk.Frame):
     The RoomsClassesSpace class provides a way to view and edit the space.
     """
 
-    def __init__(self, parent, cls,cls_=None):
+    def __init__(self, parent, *cls):
         ttk.Frame.__init__(self, parent)
         self.timeDimension__ = cls
 

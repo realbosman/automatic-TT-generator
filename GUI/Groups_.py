@@ -25,7 +25,7 @@ class Groups_(tk.Frame):
     """
     The Groups class provides a way to view  the groups in the timetable.
     """
-    def __init__(self, parent, cls,cls_=None):
+    def __init__(self, parent, *cls):
 
         ttk.Frame.__init__(self, parent)
         self.session_manager=cls
