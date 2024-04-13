@@ -11,18 +11,19 @@ from enum import Enum, auto
 # -------------------------- DEFINING GLOBAL VARIABLES -------------------------
 from Algorithm.Algo import TtGenerator
 from Algorithm.TimetableMetaData import TimetableMetaData
-from GUI import TimeslotsList, Tutor
+from GUI import  Tutor
 from GUI.GenerateTimeTable import GenerateTimeTable
 from GUI.Groups_ import Groups_
 from GUI.Home import Home
 from GUI.Session import Session
-from GUI.SessionsList import SessionsList
+
 from GUI.Space import Space
-from GUI.SpaceList import SpaceList
+
+from GUI.Splash import Splash
 from GUI.TimeSlots import TimeSlots
 from GUI.Tutor import Tutor
-from GUI.TimeslotsList import TimeslotsList
-from GUI.TutorsList import TutorsList
+
+
 from GUI.variables_ import Global_variables
 from Models.ClassRoomModel import SpaceManager
 from Models.CourseUnitModel import SessionManager
@@ -59,14 +60,15 @@ class TkinterApp(tk.Tk):
 
         self.listener_ = Listener()
         # strr=
-        print("Path to the Documents folder",self.listener_.get_app_path())
+        print("Path to the Documents folder", self.listener_.get_app_path())
         self.space_ = SpaceManager()
         self.lectures_ = SessionManager()
         self.lecturers_ = TutorsManager()
 
         self.timeDimension = TimeDimension()
         self.timetableMetadata = TimetableMetaData(self.timeDimension)
-        self.algorithm_ = None
+        self.algorithm_ = TtGenerator()
+        self.isHomeSaved = True
 
         self.style = ttk.Style(self)
         self.call("source", PATH_)
@@ -75,9 +77,9 @@ class TkinterApp(tk.Tk):
         self.title("Automatic Timetable Generator")
         # # self.overrideredirect(True)
 
-        # self.queue_message = Queue()
-        # self.bind("<<CheckQueue>>", self.Check_Queue)
-        # self.run_after_period_thread()
+        self.queue_message = Queue()
+        self.bind("<<CheckQueue_Main>>", self.Check_Queue)
+        self.run_after_period_thread()
 
         # ------------- BASIC APP LAYOUT -----------------
 
@@ -102,8 +104,8 @@ class TkinterApp(tk.Tk):
 
         # Adding Home Menu
         menubar.add_command(label='Home',
-                            command=lambda: self.show_frame(Home, "Time table Metadata", cls=self.timetableMetadata,
-                                                            cls1=self.timeDimension))
+                            command=lambda: self.show_frame(Home, "Time table Metadata", self.timetableMetadata,
+                                                            self.timeDimension, self.listener_))
         menubar.add_command(label='Edit', command=lambda: print("Edit"))
         menubar.add_command(label='Help', command=lambda: print("Help"))
 
@@ -113,19 +115,10 @@ class TkinterApp(tk.Tk):
         self.title_bar = tk.Frame(self, bg=header_color, relief='sunken', padx=7)
         self.title_bar.place(relx=0, rely=0, relwidth=1, relheight=0.05)
         # bind title bar
-        self.title_bar.bind("<ButtonPress>", self.start_move)
+        self.project_name_var=tk.StringVar(value="Project Name")
+        self.project_name=tk.Label(self.title_bar,anchor="center",text="Project Name",background=header_color,textvariable=self.project_name_var)
+        self.project_name.pack(fill=tk.Y,expand=1)
 
-        # self.label1 = ttk.Label(self.title_bar, text="File" ,background=header_color)
-        # self.label1.pack(expand=0, fill='y', side=tk.LEFT)
-        # self.label1.bind("<Button-1>",  lambda x:print("File"))
-        #
-        # self.label2 = ttk.Label(self.title_bar, text="Home"  ,background=header_color)
-        # self.label2.pack(expand=0, fill='y', side=tk.LEFT,padx=20)
-        # self.label2.bind("<Button-1>", lambda x: self.show_frame(Home, "Time table Metadata", cls=self.timetableMetadata,cls1=self.timeDimension))
-        #
-        # self.changeOnHover(self.label1, visualisation_frame_color, sidebar_color)
-        # self.changeOnHover(self.label2, visualisation_frame_color, sidebar_color)
-        #
 
         # ---------------- HEADER ------------------------
 
@@ -138,7 +131,7 @@ class TkinterApp(tk.Tk):
 
         # ---------------- SIDEBAR -----------------------
         # CREATING FRAME FOR SIDEBAR
-        self.sidebar = tk.Frame(self, bg=sidebar_color, relief='raised')
+        self.sidebar = tk.Frame(self, bg=sidebar_color, relief='raised',)
         self.sidebar.config(
             highlightbackground="#808080",
             highlightthickness=0.5
@@ -165,20 +158,20 @@ class TkinterApp(tk.Tk):
 
                                           )
         resource_submenu.options["TimeSlots"].config(
-            command=lambda: self.show_frame(TimeSlots, "Create TimeSlots", cls=self.timeDimension)
+            command=lambda: self.show_frame(TimeSlots, "Create TimeSlots", self.timeDimension)
 
         )
         resource_submenu.options["Classroom/Room/Space"].config(
-            command=lambda: self.show_frame(Space, "Create Classroom/Room/Space", cls=self.space_)
+            command=lambda: self.show_frame(Space, "Create Classroom/Room/Space", self.space_)
         )
         resource_submenu.options["Instructor/Lecturer/Tutor"].config(
-            command=lambda: self.show_frame(Tutor, "Instructor/Lecturer/Tutor", cls=self.lecturers_)
+            command=lambda: self.show_frame(Tutor, "Instructor/Lecturer/Tutor", self.lecturers_)
         )
         resource_submenu.options["Course/Class/Session"].config(
-            command=lambda: self.show_frame(Session, "Course/Class/Session", cls=self.lectures_)
+            command=lambda: self.show_frame(Session, "Course/Class/Session", self.lectures_)
         )
         resource_submenu.options["Groups"].config(
-            command=lambda: self.show_frame(Groups_, "Groups", cls=self.lectures_)
+            command=lambda: self.show_frame(Groups_, "Groups", self.lectures_)
         )
 
         self.changeOnHover(resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
@@ -223,27 +216,61 @@ class TkinterApp(tk.Tk):
         self.container.place(relx=0.2, rely=0.105, relwidth=0.8, relheight=0.9)
 
         self.frames = {}
+        self.show_frame(Splash, " ", self.timetableMetadata, self.timeDimension, self.listener_)
 
-        self.show_frame(Home, "Time table Metadata", cls=self.timetableMetadata, cls1=self.timeDimension)
+
+
 
     ''''
     This function below calls the clases and passes in them these parameters cls is the model class created at the beginning of the initialisation
     '''
 
-    # def run_after_period(self):
-    #     count=1
-    #     while count<5:
-    #         count=count+1
-    #         ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_TEXT,
-    #                         ticket_value=count)
-    #         self.queue_message.put(ticket)
-    #         self.event_generate("<<CheckQueue>>", when="tail")
-    #         time.sleep(1)
-    #
-    # def run_after_period_thread(self):
-    #     new_thread = Thread(target=self.run_after_period, daemon=True,
-    #                         )  # I can pass args = "any"
-    #     new_thread.start()
+    def run_after_period(self):
+        count = 1
+        prev_project_name = self.timetableMetadata.time_table_name
+        while True:
+            count = count + 1
+
+
+            if self.timetableMetadata.time_table_name == prev_project_name:
+               pass
+            else:
+                ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_PROJECT_NAME,
+                                ticket_value= self.timetableMetadata.time_table_name)
+                prev_project_name=self.timetableMetadata.time_table_name
+                self.queue_message.put(ticket)
+                self.event_generate("<<CheckQueue_Main>>", when="tail")
+
+            if count==5:
+                ticket = Ticket(ticket_type=TicketPurpose.REMOVE_SPLASH,
+                                ticket_value="splash")
+                prev_project_name = self.timetableMetadata.time_table_name
+                self.queue_message.put(ticket)
+                self.event_generate("<<CheckQueue_Main>>", when="tail")
+
+
+
+
+            if self.listener_.getStateHome() == False:
+                ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_HOME,
+                                ticket_value=1)
+                self.queue_message.put(ticket)
+                self.event_generate("<<CheckQueue_Main>>", when="tail")
+
+            else:
+                ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_HOME,
+                                ticket_value=0)
+                self.queue_message.put(ticket)
+                self.event_generate("<<CheckQueue_Main>>", when="tail")
+
+
+            # print("StateHome",self.listener_.getStateHome())
+            time.sleep(.6)
+
+    def run_after_period_thread(self):
+        new_thread = Thread(target=self.run_after_period, daemon=True,
+                            )  # I can pass args = "any"
+        new_thread.start()
 
     def Check_Queue(self, e):
         """
@@ -251,8 +278,28 @@ class TkinterApp(tk.Tk):
         """
         msg: Ticket
         msg = self.queue_message.get()
-        if msg.ticket_type == TicketPurpose.UPDATE_PROGRESS_TEXT:
-            print(msg.ticket_value)
+        if msg.ticket_type == TicketPurpose.UPDATE_PROGRESS_HOME:
+            # print(msg.ticket_value)
+            if msg.ticket_value == 1:
+                self.isHomeSaved = True
+            else:
+                self.isHomeSaved = False
+        if msg.ticket_type == TicketPurpose.UPDATE_PROGRESS_PROJECT_NAME:
+           self.project_name_var.set(msg.ticket_value)
+
+        if msg.ticket_type == TicketPurpose.REMOVE_SPLASH:
+            if msg.ticket_value=="splash":
+                for page in self.container.winfo_children():
+                    # print(type(Splash),"I want SPlASH", type(page))
+                    page.destroy()
+                    self.show_frame(Home, "Time table Metadata", self.timetableMetadata, self.timeDimension,
+                                    self.listener_)
+
+
+
+
+
+
 
     # function to change properties of button on hover
     def changeOnHover(self, view, colorOnHover, colorOnLeave):
@@ -270,16 +317,17 @@ class TkinterApp(tk.Tk):
         isTrue = ShowMsg().pop_msg()
         if isTrue:
 
-            self.show_frame(GenerateTimeTable, "Generate Time Table", cls=self.timeDimension,
-                            cls1=self.timetableMetadata)
+            self.show_frame(GenerateTimeTable, "Generate Time Table", self.timeDimension, self.timetableMetadata,
+                            self.space_,
+                            self.lectures_, self.lecturers_, self.algorithm_)
         else:
             print(' Generation faild')
 
-    def on_call_create(self, F, cls, cls_=None):
+    def on_call_create(self, F, *cls):
         for w in self.container.winfo_children():
             w.destroy()
 
-        frame = F(self.container, cls, cls_)
+        frame = F(self.container, *cls)
 
         frame.place(relx=0, rely=0, relwidth=1, relheight=1)
 
@@ -310,7 +358,7 @@ class TkinterApp(tk.Tk):
         else:
             self.style.theme_use("forest-dark")
 
-    def show_frame(self, cont, title, cls, cls1=None):
+    def show_frame(self, cont, title, *cls):
         """
         The function 'show_frame' is used to raise a specific frame (page) in
         the tkinter application and update the title displayed in the header.
@@ -322,6 +370,18 @@ class TkinterApp(tk.Tk):
         Returns:
         None
         """
+        if self.isHomeSaved == True:
+            self.isHomeSaved == False
+            pass
+        else:
+            isTrue = ShowMsg().pop_msg(title="Home", qn="Do want to continue without saving?")
+
+            if isTrue == True:
+                self.isHomeSaved = True
+                self.listener_.setStateHome(False)
+                pass
+            else:
+                return
 
         # frame = self.frames[cont]
         for widget in self.header.winfo_children():
@@ -329,7 +389,7 @@ class TkinterApp(tk.Tk):
             widget.destroy()
 
         for page in self.container.winfo_children():
-            # print("running widget 2")
+            # print("running widget 2",page)
             page.destroy()
         label = tk.Label(self.header,
                          text=title,
@@ -344,7 +404,7 @@ class TkinterApp(tk.Tk):
         #     else:
         #         print(' Generation faild')
 
-        self.on_call_create(cont, cls=cls, cls_=cls1)
+        self.on_call_create(cont, *cls)
         label.pack(side=tk.LEFT, padx=0, fill='both')
         # frame.tkraise()
 
@@ -545,17 +605,17 @@ class SidebarSubMenu(tk.Frame):
 
 class ShowMsg:
 
-    def pop_msg(self, title="Automatic Timetable Generator", qn="Continue to generate time table") -> bool:
+    def pop_msg(self, title="Automatic Timetable Generator", qn="Do you want to generate new  time table ?") -> bool:
         """
        Msg show
         """
-        generate = messagebox.askyesno(
+        respo = messagebox.askyesno(
             title,
             qn
 
         )
 
-        if (generate == True):
+        if (respo == True):
             print("Generating.......")
 
 
@@ -563,41 +623,17 @@ class ShowMsg:
             print("xxxxxxxxxx")
 
         # messagebox.showinfo(title=None, message="Generated")
-        return generate
+        return respo
 
-
-class Splash(tk.Tk):
-    """
-     The class creates a header and sidebar for the application. Also creates
-    resources in the sidebar,
-    """
-
-    def __init__(self):
-        tk.Tk.__init__(self)
-
-        # Initialise the classes Here
-
-        self.style = ttk.Style(self)
-        self.call("source", PATH_)
-        self.call("source", PATH__)
-        self.style.theme_use("forest-dark")
-        self.title("Automatic Timetable Generator")
-        # # self.overrideredirect(True)
-
-        # ------------- BASIC APP LAYOUT -----------------
-
-        self.geometry("1100x700")
-        # self.geometry()
-        self.resizable(True, True)
-        self.config(background=selectionbar_color)
-        # icon = tk.PhotoImage(file=PATH / 'LU_logo.png')
-        # self.iconphoto(True, icon)
 
 
 # Ticketing system call
 class TicketPurpose(Enum):
     UPDATE_PROGRESS_TEXT = auto()
+    UPDATE_PROGRESS_HOME: int = auto()
     UPDATE_PROGRESS_HEADING = auto()
+    UPDATE_PROGRESS_PROJECT_NAME:str = auto()
+    REMOVE_SPLASH: str = auto()
 
 
 class Ticket:

@@ -13,8 +13,8 @@ from flask import Flask,send_file
 
 from Pdf_Generator.pdf_generator import main as generate_pdf_schedule
 
-PDF_PATH = Path(__file__).parent / 'Generated_Time_Table.pdf'
-app = Flask(__name__)
+
+
 class TtGenerator:
     instance = None
 

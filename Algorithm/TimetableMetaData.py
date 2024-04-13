@@ -14,7 +14,7 @@ class TimetableMetaData:
 
     def __init__(self,cls=None):
         self.isInfoSet=False
-        self.time_table_name = ""
+        self.time_table_name = "temp file"
         self.creator_name = ""
         self.institute_name = ""
         self.timeDimension__=cls

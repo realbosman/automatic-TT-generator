@@ -49,14 +49,18 @@ class GenerateTimeTable(tk.Frame):
     """
     The Groups class provides a way to view  the groups in the timetable.
     """
-    def __init__(self, parent, cls,cls_=None):
+    def __init__(self, parent, *cls):
 
 
         ttk.Frame.__init__(self, parent)
         self.progress_numder=0;
-        self.gen_time_dimension=cls
-        self.get_metadata=cls_
-        print(" self.get_metadata.time_table_name,==", self.get_metadata.time_table_name,)
+        self.gen_time_dimension,self.get_metadata,self.space_,self.lectures_,self.lecturers_,self.algorithm_  =cls
+        # print("cls>>>>",cls)
+
+
+        # print(" self.get_metadata.time_table_name,==", self.get_metadata.time_table_name,)
+
+        self.name_timetble=self.get_metadata.time_table_name
         self.frame_=tk.Frame(self,background="black",)
         self.frame_.pack( fill=tk.BOTH,expand=1,anchor="center")
 
@@ -67,7 +71,7 @@ class GenerateTimeTable(tk.Frame):
         self.global_stop_execution=False
 
 
-        self.algorithm_ = TtGenerator()
+
 
 
 
@@ -131,22 +135,26 @@ class GenerateTimeTable(tk.Frame):
 
 
     def update_text(self):
-        while self.algorithm_.progress_var <=100:
-            ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_TEXT,
-                            ticket_value=self.algorithm_.progress_var)
-            self.queue_message.put(ticket)
-            self.event_generate("<<CheckQueue>>", when="tail")
-            time.sleep(.2)  # This delay helps to relieve the  while and the processor
+        try:
+            while self.algorithm_.progress_var <= 100:
+                ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_TEXT,
+                                ticket_value=self.algorithm_.progress_var)
+                self.queue_message.put(ticket)
+                self.event_generate("<<CheckQueue>>", when="tail")
+                time.sleep(.2)
+        except:
+            print("<CheckQueue>> already unbound")
 
-    def gen_process(self,title,creator):
-        self.space_ = SpaceManager()
-        self.lectures_ = SessionManager()
-        self.lecturers_ = TutorsManager()
+
+        # This delay helps to relieve the  while and the processor
+
+    def gen_process(self,t_res,l_res,s_res,title,creator):
+
         self.timetableMetadata = TimetableMetaData(self.gen_time_dimension)
         # print("DDDDDAAAYAYAYYA", self.gen_time_dimension.Days["headers"])
-        self.algorithm_.random_generator(self.gen_time_dimension.get_algo_reources(),
-                                         self.lectures_.get_algo_reources(),
-                                         self.space_.get_algo_reources(),
+        self.algorithm_.random_generator(t_res,
+                                         l_res,
+                                         s_res,
                                          title,
                                          creator
                                          )
@@ -157,14 +165,18 @@ class GenerateTimeTable(tk.Frame):
 
 
     def generate_thread(self):
-        new_thread = Thread(target=self.gen_process, daemon=True,args=(self.get_metadata.time_table_name,self.get_metadata.creator_name))  # I can pass args = "any" for the target
+        new_thread = Thread(target=self.gen_process, daemon=True,args=(self.gen_time_dimension.get_algo_reources(),self.lectures_.get_algo_reources(),
+                                                                       self.space_.get_algo_reources(),
+                                                                       self.get_metadata.time_table_name,self.get_metadata.creator_name,))  # I can pass args = "any" for the target
         new_thread.start()
         self.update_thread()
 
 
-    def visualize_Time_table(self,parent,):
+
+
+    def visualize_Time_table(self,parent,name):
         time.sleep(5)
-        for widget in self.frame_.winfo_children():
+        for widget in parent.winfo_children():
             # print("running widget 1")
             widget.destroy()
         # Create a vertical scrollbar
@@ -188,10 +200,8 @@ class GenerateTimeTable(tk.Frame):
 
         # Open the PDF file
         self.listener__ = Listener()
-        self.timetableMetadata = TimetableMetaData(self.gen_time_dimension)
 
-
-        pdf_document = fitz.open(f'{self.listener__.get_app_path()}\{self.timetableMetadata.time_table_name}.pdf')
+        pdf_document = fitz.open(rf'{self.listener__.get_app_path()}\{name}.pdf')
 
         # Load and display each page of the PDF as a resized image
         self.images = []
@@ -211,8 +221,12 @@ class GenerateTimeTable(tk.Frame):
         self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
     def visualize_Time_table_thread(self):
-        new_thread = Thread(target=self.visualize_Time_table, daemon=True,args=(self.frame_,))  # I can pass args = "any" for the target
+        print("FROM VISUAL==", self.get_metadata.time_table_name)
+        # TODO STACK HERE
+        new_thread = Thread(target=self.visualize_Time_table, daemon=True,args=(self.frame_,
+                                                                                self.name_timetble,))  # I can pass args = "any" for the target
         new_thread.start()
+
 
 
 

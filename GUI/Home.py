@@ -20,12 +20,13 @@ class Home(tk.Frame):
     The Home class provides a way to view and edit the time table metadata.
     """
 
-    def __init__(self, parent, cls,cls_):
+    def __init__(self, parent, *cls):
         ttk.Frame.__init__(self, parent)
 
-
-        self.timeTableMetaData__ = cls
-        self.td = cls_
+        self.timeTableMetaData__,self.td,self.listenerr = cls
+        # print(self.listenerr.getStateHome())
+        self.listenerr.setStateHome(True)
+        # print(self.listenerr.getStateHome())
         self.project_name__ = ""
         self.project_creator__ = ""
         self.institute_name__ = ""
@@ -270,6 +271,7 @@ class Home(tk.Frame):
 
 
     def save_thread(self):
+        self.listenerr.setStateHome(False)
         print("Threading started")
         new_thread = Thread(target=self.save_information, daemon=True,
                             )  # I can pass args = "any" for the target

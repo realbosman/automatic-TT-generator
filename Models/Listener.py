@@ -17,7 +17,7 @@ class Listener:
         return cls.instance
 
     def __init__(self, * args):
-        stateHome: bool = False
+        self.stateHome: bool = False
         # Get the path to the Documents folder
         self.documents_folder = os.path.join(os.environ["USERPROFILE"], "Documents")
 
