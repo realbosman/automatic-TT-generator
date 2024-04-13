@@ -9,10 +9,9 @@ import time
 import webbrowser
 from pathlib import Path
 
-from flask import Flask,send_file
+from flask import Flask, send_file
 
 from Pdf_Generator.pdf_generator import main as generate_pdf_schedule
-
 
 
 class TtGenerator:
@@ -23,13 +22,13 @@ class TtGenerator:
             cls.instance = object.__new__(cls)
         return cls.instance
 
-    def __init__(self,*cls):
-        self.Groups=None
+    def __init__(self, *cls):
+        self.Groups = None
         for arg in cls:
-            self.Groups=arg
+            self.Groups = arg
 
         self.progress_var = 0
-        self.Full_Time_table_dict=dict()
+        self.Full_Time_table_dict = dict()
         self.Full_Time_table_list = list()
         self.TimeTable = {
             "MON": [],
@@ -41,7 +40,7 @@ class TtGenerator:
             "SUN": [],
         }
         self.list_ = list()
-        self.list_Merged_Time_dict=dict()
+        self.list_Merged_Time_dict = dict()
         self.timeslots_lst = list()
         self.class_rooms_lst = list()
         self.created_lectures_details_lst = list()
@@ -50,7 +49,7 @@ class TtGenerator:
 
         # TODO this generates the pdf file
 
-    def random_generator(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst,title,creator):
+    def random_generator(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst, title, creator):
 
         self.timeslots_lst = timeslots_lst
         self.class_rooms_lst = class_rooms_lst
@@ -62,52 +61,64 @@ class TtGenerator:
         # Every subgroup has to be wit its own timeslots to prvent overlapping of time
         for item in self.Groups.get_sub_groups():
             print("item,", str(f'{re.findall(r"<(.*?)>", item)[1]}'))
-            self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", item)[1]}')]=timeslots_lst
-        print("self.list_Merged_Time_dict",self.list_Merged_Time_dict)
-
-
+            self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", item)[1]}')] = timeslots_lst
+        print("self.list_Merged_Time_dict", self.list_Merged_Time_dict)
 
         for i in range(count_created_lectures):
+            time_picked = ""
+            lecture_picked = ""
+            space_picked = ""
+            is_merge_timeslots = False
+
             # TODO this is where if a lecturer has already got or picked time first priority
-            # TODO if the rooms are over go get a brand new class rooms
             lecture_picked = random.choice(self.created_lectures_details_lst)
-            time_picked = random.choice( self.timeslots_lst)
 
-            #Randomly Picking time  from the corresponding timeslot
-            # sep_ = str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}').split(',', -1)
-            #
-            # if len(sep_) <= 1:
-            #     time_picked = random.choice(
-            #         self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
-            # else:
-            #     print("Do something")
+            # Randomly Picking time  from the corresponding timeslot
+            # TODO MANAGE TIME
+            sep_ = str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}').split(',', -1)
 
+            if len(sep_) <= 1:
+                time_picked = random.choice(
+                    self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
+            else:
+                is_merge_timeslots = True
+                print("SET =", self.intersection_of_n_sets(self.set_list_of_sets(sep_)))
+                inter_set = self.intersection_of_n_sets(self.set_list_of_sets(sep_))
+                # Handle the empty set in case there is no intersection.
 
+                if len(inter_set) == 0:
+                    pass
+                else:
+                    time_picked = random.choice(list(inter_set))
 
+            # TODO if the rooms are over go get a brand new class rooms
             space_picked = random.choice(self.class_rooms_lst)
 
             # TODO what if lecturer_dicts equates to zero when pop is done
 
-            # TODO MANAGE TIME
-            if len(self.timeslots_lst) == 0:
-                # print("Overlapping IN TIME ")
-                break
+
+            # if len(self.timeslots_lst) == 0:
+            #     # print("Overlapping IN TIME ")
+            #     break
             # TODO if the rooms are over go get a brand new class rooms
 
-
-            #TODO: THIS IS WHERE TO ADD THE CREATED TO THE LIST (Remeber to each the overlapping here)
+            # TODO: THIS IS WHERE TO ADD THE CREATED TO THE LIST (Remeber to each the overlapping here)
 
             # print("<><><><><>",lecture_picked,time_picked)
 
+            # Packing the values into a list to hold all the occurrences
             self.Full_Time_table_list.append(
-                f'<{re.findall(r"<(.*?)>",lecture_picked)[2]}><{re.findall(r"<(.*?)>",lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>",lecture_picked)[1]}><{re.findall(r"<(.*?)>",time_picked)[0]}><{re.findall(r"<(.*?)>",time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'
+                f'<{re.findall(r"<(.*?)>", lecture_picked)[2]}><{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[0]}><{re.findall(r"<(.*?)>", time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'
             )
-
 
             self.TimeTable[re.findall(r'<(.*?)>', time_picked)[0]].append(
                 str(f'<{re.findall(r"<(.*?)>", lecture_picked)[2]}><{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'))
 
-            self.timeslots_lst.remove(time_picked)
+            if is_merge_timeslots == True:
+                self.pop_time_slot(sep_,time_picked)
+            else:
+                self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')].remove(time_picked)
+
             self.created_lectures_details_lst.remove(lecture_picked)
             self.class_rooms_lst.remove(space_picked)
 
@@ -115,9 +126,11 @@ class TtGenerator:
                 self.created_lectures_details_lst)) / count_created_lectures)) * 100)
             # print("Progress:", self.progress_var)
 
+            # TODO: Check all the timeslots to see if the list are not empty
+
             # time.sleep(3)
         # self.cleanPrint()
-        generate_pdf_schedule(self.get__pdf_resources(),title=title,creator=creator)
+        generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator)
         time.sleep(3)
         self.open_pdf()
 
@@ -130,11 +143,9 @@ class TtGenerator:
         print(f'SAT = {self.TimeTable["SAT"]}')
         print(f'SUN = {self.TimeTable["SUN"]}')
 
-
     def open_pdf(self):
 
         pass
-
 
     # this should be in the model section
     def edit_TimeTable_days(self):
@@ -199,13 +210,13 @@ class TtGenerator:
 
     def get__pdf_resources(self) -> list:
         # print(self.Full_Time_table_list)
-        for faculty in  self.Full_Time_table_list:
+        for faculty in self.Full_Time_table_list:
             self.Full_Time_table_dict[str(f'{re.findall(r"<(.*?)>", faculty)[1]}')] = dict()  # the faculty dict
 
-        for faculty in  self.Full_Time_table_dict.keys():
+        for faculty in self.Full_Time_table_dict.keys():
             for item in self.Full_Time_table_list:
-                txt_item =str(f'{re.findall(r"<(.*?)>", item)[3]}')
-                if  str(f'{re.findall(r"<(.*?)>", item)[1]}')== faculty:
+                txt_item = str(f'{re.findall(r"<(.*?)>", item)[3]}')
+                if str(f'{re.findall(r"<(.*?)>", item)[1]}') == faculty:
                     sep_ = txt_item.split(',')
                     if len(sep_) > 1:
                         for i, text in enumerate(sep_):
@@ -213,19 +224,18 @@ class TtGenerator:
                     else:
                         self.Full_Time_table_dict[faculty][txt_item] = list()
 
-
         for faculty in self.Full_Time_table_dict.keys():
             for sub_group in self.Full_Time_table_dict[faculty].keys():
                 for item in self.Full_Time_table_list:
                     if str(f'{re.findall(r"<(.*?)>", item)[1]}') == faculty:
-                        txt_item=str(f'{re.findall(r"<(.*?)>", item)[3]}')
-                        sep_ = txt_item.split(',',-1)
+                        txt_item = str(f'{re.findall(r"<(.*?)>", item)[3]}')
+                        sep_ = txt_item.split(',', -1)
                         # print("Before", txt_item)
                         # print("Sep", sep_)
                         if len(sep_) > 1:
 
                             for i, text in enumerate(sep_):
-                                key=str(f'{re.findall(r"<(.*?)>", item)[4]}')
+                                key = str(f'{re.findall(r"<(.*?)>", item)[4]}')
                                 day = None
                                 if key == "MON":
                                     day = "Monday"
@@ -247,14 +257,13 @@ class TtGenerator:
                                 dict_ = {
                                 }
 
-                                a, b, c, d, e, f ,g= re.findall(r'<(.*?)>', item)
+                                a, b, c, d, e, f, g = re.findall(r'<(.*?)>', item)
                                 # print("+++",self.TimeTable[key][i])
                                 name = d + "," + " " + a + "," + " " + g + "," + " " + c
                                 dict_['name'] = name
                                 dict_['days'] = day
                                 dict_['time'] = f
                                 dict_['color'] = "FF94EF"
-
 
                                 self.Full_Time_table_dict[faculty][text].append(dict_)
 
@@ -291,7 +300,36 @@ class TtGenerator:
 
                             self.Full_Time_table_dict[faculty][txt_item].append(dict_)
 
-
         # print("This fine")
         # print(self.Full_Time_table_dict)
         return self.Full_Time_table_dict
+
+    def intersection_of_n_sets(self, list_of_sets):
+        if not list_of_sets:
+            return set()  # If there are no sets, return an empty set
+
+        intersection_set = list_of_sets[0]  # Start with the first set
+
+        for s in list_of_sets[1:]:  # Iterate over the remaining sets
+            intersection_set = intersection_set.intersection(s)  # Take the intersection
+
+            # If the intersection becomes empty at any point, return an empty set
+            if not intersection_set:
+                return set()
+
+        return intersection_set
+
+    def set_list_of_sets(self, subgroups):
+        list_ = list()
+        for group in subgroups:
+            list_.append(set(self.list_Merged_Time_dict[group]))
+        return list_
+
+    def pop_time_slot(self, subgroups, time_slot):
+        for group in subgroups:
+            for index,time_slot_ in enumerate(self.list_Merged_Time_dict[group]):
+                if time_slot_==time_slot:
+                    self.list_Merged_Time_dict[group].remove(time_slot_)
+
+
+

@@ -20,7 +20,7 @@ class TimetableMetaData:
 
     def __init__(self,cls=None):
         self.isInfoSet=False
-        self.time_table_name="TimeTable"
+        self.time_table_name="_"
         self.creator_name = ""
         self.institute_name = ""
         self.timeDimension__=cls
