@@ -20,7 +20,10 @@ class Tutor(tk.Frame):
 
     def __init__(self, parent, *cls):
         ttk.Frame.__init__(self, parent)
-        self.tutor__ = cls
+
+
+        for arg in cls:
+            self.tutor__ = arg
         # self.config(bg=visualisation_frame_color)
         self.combo = tk.StringVar()
         self.combo2 = tk.StringVar()

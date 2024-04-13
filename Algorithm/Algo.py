@@ -23,7 +23,11 @@ class TtGenerator:
             cls.instance = object.__new__(cls)
         return cls.instance
 
-    def __init__(self):
+    def __init__(self,*cls):
+        self.Groups=None
+        for arg in cls:
+            self.Groups=arg
+
         self.progress_var = 0
         self.Full_Time_table_dict=dict()
         self.Full_Time_table_list = list()
@@ -37,6 +41,7 @@ class TtGenerator:
             "SUN": [],
         }
         self.list_ = list()
+        self.list_Merged_Time_dict=dict()
         self.timeslots_lst = list()
         self.class_rooms_lst = list()
         self.created_lectures_details_lst = list()
@@ -53,12 +58,31 @@ class TtGenerator:
         self.list_.clear()
         count_created_lectures = len(self.created_lectures_details_lst)
 
+        # Making  copy of lists from the time
+        # Every subgroup has to be wit its own timeslots to prvent overlapping of time
+        for item in self.Groups.get_sub_groups():
+            print("item,", str(f'{re.findall(r"<(.*?)>", item)[1]}'))
+            self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", item)[1]}')]=timeslots_lst
+        print("self.list_Merged_Time_dict",self.list_Merged_Time_dict)
+
+
+
         for i in range(count_created_lectures):
             # TODO this is where if a lecturer has already got or picked time first priority
             # TODO if the rooms are over go get a brand new class rooms
             lecture_picked = random.choice(self.created_lectures_details_lst)
+            time_picked = random.choice( self.timeslots_lst)
 
-            time_picked = random.choice(self.timeslots_lst)
+            #Randomly Picking time  from the corresponding timeslot
+            # sep_ = str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}').split(',', -1)
+            #
+            # if len(sep_) <= 1:
+            #     time_picked = random.choice(
+            #         self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
+            # else:
+            #     print("Do something")
+
+
 
             space_picked = random.choice(self.class_rooms_lst)
 
@@ -92,7 +116,7 @@ class TtGenerator:
             # print("Progress:", self.progress_var)
 
             # time.sleep(3)
-        self.cleanPrint()
+        # self.cleanPrint()
         generate_pdf_schedule(self.get__pdf_resources(),title=title,creator=creator)
         time.sleep(3)
         self.open_pdf()
@@ -268,6 +292,6 @@ class TtGenerator:
                             self.Full_Time_table_dict[faculty][txt_item].append(dict_)
 
 
-        print("This fine")
-        print(self.Full_Time_table_dict)
+        # print("This fine")
+        # print(self.Full_Time_table_dict)
         return self.Full_Time_table_dict

@@ -67,7 +67,7 @@ class TkinterApp(tk.Tk):
 
         self.timeDimension = TimeDimension()
         self.timetableMetadata = TimetableMetaData(self.timeDimension)
-        self.algorithm_ = TtGenerator()
+        self.algorithm_ = TtGenerator( self.lectures_)
         self.isHomeSaved = True
 
         self.style = ttk.Style(self)
@@ -158,20 +158,20 @@ class TkinterApp(tk.Tk):
 
                                           )
         resource_submenu.options["TimeSlots"].config(
-            command=lambda: self.show_frame(TimeSlots, "Create TimeSlots", self.timeDimension)
+            command=lambda: self.show_frame(TimeSlots, "Create TimeSlots", self.timeDimension,)
 
         )
         resource_submenu.options["Classroom/Room/Space"].config(
-            command=lambda: self.show_frame(Space, "Create Classroom/Room/Space", self.space_)
+            command=lambda: self.show_frame(Space, "Create Classroom/Room/Space", self.space_,)
         )
         resource_submenu.options["Instructor/Lecturer/Tutor"].config(
-            command=lambda: self.show_frame(Tutor, "Instructor/Lecturer/Tutor", self.lecturers_)
+            command=lambda: self.show_frame(Tutor, "Instructor/Lecturer/Tutor", self.lecturers_,)
         )
         resource_submenu.options["Course/Class/Session"].config(
-            command=lambda: self.show_frame(Session, "Course/Class/Session", self.lectures_)
+            command=lambda: self.show_frame(Session, "Course/Class/Session", self.lectures_,)
         )
         resource_submenu.options["Groups"].config(
-            command=lambda: self.show_frame(Groups_, "Groups", self.lectures_)
+            command=lambda: self.show_frame(Groups_, "Groups", self.lectures_,)
         )
 
         self.changeOnHover(resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
@@ -233,7 +233,8 @@ class TkinterApp(tk.Tk):
 
 
             if self.timetableMetadata.time_table_name == prev_project_name:
-               pass
+                pass
+               # print("The same")
             else:
                 ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_PROJECT_NAME,
                                 ticket_value= self.timetableMetadata.time_table_name)
@@ -244,7 +245,7 @@ class TkinterApp(tk.Tk):
             if count==5:
                 ticket = Ticket(ticket_type=TicketPurpose.REMOVE_SPLASH,
                                 ticket_value="splash")
-                prev_project_name = self.timetableMetadata.time_table_name
+
                 self.queue_message.put(ticket)
                 self.event_generate("<<CheckQueue_Main>>", when="tail")
 

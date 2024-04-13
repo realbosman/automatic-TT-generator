@@ -22,7 +22,10 @@ class TimeSlots(tk.Frame):
 
     def __init__(self, parent, *cls):
         ttk.Frame.__init__(self, parent)
-        self.timeDimension__ = cls
+        print("TIME CLS",cls)
+
+        for arg in cls:
+            self.timeDimension__= arg
 
         # self.config(bg=visualisation_frame_color)
         self.combo = tk.StringVar()

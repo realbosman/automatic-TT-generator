@@ -53,19 +53,37 @@ class GenerateTimeTable(tk.Frame):
 
 
         ttk.Frame.__init__(self, parent)
-        self.progress_numder=0;
-        self.gen_time_dimension,self.get_metadata,self.space_,self.lectures_,self.lecturers_,self.algorithm_  =cls
+        self.progress_number=0;
+
+        for index,arg in enumerate(cls):
+            print("Running args")
+            if index==0:
+                self.gen_time_dimension= arg
+            if index == 1:
+               self.get_metadata  = arg
+            if index == 2:
+                 self.space_= arg
+            if index == 3:
+               self.lectures_ = arg
+            if index == 4:
+               self.lecturers_= arg
+            if index == 5:
+                self.algorithm_ = arg
+        # print("FROM VISUAL After args ==", self.get_metadata.time_table_name)
+
+
         # print("cls>>>>",cls)
 
 
         # print(" self.get_metadata.time_table_name,==", self.get_metadata.time_table_name,)
 
-        self.name_timetble=self.get_metadata.time_table_name
+        self.name_timetable=self.get_metadata.time_table_name
+        # print("FROM VISUAL After args plus name ==", self.get_metadata.time_table_name, self.name_timetable)
         self.frame_=tk.Frame(self,background="black",)
         self.frame_.pack( fill=tk.BOTH,expand=1,anchor="center")
 
         self.queue_message = Queue()
-        self.bind("<<CheckQueue>>", self.Check_Queue)
+        self.bind("<<CheckQueue_gen>>", self.Check_Queue)
         self.txt_var=tk.StringVar(value="Generating TimeTable: 0%")
         self.txt_var_ = tk.StringVar()
         self.global_stop_execution=False
@@ -78,6 +96,7 @@ class GenerateTimeTable(tk.Frame):
 
 
         self.animate_()
+        # print(" After ANimate args plus name ==", self.get_metadata.time_table_name, self.name_timetable)
 
         self.ll = ttk.Label(self.frame_, textvariable=self.txt_var,background='black',font=16)
         self.ll.place(x=0,y=0,relx=0.4,rely=0.55)
@@ -124,11 +143,13 @@ class GenerateTimeTable(tk.Frame):
         if msg.ticket_type == TicketPurpose.UPDATE_PROGRESS_TEXT:
             self.txt_var.set(f'Generating TimeTable: {msg.ticket_value}%')
             if msg.ticket_value==100:
+                # print("Before 100 ==", self.get_metadata.time_table_name, self.name_timetable)
                 self.txt_var.set(f'Generating TimeTable Done: 100%')
                 self.txt_var_.set(f'Preparing .....')
                 self.visualize_Time_table_thread()
-                print("Running")
-                self.unbind("<<CheckQueue>>")
+                # print("after 100  and thread==", self.get_metadata.time_table_name, self.name_timetable)
+                # print("Running")
+                self.unbind("<<CheckQueue_gen>>")
 
 
 
@@ -140,10 +161,10 @@ class GenerateTimeTable(tk.Frame):
                 ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_TEXT,
                                 ticket_value=self.algorithm_.progress_var)
                 self.queue_message.put(ticket)
-                self.event_generate("<<CheckQueue>>", when="tail")
+                self.event_generate("<<CheckQueue_gen>>", when="tail")
                 time.sleep(.2)
         except:
-            print("<CheckQueue>> already unbound")
+            print("<<CheckQueue_gen>> already unbound")
 
 
         # This delay helps to relieve the  while and the processor
@@ -221,11 +242,14 @@ class GenerateTimeTable(tk.Frame):
         self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
     def visualize_Time_table_thread(self):
-        print("FROM VISUAL==", self.get_metadata.time_table_name)
+        # print("FROM VISUAL Before ==", self.get_metadata.time_table_name,)
         # TODO STACK HERE
-        new_thread = Thread(target=self.visualize_Time_table, daemon=True,args=(self.frame_,
-                                                                                self.name_timetble,))  # I can pass args = "any" for the target
-        new_thread.start()
+        new_thread_ = Thread(target=self.visualize_Time_table, daemon=True, args=(self.frame_,
+                                                                                self.name_timetable,))  # I can pass args = "any" for the target
+        new_thread_.start()
+        self.get_metadata.time_table_name=self.name_timetable
+
+        # print("FROM VISUAL After==", self.get_metadata.time_table_name)
 
 
 

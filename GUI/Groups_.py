@@ -28,7 +28,9 @@ class Groups_(tk.Frame):
     def __init__(self, parent, *cls):
 
         ttk.Frame.__init__(self, parent)
-        self.session_manager=cls
+
+        for arg in cls:
+            self.session_manager=arg
         self.cf = CollapsingFrame(self)
         self.cf.pack(fill=tk.BOTH)
         print(IMG_PATH)

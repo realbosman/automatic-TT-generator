@@ -18,6 +18,7 @@ class Listener:
 
     def __init__(self, * args):
         self.stateHome: bool = False
+        self.timeTableNameListener="Listener time Name";
         # Get the path to the Documents folder
         self.documents_folder = os.path.join(os.environ["USERPROFILE"], "Documents")
 
@@ -37,4 +38,5 @@ class Listener:
 
     def get_app_path(self):
         return self.app_documents_folder
+
 

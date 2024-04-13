@@ -1,6 +1,6 @@
 class ClassRoomModel:
     '''
-     This class creates  a class room
+    This is ClassRoomModel ,on initialization is takes classRoom data
     '''
 
     def __init__(self, class_room_name, class_room_capacity):
@@ -17,7 +17,7 @@ class ClassRoomModel:
 
 class SpaceManager:
     '''
-       This class manages the space
+       This class manages the space/Class Room
        '''
 
     instance = None
