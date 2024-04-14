@@ -3,8 +3,8 @@ from Algorithm.Algo import TtGenerator
 from Models.ClassRoomModel import ClassRoomModel, ClassRooms
 from Models.CourseUnitModel import CourseUnitModel
 from Models.Manager import Manager
-from Models.CreatedLectures import CreatedLecture, CreatedLectures
-from Models.Lecturer_Model import Lecturer_Model
+
+from Models.Tutor_Model import Lecturer_Model
 from tabulate import tabulate
 
 from Models.TimeDimension import TimeDimension

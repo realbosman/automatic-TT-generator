@@ -29,6 +29,7 @@ class TtGenerator:
         self.progress_var = 0
         self.Full_Time_table_dict = dict()
         self.Full_Time_table_list = list()
+        self.Tutor_tracking=list()
         self.TimeTable = {
             "MON": [],
             "TUE": [],
@@ -90,6 +91,7 @@ class TtGenerator:
                 # Handle the empty set in case there is no intersection.
 
                 if len(inter_set) == 0:
+                    # TODO what if no intersection
                     pass
                 else:
                     time_picked = random.choice(list(inter_set))
@@ -97,16 +99,27 @@ class TtGenerator:
             # TODO if the rooms are over go get a brand new class rooms
             space_picked = random.choice(self.class_rooms_lst)
 
-            # TODO what if lecturer_dicts equates to zero when pop is done
 
-            # if len(self.timeslots_lst) == 0:
-            #     # print("Overlapping IN TIME ")
-            #     break
-            # TODO if the rooms are over go get a brand new class rooms
+            tutor_and_time=f'<{re.findall(r"<(.*?)>", lecture_picked)[3]}><{time_picked}>'
+            # Check if the Tutor is already in the tutor tracking list
+            if tutor_and_time in self.Tutor_tracking:
+                # Find free time for the Tutor
+                if len(sep_) <= 1:
+                    print("Ohh Ohh Tutor overlaping <=1")
+                    for new_time in self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')]:
+                        if new_time != time_picked:
+                            time_picked=new_time
+                else:
+                    print("Ohh Ohh Tutor overlaping >1")
+                    # TODO something if the more groups share the same Tutor and Tutor is occupied at that time
+                    pass
+            else:
+                # Add the Tutor and timeslot to the tutor tracking list if there is no overlap
+                self.Tutor_tracking.append(tutor_and_time)
 
-            # TODO: THIS IS WHERE TO ADD THE CREATED TO THE LIST (Remeber to each the overlapping here)
 
-            # print("<><><><><>",lecture_picked,time_picked)
+
+
 
             # Packing the values into a list to hold all the occurrences
             self.Full_Time_table_list.append(
@@ -134,11 +147,11 @@ class TtGenerator:
 
         generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator)
         time.sleep(3)
-        self.open_pdf()
+
 
     def get__pdf_resources(self) -> list:
         """
-        This function generates the PDF resources, after the time table has been created.
+        This function generates the PDF resources, after the timetable has been created.
         :return dict():
         """
         # print(self.Full_Time_table_list)

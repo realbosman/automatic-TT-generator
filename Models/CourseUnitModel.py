@@ -1,4 +1,4 @@
-from Models.Lecturer_Model import TutorsManager
+from Models.Tutor_Model import TutorsManager
 
 
 class CourseUnitModel:

@@ -70,7 +70,6 @@ class TutorsManager:
 
 
 
-
     def get_algo_reources(self) -> list:
         algo_list = list()
         for lst in self.Space_List:

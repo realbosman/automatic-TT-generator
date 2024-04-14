@@ -27,7 +27,7 @@ from GUI.Tutor import Tutor
 from GUI.variables_ import Global_variables
 from Models.ClassRoomModel import SpaceManager
 from Models.CourseUnitModel import SessionManager
-from Models.Lecturer_Model import TutorsManager
+from Models.Tutor_Model import TutorsManager
 from Models.Listener import Listener
 from Models.TimeDimension import TimeDimension
 

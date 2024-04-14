@@ -45,7 +45,7 @@ visualisation_frame_color = "#2B2B2B"
 TEXT_COLOR = '#AFB1B3'
 
 
-class GenerateTimeTable(tk.Frame):
+class View(tk.Frame):
     """
     The Groups class provides a way to view  the groups in the timetable.
     """
@@ -95,7 +95,7 @@ class GenerateTimeTable(tk.Frame):
 
 
 
-        self.animate_()
+
         # print(" After ANimate args plus name ==", self.get_metadata.time_table_name, self.name_timetable)
 
         self.ll = ttk.Label(self.frame_, textvariable=self.txt_var,background='black',font=16)
@@ -109,29 +109,6 @@ class GenerateTimeTable(tk.Frame):
 
 
 
-    def animate_(self):
-        # open the GIF and create a cycle iterator
-        file_path = Path(__file__).parent / "assets/spp_smaller.gif"
-        with Image.open(file_path) as im:
-            # create a sequence
-            sequence = ImageSequence.Iterator(im)
-            images = [ImageTk.PhotoImage(s) for s in sequence]
-            self.image_cycle = cycle(images)
-
-            # length of each frame
-            self.framerate = im.info["duration"]
-
-        self.img_container = ttk.Label(self.frame_, image=next(self.image_cycle),border=None)
-        self.img_container.place(x=0,y=0,relx=0.45,rely=0.4)
-        self.after(self.framerate, self.next_frame)
-
-    def next_frame(self):
-        """Update the image for each frame"""
-        try:
-            self.img_container.configure(image=next(self.image_cycle))
-            self.after(self.framerate, self.next_frame)
-        except:
-            print("spinner already deleted")
 
 
     def Check_Queue(self, e):
