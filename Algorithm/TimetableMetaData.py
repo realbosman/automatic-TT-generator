@@ -1,3 +1,4 @@
+from Models.Listener import Listener
 from Models.TimeDimension import TimeDimension
 
 class TimetableMetaData:
@@ -44,6 +45,7 @@ class TimetableMetaData:
         self.creators_email = creators_email
         self.preferences_list = preferences_list
         self.timeDimension__.set_from_metadata_thread(days_list)
+        Listener.timeTableNameListener=time_table_name_
         # self.days_list=self.timeDimension__.refresh_list_Home_timetable_metadata()
 
 

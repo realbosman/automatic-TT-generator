@@ -1,42 +1,56 @@
 import os
+import os
 
 
 class Listener:
+    # Static variables to store state and timetable name
+    stateHome = False
+    timeTableNameListener = "Timetbale Name"
+    isTimeTableCreated = False
+    isOptionsUpdated=False
+    preferenceList = ["TimeSlots", "Groups", "Classroom/Room/Space", "Course/Class/Session",
+                      "Instructor/Lecturer/Tutor"]
 
-    instance = None
-    countInstance = 0
+    @staticmethod
+    def get_app_path():
+        # Static method to get the path to the app's documents folder
+        documents_folder = os.path.join(os.environ["USERPROFILE"], "Documents")
+        app_documents_folder = os.path.join(documents_folder, "Automated TimeTable Generator")
+        if not os.path.exists(app_documents_folder):
+            os.makedirs(app_documents_folder)
+        return app_documents_folder
 
-    def __new__(cls, *args, **kwargs):
-        if not isinstance(cls.instance, cls):
-            cls.instance = object.__new__(cls)
-            cls.countInstance += 1
-            print(cls.countInstance)
-        else:
-            print(cls.countInstance)
+    @staticmethod
+    def get_state_home():
+        # Static method to get the state of home
+        return Listener.stateHome
 
-        return cls.instance
+    @staticmethod
+    def set_state_home(state):
+        # Static method to set the state of home
+        Listener.stateHome = state
 
-    def __init__(self, * args):
-        self.stateHome: bool = False
-        self.timeTableNameListener="Listener time Name";
-        # Get the path to the Documents folder
-        self.documents_folder = os.path.join(os.environ["USERPROFILE"], "Documents")
+    @staticmethod
+    def set_time_table_name(name):
+        # Static method to set the timetable name
+        Listener.timeTableNameListener = name
 
-        # Create a directory within the Documents folder to store your app's documents
-        self.app_documents_folder = os.path.join(self.documents_folder, "Automated TimeTable Generator")
-
-        # Check if the app_documents_folder already exists
-        if not os.path.exists(self.app_documents_folder):
-            # If it doesn't exist, create it
-            os.makedirs(self.app_documents_folder)
-
-    def getStateHome(self):
-        return self.stateHome
-
-    def setStateHome(self, state):
-        self.stateHome = state
-
-    def get_app_path(self):
-        return self.app_documents_folder
+    @staticmethod
+    def get_time_table_name():
+        # Static method to get the timetable name
+        return Listener.timeTableNameListener
 
 
+class TimeTableManager:
+    # Static variable to store the timetable name
+    timeTableNameListener = ""
+
+    @staticmethod
+    def set_time_table_name(name):
+        # Setter method to update the timetable name
+        TimeTableManager.timeTableNameListener = name
+
+    @staticmethod
+    def get_time_table_name():
+        # Getter method to retrieve the timetable name
+        return TimeTableManager.timeTableNameListener

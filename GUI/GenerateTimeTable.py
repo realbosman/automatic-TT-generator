@@ -8,7 +8,7 @@ from pathlib import Path
 from tkinter import *
 from PIL import ImageTk, Image
 
-from Models.Listener import Listener
+from Models.Listener import Listener, TimeTableManager
 
 _PATH = Path(__file__).parent / 'assets'
 from tkinter import *
@@ -69,6 +69,8 @@ class GenerateTimeTable(tk.Frame):
                self.lecturers_= arg
             if index == 5:
                 self.algorithm_ = arg
+            if index == 5:
+                self.listener___ = arg
         # print("FROM VISUAL After args ==", self.get_metadata.time_table_name)
 
 
@@ -220,9 +222,11 @@ class GenerateTimeTable(tk.Frame):
         self.canvas.create_window((0, 0), window=self.frame_images, anchor=tk.NW)
 
         # Open the PDF file
-        self.listener__ = Listener()
+        # self.listener__ = Listener()
+        Listener.isTimeTableCreated=False
 
-        pdf_document = fitz.open(rf'{self.listener__.get_app_path()}\{name}.pdf')
+
+        pdf_document = fitz.open(rf'{Listener.get_app_path()}\{Listener.timeTableNameListener}.pdf')
 
         # Load and display each page of the PDF as a resized image
         self.images = []
@@ -237,6 +241,18 @@ class GenerateTimeTable(tk.Frame):
         # Update the scroll region to include all the images
         self.frame_images.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
+        Listener.isTimeTableCreated = True
+        Listener.timeTableNameListener=name
+        # To set the timetable name from any frame
+        # TimeTableManager.set_time_table_name(name)
+
+
+        # To get the timetable name from any frame
+
+
+        print("Name:",name)
+        print("LISTENER NAME",Listener.timeTableNameListener)
+        # print("STATIC", TimeTableManager.get_time_table_name())
 
     def on_mousewheel(self,event):
         self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
@@ -245,7 +261,7 @@ class GenerateTimeTable(tk.Frame):
         # print("FROM VISUAL Before ==", self.get_metadata.time_table_name,)
         # TODO STACK HERE
         new_thread_ = Thread(target=self.visualize_Time_table, daemon=True, args=(self.frame_,
-                                                                                self.name_timetable,))  # I can pass args = "any" for the target
+                                                                                Listener.timeTableNameListener,))  # I can pass args = "any" for the target
         new_thread_.start()
         self.get_metadata.time_table_name=self.name_timetable
 

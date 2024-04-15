@@ -1,12 +1,13 @@
 import time
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 from threading import Thread
 from queue import Queue
 from enum import Enum, auto
 
 # -------------------------- DEFINING GLOBAL VARIABLES -------------------------
+from Models.Listener import Listener
 
 selectionbar_color = '#3C3F3F'
 sidebar_color = '#3C3F3F'
@@ -25,7 +26,7 @@ class Home(tk.Frame):
 
         self.timeTableMetaData__,self.td,self.listenerr = cls
         # print(self.listenerr.getStateHome())
-        self.listenerr.setStateHome(True)
+        Listener.set_state_home(True)
         # print(self.listenerr.getStateHome())
         self.project_name__ = ""
         self.project_creator__ = ""
@@ -240,38 +241,67 @@ class Home(tk.Frame):
 
 
     def save_information(self):
-        self.days__.clear()
-        self.preference_lst__.clear()
-        self.project_name__ = self.project_name_var.get()
-        self.project_creator__ = self.project_creator_var.get()
-        self.email__ = self.project_email_var.get()
-        self.institute_name__ = self.project_institute_var.get()
 
-        self.days__.append(self.mon_status_var.get())
-        self.days__.append(self.tue_status_var.get())
-        self.days__.append(self.wed_status_var.get())
-        self.days__.append(self.thur_status_var.get())
-        self.days__.append(self.fri_status_var.get())
-        self.days__.append(self.sat_status_var.get())
-        self.days__.append(self.sun_status_var.get())
+        if self.mon_status_var.get()[-1]=="_" and self.tue_status_var.get()[-1]=="_" and self.wed_status_var.get()[-1]=="_" and self.thur_status_var.get()[-1]=="_" and self.fri_status_var.get()[-1]=="_" and self.sat_status_var.get()[-1]=="_"  and self.sun_status_var.get()[-1]=="_":
+              messagebox.showerror(title="Timetable Metadata Error",message="Days are not selected!,Please select a day.")
+              return
+        elif self.project_creator_var.get()=="":
+            messagebox.showerror(title="Timetable Metadata Error",
+                                 message="Fields can't be left blank.")
+            return
+        elif  self.project_institute_var.get()=="":
+            messagebox.showerror(title="Timetable Metadata Error",
+                                 message="Fields can't be left blank.")
+            return
+        elif self.project_name_var.get()=="" :
+            messagebox.showerror(title="Timetable Metadata Error",
+                                 message="Fields can't be left blank.")
+            return
+        else:
+            self.days__.clear()
+            self.preference_lst__.clear()
+            self.project_name__ = self.project_name_var.get()
+            self.project_creator__ = self.project_creator_var.get()
+            self.email__ = self.project_email_var.get()
+            self.institute_name__ = self.project_institute_var.get()
 
-        self.preference_lst__.append(self.space_status_var.get())
-        self.preference_lst__.append(self.session_status_var.get())
-        self.preference_lst__.append(self.tutor_status_var.get())
+            self.days__.append(self.mon_status_var.get())
+            self.days__.append(self.tue_status_var.get())
+            self.days__.append(self.wed_status_var.get())
+            self.days__.append(self.thur_status_var.get())
+            self.days__.append(self.fri_status_var.get())
+            self.days__.append(self.sat_status_var.get())
+            self.days__.append(self.sun_status_var.get())
 
-        self.timeTableMetaData__.set_timetable_information(
-            True,
-            self.project_name__,
-            self.project_creator__,
-            self.institute_name__,
-            self.email__,
-            self.days__,
-            self.preference_lst__
-        )
+            self.preference_lst__.append(self.space_status_var.get())
+            self.preference_lst__.append(self.session_status_var.get())
+            self.preference_lst__.append(self.tutor_status_var.get())
+
+
+            Listener.preferenceList[2]=self.space_status_var.get()
+            Listener.preferenceList[3] = self.session_status_var.get()
+            Listener.preferenceList[4] = self.tutor_status_var.get()
+            Listener.isOptionsUpdated =True
+            print("Updated", Listener.preferenceList)
+
+            self.timeTableMetaData__.set_timetable_information(
+                True,
+                self.project_name__,
+                self.project_creator__,
+                self.institute_name__,
+                self.email__,
+                self.days__,
+                self.preference_lst__
+            )
+
+
+
+
+
 
 
     def save_thread(self):
-        self.listenerr.setStateHome(False)
+        Listener.set_state_home(False)
         print("Threading started")
         new_thread = Thread(target=self.save_information, daemon=True,
                             )  # I can pass args = "any" for the target

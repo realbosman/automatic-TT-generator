@@ -292,7 +292,7 @@ def main(
         creator="creator"
 
 ):
-    listener__ = Listener()
+
     """
     Weekly schedule typesetter
 
@@ -319,7 +319,7 @@ def main(
         week = FULL_WEEK_EN
 
     if outfile is None:
-        outfile_name = str(Path(f'{listener__.get_app_path()}\{title}').with_suffix(".pdf"))
+        outfile_name = str(Path(f'{Listener.get_app_path()}\{Listener.timeTableNameListener}').with_suffix(".pdf"))
         outfile = click.open_file(outfile_name, "wb")
 
     c = Canvas(outfile, (page_width, page_height))

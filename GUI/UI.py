@@ -11,7 +11,7 @@ from enum import Enum, auto
 # -------------------------- DEFINING GLOBAL VARIABLES -------------------------
 from Algorithm.Algo import TtGenerator
 from Algorithm.TimetableMetaData import TimetableMetaData
-from GUI import  Tutor
+from GUI import Tutor
 from GUI.GenerateTimeTable import GenerateTimeTable
 from GUI.Groups_ import Groups_
 from GUI.Home import Home
@@ -22,13 +22,13 @@ from GUI.Space import Space
 from GUI.Splash import Splash
 from GUI.TimeSlots import TimeSlots
 from GUI.Tutor import Tutor
-
+from GUI.View import View
 
 from GUI.variables_ import Global_variables
 from Models.ClassRoomModel import SpaceManager
 from Models.CourseUnitModel import SessionManager
 from Models.Tutor_Model import TutorsManager
-from Models.Listener import Listener
+from Models.Listener import Listener, TimeTableManager
 from Models.TimeDimension import TimeDimension
 
 selectionbar_color = '#3C3F3F'
@@ -59,15 +59,16 @@ class TkinterApp(tk.Tk):
         # Get the path to the Documents folder
 
         self.listener_ = Listener()
-        # strr=
+        self.isTimetabecreatedMainThread = False
         print("Path to the Documents folder", self.listener_.get_app_path())
         self.space_ = SpaceManager()
         self.lectures_ = SessionManager()
         self.lecturers_ = TutorsManager()
+        self.is_Option_Update = False
 
         self.timeDimension = TimeDimension()
         self.timetableMetadata = TimetableMetaData(self.timeDimension)
-        self.algorithm_ = TtGenerator( self.lectures_)
+        self.algorithm_ = TtGenerator(self.lectures_)
         self.isHomeSaved = True
 
         self.style = ttk.Style(self)
@@ -115,10 +116,10 @@ class TkinterApp(tk.Tk):
         self.title_bar = tk.Frame(self, bg=header_color, relief='sunken', padx=7)
         self.title_bar.place(relx=0, rely=0, relwidth=1, relheight=0.05)
         # bind title bar
-        self.project_name_var=tk.StringVar(value="Project Name")
-        self.project_name=tk.Label(self.title_bar,anchor="center",text="Project Name",background=header_color,textvariable=self.project_name_var)
-        self.project_name.pack(fill=tk.Y,expand=1)
-
+        self.project_name_var = tk.StringVar(value="Project Name")
+        self.project_name = tk.Label(self.title_bar, anchor="center", text="Project Name", background=header_color,
+                                     textvariable=self.project_name_var)
+        self.project_name.pack(fill=tk.Y, expand=1)
 
         # ---------------- HEADER ------------------------
 
@@ -131,7 +132,7 @@ class TkinterApp(tk.Tk):
 
         # ---------------- SIDEBAR -----------------------
         # CREATING FRAME FOR SIDEBAR
-        self.sidebar = tk.Frame(self, bg=sidebar_color, relief='raised',)
+        self.sidebar = tk.Frame(self, bg=sidebar_color, relief='raised', )
         self.sidebar.config(
             highlightbackground="#808080",
             highlightthickness=0.5
@@ -148,30 +149,24 @@ class TkinterApp(tk.Tk):
         # TODO : Rectife this so that it can be handle the list items
         resource_submenu = SidebarSubMenu(self.submenu_frame,
                                           sub_menu_heading='Resources',
-                                          sub_menu_options=["TimeSlots",
-                                                            "Groups",
-                                                            "Classroom/Room/Space",
-                                                            "Course/Class/Session",
-                                                            "Instructor/Lecturer/Tutor"
-
-                                                            ]
+                                          sub_menu_options=Listener.preferenceList
 
                                           )
         resource_submenu.options["TimeSlots"].config(
-            command=lambda: self.show_frame(TimeSlots, "Create TimeSlots", self.timeDimension,)
+            command=lambda: self.show_frame(TimeSlots, "Create TimeSlots", self.timeDimension, )
 
         )
-        resource_submenu.options["Classroom/Room/Space"].config(
-            command=lambda: self.show_frame(Space, "Create Classroom/Room/Space", self.space_,)
+        resource_submenu.options[Listener.preferenceList[2]].config(
+            command=lambda: self.show_frame(Space, f"Create {Listener.preferenceList[2]}", self.space_, )
         )
-        resource_submenu.options["Instructor/Lecturer/Tutor"].config(
-            command=lambda: self.show_frame(Tutor, "Instructor/Lecturer/Tutor", self.lecturers_,)
+        resource_submenu.options[Listener.preferenceList[4]].config(
+            command=lambda: self.show_frame(Tutor, f"{Listener.preferenceList[4]}", self.lecturers_, )
         )
-        resource_submenu.options["Course/Class/Session"].config(
-            command=lambda: self.show_frame(Session, "Course/Class/Session", self.lectures_,)
+        resource_submenu.options[Listener.preferenceList[3]].config(
+            command=lambda: self.show_frame(Session, f"{Listener.preferenceList[4]}", self.lectures_, )
         )
         resource_submenu.options["Groups"].config(
-            command=lambda: self.show_frame(Groups_, "Groups", self.lectures_,)
+            command=lambda: self.show_frame(Groups_, "Groups", self.lectures_, )
         )
 
         self.changeOnHover(resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
@@ -186,7 +181,7 @@ class TkinterApp(tk.Tk):
         Generator_time_table = SidebarSubMenu(self.submenu_frame,
                                               sub_menu_heading='Time Table',
                                               sub_menu_options=["Generate Time Table",
-                                                                "Edit Time Table",
+                                                                "View TimeTable",
                                                                 "Generate PDF",
                                                                 ]
 
@@ -195,8 +190,8 @@ class TkinterApp(tk.Tk):
         Generator_time_table.options["Generate Time Table"].config(
             command=lambda: self.start_time_table_generation()  # self.start_time_table_generation()
         )
-        Generator_time_table.options["Edit Time Table"].config(
-            command=lambda: print("Edit Time Table")
+        Generator_time_table.options["View TimeTable"].config(
+            command=self.view_time_table
         )
         Generator_time_table.options["Generate PDF"].config(
             command=lambda: print("Generate PDF")
@@ -204,7 +199,7 @@ class TkinterApp(tk.Tk):
 
         self.changeOnHover(Generator_time_table.options["Generate Time Table"], visualisation_frame_color,
                            sidebar_color)
-        self.changeOnHover(Generator_time_table.options["Edit Time Table"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(Generator_time_table.options["View TimeTable"], visualisation_frame_color, sidebar_color)
         self.changeOnHover(Generator_time_table.options["Generate PDF"], visualisation_frame_color, sidebar_color)
 
         Generator_time_table.place(relx=0, rely=0.4, relwidth=1, relheight=0.3)
@@ -218,9 +213,6 @@ class TkinterApp(tk.Tk):
         self.frames = {}
         self.show_frame(Splash, " ", self.timetableMetadata, self.timeDimension, self.listener_)
 
-
-
-
     ''''
     This function below calls the clases and passes in them these parameters cls is the model class created at the beginning of the initialisation
     '''
@@ -228,31 +220,59 @@ class TkinterApp(tk.Tk):
     def run_after_period(self):
         count = 1
         prev_project_name = self.timetableMetadata.time_table_name
+        preferencelstMain = Listener.preferenceList
+        print("Before Updated", Listener.preferenceList)
+
         while True:
             count = count + 1
+            self.isTimetabecreatedMainThread = Listener.isTimeTableCreated
+            print(count)
+            print("After Updated", Listener.preferenceList)
 
 
-            if self.timetableMetadata.time_table_name == prev_project_name:
-                pass
-               # print("The same")
-            else:
-                ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_PROJECT_NAME,
-                                ticket_value= self.timetableMetadata.time_table_name)
-                prev_project_name=self.timetableMetadata.time_table_name
+            if Listener.isOptionsUpdated==True:
+                for widget in self.submenu_frame.winfo_children():
+                    # print("running widget 1")
+                    widget.destroy()
+                ticket = Ticket(ticket_type=TicketPurpose.UPDATE_OPTIONS,
+                                ticket_value=1)
                 self.queue_message.put(ticket)
                 self.event_generate("<<CheckQueue_Main>>", when="tail")
 
-            if count==5:
+
+                # self.update_Options(3)
+
+            if Listener.preferenceList[4] != preferencelstMain[4]:
+                print("CHANGED", Listener.preferenceList)
+                preferencelstMain = Listener.preferenceList
+                self.is_Option_Update = True
+                for widget in self.submenu_frame.winfo_children():
+                    # print("running widget 1")
+                    widget.destroy()
+                ticket = Ticket(ticket_type=TicketPurpose.UPDATE_OPTIONS,
+                                ticket_value=1)
+                self.queue_message.put(ticket)
+                self.event_generate("<<CheckQueue_Main>>", when="tail")
+                # self.update_Options(4)
+
+            if self.timetableMetadata.time_table_name == prev_project_name:
+                pass
+            # print("The same")
+            else:
+                ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_PROJECT_NAME,
+                                ticket_value=self.timetableMetadata.time_table_name)
+                prev_project_name = self.timetableMetadata.time_table_name
+                self.queue_message.put(ticket)
+                self.event_generate("<<CheckQueue_Main>>", when="tail")
+
+            if count == 5:
                 ticket = Ticket(ticket_type=TicketPurpose.REMOVE_SPLASH,
                                 ticket_value="splash")
 
                 self.queue_message.put(ticket)
                 self.event_generate("<<CheckQueue_Main>>", when="tail")
 
-
-
-
-            if self.listener_.getStateHome() == False:
+            if Listener.get_state_home() == False:
                 ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_HOME,
                                 ticket_value=1)
                 self.queue_message.put(ticket)
@@ -263,7 +283,6 @@ class TkinterApp(tk.Tk):
                                 ticket_value=0)
                 self.queue_message.put(ticket)
                 self.event_generate("<<CheckQueue_Main>>", when="tail")
-
 
             # print("StateHome",self.listener_.getStateHome())
             time.sleep(.6)
@@ -286,21 +305,34 @@ class TkinterApp(tk.Tk):
             else:
                 self.isHomeSaved = False
         if msg.ticket_type == TicketPurpose.UPDATE_PROGRESS_PROJECT_NAME:
-           self.project_name_var.set(msg.ticket_value)
+            self.project_name_var.set(msg.ticket_value)
 
         if msg.ticket_type == TicketPurpose.REMOVE_SPLASH:
-            if msg.ticket_value=="splash":
+            if msg.ticket_value == "splash":
                 for page in self.container.winfo_children():
                     # print(type(Splash),"I want SPlASH", type(page))
                     page.destroy()
                     self.show_frame(Home, "Time table Metadata", self.timetableMetadata, self.timeDimension,
                                     self.listener_)
+        if msg.ticket_type == TicketPurpose.UPDATE_OPTIONS:
+            if msg.ticket_value == 1:
+                self.update_Options()
+                Listener.isOptionsUpdated=False
+            print("OPTIONS UPDATE", Listener.preferenceList)
 
-
-
-
-
-
+    def view_time_table(self):
+        self.listener__ = Listener()
+        if self.isTimetabecreatedMainThread:
+            print("VIEWNAME __", Listener.timeTableNameListener)
+            print("VIEWNAME _", Listener.timeTableNameListener)
+            # print("STATIC", TimeTableManager.get_time_table_name())
+            if Listener.timeTableNameListener != "":
+                self.show_frame(View, "Time table Metadata", self.timetableMetadata,
+                                self.timeDimension, self.listener_)
+            else:
+                messagebox.showerror(title="View TimeTable", message="No timetable information available")
+        else:
+            messagebox.showerror(title="View", message="No timetable information available")
 
     # function to change properties of button on hover
     def changeOnHover(self, view, colorOnHover, colorOnLeave):
@@ -320,7 +352,7 @@ class TkinterApp(tk.Tk):
 
             self.show_frame(GenerateTimeTable, "Generate Time Table", self.timeDimension, self.timetableMetadata,
                             self.space_,
-                            self.lectures_, self.lecturers_, self.algorithm_)
+                            self.lectures_, self.lecturers_, self.algorithm_, self.listener_)
         else:
             print(' Generation faild')
 
@@ -408,6 +440,67 @@ class TkinterApp(tk.Tk):
         self.on_call_create(cont, *cls)
         label.pack(side=tk.LEFT, padx=0, fill='both')
         # frame.tkraise()
+
+    def update_Options(self):
+        # TODO : Rectife this so that it can be handle the list items
+        resource_submenu = SidebarSubMenu(self.submenu_frame,
+                                          sub_menu_heading='Resources',
+                                          sub_menu_options=Listener.preferenceList
+
+                                          )
+        resource_submenu.options["TimeSlots"].config(
+            command=lambda: self.show_frame(TimeSlots, "Create TimeSlots", self.timeDimension, )
+
+        )
+        resource_submenu.options[Listener.preferenceList[2]].config(
+            command=lambda: self.show_frame(Space, f"Create {Listener.preferenceList[2]}", self.space_, )
+        )
+        resource_submenu.options[Listener.preferenceList[4]].config(
+            command=lambda: self.show_frame(Tutor, f"{Listener.preferenceList[4]}", self.lecturers_, )
+        )
+        resource_submenu.options[Listener.preferenceList[3]].config(
+            command=lambda: self.show_frame(Session, f"{Listener.preferenceList[3]}", self.lectures_, )
+        )
+        resource_submenu.options["Groups"].config(
+            command=lambda: self.show_frame(Groups_, "Groups", self.lectures_, )
+        )
+
+        self.changeOnHover(resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(resource_submenu.options[Listener.preferenceList[2]], visualisation_frame_color,
+                           sidebar_color)
+        self.changeOnHover(resource_submenu.options[Listener.preferenceList[3]], visualisation_frame_color,
+                           sidebar_color)
+        self.changeOnHover(resource_submenu.options[Listener.preferenceList[4]], visualisation_frame_color,
+                           sidebar_color)
+        self.changeOnHover(resource_submenu.options["Groups"], visualisation_frame_color, sidebar_color)
+
+        resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
+
+        generator_time_table = SidebarSubMenu(self.submenu_frame,
+                                              sub_menu_heading='Time Table',
+                                              sub_menu_options=["Generate Time Table",
+                                                                "View TimeTable",
+                                                                "Generate PDF",
+                                                                ]
+
+                                              )
+
+        generator_time_table.options["Generate Time Table"].config(
+            command=lambda: self.start_time_table_generation()  # self.start_time_table_generation()
+        )
+        generator_time_table.options["View TimeTable"].config(
+            command=self.view_time_table
+        )
+        generator_time_table.options["Generate PDF"].config(
+            command=lambda: print("Generate PDF")
+        )
+
+        self.changeOnHover(generator_time_table.options["Generate Time Table"], visualisation_frame_color,
+                           sidebar_color)
+        self.changeOnHover(generator_time_table.options["View TimeTable"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(generator_time_table.options["Generate PDF"], visualisation_frame_color, sidebar_color)
+
+        generator_time_table.place(relx=0, rely=0.4, relwidth=1, relheight=0.3)
 
 
 # ------------------------ MULTIPAGE FRAMES ------------------------------------
@@ -627,14 +720,14 @@ class ShowMsg:
         return respo
 
 
-
 # Ticketing system call
 class TicketPurpose(Enum):
     UPDATE_PROGRESS_TEXT = auto()
     UPDATE_PROGRESS_HOME: int = auto()
     UPDATE_PROGRESS_HEADING = auto()
-    UPDATE_PROGRESS_PROJECT_NAME:str = auto()
+    UPDATE_PROGRESS_PROJECT_NAME: str = auto()
     REMOVE_SPLASH: str = auto()
+    UPDATE_OPTIONS: int = auto()
 
 
 class Ticket:

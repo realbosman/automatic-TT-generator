@@ -1,12 +1,7 @@
 import time
 import tkinter as tk
-from tkinter import ttk
 from pathlib import Path
-from PIL import Image, ImageTk, ImageSequence
-from itertools import cycle
-from pathlib import Path
-from tkinter import *
-from PIL import ImageTk, Image
+from tkinter import ttk, messagebox
 
 from Models.Listener import Listener
 
@@ -18,21 +13,12 @@ import fitz  # PyMuPDF
 from threading import Thread
 from queue import Queue
 from enum import Enum, auto
-from flask import Flask, send_file
 from pathlib import Path
-import re
 
-from tk import *
 #
-from Algorithm.Algo import TtGenerator
 from Algorithm.TimetableMetaData import TimetableMetaData
-from Models.ClassRoomModel import SpaceManager
-from Models.CourseUnitModel import SessionManager
-from Models.Tutor_Model import TutorsManager
-from Models.TimeDimension import TimeDimension
 
 IMG_PATH = Path(__file__).parent / 'assets'
-
 
 # import openpyxl
 
@@ -49,67 +35,17 @@ class View(tk.Frame):
     """
     The Groups class provides a way to view  the groups in the timetable.
     """
+
     def __init__(self, parent, *cls):
 
-
         ttk.Frame.__init__(self, parent)
-        self.progress_number=0;
 
-        for index,arg in enumerate(cls):
-            print("Running args")
-            if index==0:
-                self.gen_time_dimension= arg
-            if index == 1:
-               self.get_metadata  = arg
-            if index == 2:
-                 self.space_= arg
-            if index == 3:
-               self.lectures_ = arg
-            if index == 4:
-               self.lecturers_= arg
-            if index == 5:
-                self.algorithm_ = arg
-        # print("FROM VISUAL After args ==", self.get_metadata.time_table_name)
+        for arg in cls:
+            self.listener_View=arg
 
+        self.NameListener=self.listener_View.timeTableNameListener
 
-        # print("cls>>>>",cls)
-
-
-        # print(" self.get_metadata.time_table_name,==", self.get_metadata.time_table_name,)
-
-        self.name_timetable=self.get_metadata.time_table_name
-        # print("FROM VISUAL After args plus name ==", self.get_metadata.time_table_name, self.name_timetable)
-        self.frame_=tk.Frame(self,background="black",)
-        self.frame_.pack( fill=tk.BOTH,expand=1,anchor="center")
-
-        self.queue_message = Queue()
-        self.bind("<<CheckQueue_gen>>", self.Check_Queue)
-        self.txt_var=tk.StringVar(value="Generating TimeTable: 0%")
-        self.txt_var_ = tk.StringVar()
-        self.global_stop_execution=False
-
-
-
-
-
-
-
-
-
-        # print(" After ANimate args plus name ==", self.get_metadata.time_table_name, self.name_timetable)
-
-        self.ll = ttk.Label(self.frame_, textvariable=self.txt_var,background='black',font=16)
-        self.ll.place(x=0,y=0,relx=0.4,rely=0.55)
-        self.ll2 = ttk.Label(self.frame_, textvariable=self.txt_var_, background='black', font=16)
-        # self.ll2.place(x=0, y=0, relx=0.4, rely=0.65)
-
-
-        self.generate_thread()
-
-
-
-
-
+        self.visualize_Time_table_thread()
 
     def Check_Queue(self, e):
         """
@@ -119,7 +55,7 @@ class View(tk.Frame):
         msg = self.queue_message.get()
         if msg.ticket_type == TicketPurpose.UPDATE_PROGRESS_TEXT:
             self.txt_var.set(f'Generating TimeTable: {msg.ticket_value}%')
-            if msg.ticket_value==100:
+            if msg.ticket_value == 100:
                 # print("Before 100 ==", self.get_metadata.time_table_name, self.name_timetable)
                 self.txt_var.set(f'Generating TimeTable Done: 100%')
                 self.txt_var_.set(f'Preparing .....')
@@ -127,10 +63,6 @@ class View(tk.Frame):
                 # print("after 100  and thread==", self.get_metadata.time_table_name, self.name_timetable)
                 # print("Running")
                 self.unbind("<<CheckQueue_gen>>")
-
-
-
-
 
     def update_text(self):
         try:
@@ -143,10 +75,9 @@ class View(tk.Frame):
         except:
             print("<<CheckQueue_gen>> already unbound")
 
-
         # This delay helps to relieve the  while and the processor
 
-    def gen_process(self,t_res,l_res,s_res,title,creator):
+    def gen_process(self, t_res, l_res, s_res, title, creator):
 
         self.timetableMetadata = TimetableMetaData(self.gen_time_dimension)
         # print("DDDDDAAAYAYAYYA", self.gen_time_dimension.Days["headers"])
@@ -161,28 +92,26 @@ class View(tk.Frame):
         new_thread = Thread(target=self.update_text, daemon=True)  # I can pass args = "any" for the target
         new_thread.start()
 
-
     def generate_thread(self):
-        new_thread = Thread(target=self.gen_process, daemon=True,args=(self.gen_time_dimension.get_algo_reources(),self.lectures_.get_algo_reources(),
-                                                                       self.space_.get_algo_reources(),
-                                                                       self.get_metadata.time_table_name,self.get_metadata.creator_name,))  # I can pass args = "any" for the target
+        new_thread = Thread(target=self.gen_process, daemon=True,
+                            args=(self.gen_time_dimension.get_algo_reources(), self.lectures_.get_algo_reources(),
+                                  self.space_.get_algo_reources(),
+                                  self.get_metadata.time_table_name,
+                                  self.get_metadata.creator_name,))  # I can pass args = "any" for the target
         new_thread.start()
         self.update_thread()
 
-
-
-
-    def visualize_Time_table(self,parent,name):
+    def visualize_Time_table(self, parent, name):
         time.sleep(5)
         for widget in parent.winfo_children():
             # print("running widget 1")
             widget.destroy()
         # Create a vertical scrollbar
         self.scrollbar = tk.Scrollbar(parent)
-        self. scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         # Create a canvas
-        self.canvas = tk.Canvas(parent, width=700,height=600, yscrollcommand=self.scrollbar.set)
+        self.canvas = tk.Canvas(parent, width=700, height=600, yscrollcommand=self.scrollbar.set)
         self.canvas.place(relx=.5, rely=.5, anchor=tk.CENTER)
         # self.canvas.tkraise()
 
@@ -197,9 +126,13 @@ class View(tk.Frame):
         self.canvas.create_window((0, 0), window=self.frame_images, anchor=tk.NW)
 
         # Open the PDF file
-        self.listener__ = Listener()
+        # self.listener__ = Listener()
+        if name == "":
+            print("Name:", name)
+            messagebox.showerror(title="Error",message=f'<{name}>')
+            return
+        pdf_document = fitz.open(rf'{Listener.get_app_path()}\{name}.pdf')
 
-        pdf_document = fitz.open(rf'{self.listener__.get_app_path()}\{name}.pdf')
 
         # Load and display each page of the PDF as a resized image
         self.images = []
@@ -215,22 +148,18 @@ class View(tk.Frame):
         self.frame_images.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
-    def on_mousewheel(self,event):
+    def on_mousewheel(self, event):
         self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
 
     def visualize_Time_table_thread(self):
         # print("FROM VISUAL Before ==", self.get_metadata.time_table_name,)
         # TODO STACK HERE
-        new_thread_ = Thread(target=self.visualize_Time_table, daemon=True, args=(self.frame_,
-                                                                                self.name_timetable,))  # I can pass args = "any" for the target
+        time.sleep(.4)
+        new_thread_ = Thread(target=self.visualize_Time_table, daemon=True, args=(self,
+                                                                                  Listener.timeTableNameListener,))  # I can pass args = "any" for the target
         new_thread_.start()
-        self.get_metadata.time_table_name=self.name_timetable
 
         # print("FROM VISUAL After==", self.get_metadata.time_table_name)
-
-
-
-
 
 
 # Ticketing system call
@@ -244,7 +173,3 @@ class Ticket:
                  ticket_value: int):
         self.ticket_type = ticket_type
         self.ticket_value = ticket_value
-
-
-
-
