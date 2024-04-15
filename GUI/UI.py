@@ -82,6 +82,22 @@ class TkinterApp(tk.Tk):
         self.bind("<<CheckQueue_Main>>", self.Check_Queue)
         self.run_after_period_thread()
 
+        # # create a horizontal scrollbar by
+        # # setting orient to horizontal
+        # h = tk.Scrollbar(self, orient='horizontal')
+        # # attach Scrollbar to root window at
+        # # the bootom
+        # h.pack(side=tk.BOTTOM, fill=tk.X)
+        #
+        # # create a vertical scrollbar-no need
+        # # to write orient as it is by
+        # # default vertical
+        # v = tk.Scrollbar(self)
+        #
+        # # attach Scrollbar to root window on
+        # # the side
+        # v.pack(side=tk.RIGHT, fill=tk.Y)
+
         # ------------- BASIC APP LAYOUT -----------------
 
         self.geometry("1100x700")
@@ -221,13 +237,13 @@ class TkinterApp(tk.Tk):
         count = 1
         prev_project_name = self.timetableMetadata.time_table_name
         preferencelstMain = Listener.preferenceList
-        print("Before Updated", Listener.preferenceList)
+        # print("Before Updated", Listener.preferenceList)
 
         while True:
             count = count + 1
             self.isTimetabecreatedMainThread = Listener.isTimeTableCreated
-            print(count)
-            print("After Updated", Listener.preferenceList)
+            # print(count)
+            # print("After Updated", Listener.preferenceList)
 
 
             if Listener.isOptionsUpdated==True:
@@ -243,7 +259,7 @@ class TkinterApp(tk.Tk):
                 # self.update_Options(3)
 
             if Listener.preferenceList[4] != preferencelstMain[4]:
-                print("CHANGED", Listener.preferenceList)
+                # print("CHANGED", Listener.preferenceList)
                 preferencelstMain = Listener.preferenceList
                 self.is_Option_Update = True
                 for widget in self.submenu_frame.winfo_children():
@@ -286,6 +302,9 @@ class TkinterApp(tk.Tk):
 
             # print("StateHome",self.listener_.getStateHome())
             time.sleep(.6)
+            # Make count 10
+            if count >1000:
+                count=10
 
     def run_after_period_thread(self):
         new_thread = Thread(target=self.run_after_period, daemon=True,
@@ -411,7 +430,7 @@ class TkinterApp(tk.Tk):
 
             if isTrue == True:
                 self.isHomeSaved = True
-                self.listener_.setStateHome(False)
+                Listener.set_state_home(False)
                 pass
             else:
                 return

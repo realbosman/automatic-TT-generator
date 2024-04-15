@@ -55,10 +55,11 @@ class SessionManager:
             ["CSC 1202 OBJECTORIENTED PROGRAMMING", "Mr. KASAAZI George William", "SCIENCE", "BSC IT 1"],
             ["COMPUTER 1 CSC 1203 DATABASE MANAGEMENT SYSTEMS", "KALEMA PETER", "SCIENCE", "BSC IT 1,BSC CS 1"],
             ["CSC 1201 SYSTEM ANALYSIS & DESIGN", "LUBOWA SAMUEL", "SCIENCE", "BSC CS 1,BSC IT 1"],
-            ["CSC1104 PRINCIPLES OF PROGRAMMING", "KASOZI BRIAN", "SCIENCE", "BSC IT 1"]
+            ["CSC1104 PRINCIPLES OF PROGRAMMING", "KASOZI BRIAN", "SCIENCE", "BSC IT 1"],
+            ["My", "Tony", "BAM", "BAM 1"]
         ]
 
-        # self.set_groups_cu()
+        self.set_groups_cu()
 
     def __new__(cls, *args, **kwargs):
         if not isinstance(cls.instance, cls):

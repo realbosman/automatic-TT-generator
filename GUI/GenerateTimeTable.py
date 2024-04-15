@@ -1,6 +1,6 @@
 import time
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 from pathlib import Path
 from PIL import Image, ImageTk, ImageSequence
 from itertools import cycle
@@ -123,7 +123,7 @@ class GenerateTimeTable(tk.Frame):
             # length of each frame
             self.framerate = im.info["duration"]
 
-        self.img_container = ttk.Label(self.frame_, image=next(self.image_cycle),border=None)
+        self.img_container = ttk.Label(self.frame_, image=next(self.image_cycle),border=None,background="black")
         self.img_container.place(x=0,y=0,relx=0.45,rely=0.4)
         self.after(self.framerate, self.next_frame)
 
@@ -198,7 +198,7 @@ class GenerateTimeTable(tk.Frame):
 
 
     def visualize_Time_table(self,parent,name):
-        time.sleep(5)
+        time.sleep(.5)
         for widget in parent.winfo_children():
             # print("running widget 1")
             widget.destroy()
@@ -207,7 +207,7 @@ class GenerateTimeTable(tk.Frame):
         self. scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         # Create a canvas
-        self.canvas = tk.Canvas(parent, width=700,height=600, yscrollcommand=self.scrollbar.set)
+        self.canvas = tk.Canvas(parent, width=800,height=600, yscrollcommand=self.scrollbar.set)
         self.canvas.place(relx=.5, rely=.5, anchor=tk.CENTER)
         # self.canvas.tkraise()
 
@@ -219,14 +219,17 @@ class GenerateTimeTable(tk.Frame):
 
         # Create a frame inside the canvas to hold the images
         self.frame_images = tk.Frame(self.canvas)
-        self.canvas.create_window((0, 0), window=self.frame_images, anchor=tk.NW)
+        self.canvas.create_window((0, 0), window=self.frame_images, anchor=tk.CENTER)
 
         # Open the PDF file
         # self.listener__ = Listener()
         Listener.isTimeTableCreated=False
 
 
-        pdf_document = fitz.open(rf'{Listener.get_app_path()}\{Listener.timeTableNameListener}.pdf')
+        try:
+           pdf_document = fitz.open(rf'{Listener.get_app_path()}\{Listener.timeTableNameListener}.pdf')
+        except:
+            messagebox.showerror(title="Error", message="Timetable generation error")
 
         # Load and display each page of the PDF as a resized image
         self.images = []
@@ -234,7 +237,7 @@ class GenerateTimeTable(tk.Frame):
             page = pdf_document.load_page(page_number)
             pixmap = page.get_pixmap(matrix=fitz.Matrix(2, 2))
             # Resize the image
-            img = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples).resize((700, 700))
+            img = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples).resize((800, 800))
             img = ImageTk.PhotoImage(image=img)
             self.images.append(img)
             self.canvas.create_image(10, 10 + page_number * (img.height() + 10), anchor=NW, image=img)
@@ -255,7 +258,11 @@ class GenerateTimeTable(tk.Frame):
         # print("STATIC", TimeTableManager.get_time_table_name())
 
     def on_mousewheel(self,event):
-        self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        try:
+          self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        except:
+            print("Exception in on_mousewheel method GenerateTimeTable.py")
+
 
     def visualize_Time_table_thread(self):
         # print("FROM VISUAL Before ==", self.get_metadata.time_table_name,)

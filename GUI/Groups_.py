@@ -42,6 +42,7 @@ class Groups_(tk.Frame):
 
     def render_groups(self):
         self.frame_list.clear()
+        self.session_manager.set_groups_cu()
 
         for i , faculty in enumerate(self.session_manager.get_faculty_cu()):
             self.frame_list.append(ttk.Frame(self.cf, padding=10))
@@ -51,12 +52,6 @@ class Groups_(tk.Frame):
                 if re.findall(r"<(.*?)>", sub_group)[0] ==  faculty:
                     ttk.Checkbutton(self.frame_list[i], text=f'{re.findall(r"<(.*?)>", sub_group)[1]}').pack(fill=tk.X)
             self.cf.add(child=self.frame_list[i], title=f'{faculty}')
-
-
-
-
-
-
 
 
 

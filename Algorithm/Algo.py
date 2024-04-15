@@ -22,6 +22,7 @@ class TtGenerator:
         This is TtGenerator constructor that  accepts n parameters
         :param cls:
         """
+        self.is_merge_timeslots = None
         self.Groups = None
         for arg in cls:
             self.Groups = arg
@@ -55,24 +56,37 @@ class TtGenerator:
         :param creator:
         :return None:
         """
-        self.timeslots_lst = timeslots_lst
+
+
         self.class_rooms_lst = class_rooms_lst
         self.created_lectures_details_lst = created_lectures_details_lst
         self.list_.clear()
+        self.is_merge_timeslots = False
         count_created_lectures = len(self.created_lectures_details_lst)
 
         # Making  copy of lists from the time
-        # Every subgroup has to be wit its own timeslots to prvent overlapping of time
+        # Every subgroup has to be with its own timeslots to prvent overlapping of time
         for item in self.Groups.get_sub_groups():
-            print("item,", str(f'{re.findall(r"<(.*?)>", item)[1]}'))
-            self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", item)[1]}')] = timeslots_lst
-        print("self.list_Merged_Time_dict", self.list_Merged_Time_dict)
+                self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", item)[1]}')]=list()
+
+        # TODO: Give each subgroup its own timeslots so that they don't overlap or share the same Reference from  timeslots_lst(Also check others to see)
+        for item in self.Groups.get_sub_groups():
+            # print("item,", str(f'{re.findall(r"<(.*?)>", item)[1]}'))
+            for value in timeslots_lst:
+                self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", item)[1]}')].append(value)
+                self.timeslots_lst.append(value)
+        # print("self.list_Merged_Time_dict", self.list_Merged_Time_dict)
 
         for i in range(count_created_lectures):
+            # print("DIP CS 1===", self.list_Merged_Time_dict["DIP CS 1"])
+            # print("BSC IT 1===", self.list_Merged_Time_dict["BSC IT 1"])
+            # print("BSC CS 1===", self.list_Merged_Time_dict["BSC CS 1"])
+            # print("Self.timeslots_lst",  self.timeslots_lst)
+            # print("timeslots_lst", timeslots_lst)
             time_picked = ""
             lecture_picked = ""
             space_picked = ""
-            is_merge_timeslots = False
+
 
             # TODO this is where if a lecturer has already got or picked time first priority
             lecture_picked = random.choice(self.created_lectures_details_lst)
@@ -82,11 +96,17 @@ class TtGenerator:
             sep_ = str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}').split(',', -1)
 
             if len(sep_) <= 1:
-                time_picked = random.choice(
+
+                try:
+                  time_picked = random.choice(
                     self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
+                except:
+                    # print("So this is the problem==", lecture_picked,self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
+                    return
+
             else:
-                is_merge_timeslots = True
-                print("SET =", self.intersection_of_n_sets(self.set_list_of_sets(sep_)))
+                self.is_merge_timeslots = True
+                # print("SET =", self.intersection_of_n_sets(self.set_list_of_sets(sep_)))
                 inter_set = self.intersection_of_n_sets(self.set_list_of_sets(sep_))
                 # Handle the empty set in case there is no intersection.
 
@@ -100,17 +120,18 @@ class TtGenerator:
             space_picked = random.choice(self.class_rooms_lst)
 
 
+
             tutor_and_time=f'<{re.findall(r"<(.*?)>", lecture_picked)[3]}><{time_picked}>'
             # Check if the Tutor is already in the tutor tracking list
             if tutor_and_time in self.Tutor_tracking:
                 # Find free time for the Tutor
                 if len(sep_) <= 1:
-                    print("Ohh Ohh Tutor overlaping <=1")
+                    # print("Ohh Ohh Tutor overlaping <=1")
                     for new_time in self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')]:
                         if new_time != time_picked:
                             time_picked=new_time
                 else:
-                    print("Ohh Ohh Tutor overlaping >1")
+                    # print("Ohh Ohh Tutor overlaping >1")
                     # TODO something if the more groups share the same Tutor and Tutor is occupied at that time
                     pass
             else:
@@ -129,10 +150,16 @@ class TtGenerator:
             self.TimeTable[re.findall(r'<(.*?)>', time_picked)[0]].append(
                 str(f'<{re.findall(r"<(.*?)>", lecture_picked)[2]}><{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'))
 
-            if is_merge_timeslots:
+            if self.is_merge_timeslots == True:
+                # print("Reaching ................................................")
                 self.remove_time_slot(sep_, time_picked)
+                self.is_merge_timeslots = False
+                # print("POPPED-- :", self.list_Merged_Time_dict,
+                #       lecture_picked)
+
             else:
                 self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')].remove(time_picked)
+                # print("POPPED :",self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')],lecture_picked)
 
             self.created_lectures_details_lst.remove(lecture_picked)
             self.class_rooms_lst.remove(space_picked)
@@ -288,6 +315,7 @@ class TtGenerator:
         :param time_slot:
         :return:
         """
+        print("These are the groups",subgroups)
         for group in subgroups:
             for index, time_slot_ in enumerate(self.list_Merged_Time_dict[group]):
                 if time_slot_ == time_slot:

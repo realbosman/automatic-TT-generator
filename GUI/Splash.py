@@ -65,7 +65,7 @@ class Splash(tk.Frame):
             # length of each frame
             self.framerate = im.info["duration"]
 
-        self.img_container = ttk.Label(self.frame_, image=next(self.image_cycle),border=None)
+        self.img_container = ttk.Label(self.frame_, image=next(self.image_cycle),background="black",border=None)
         self.img_container.place(x=0,y=0,relx=0.45,rely=0.4)
         self.after(self.framerate, self.next_frame)
 

@@ -333,13 +333,15 @@ def main(
         c.scale(factor, factor)
 
     data = list()
+    # print("infile.keys()==",infile.keys())
 
     for faculty in infile.keys():
         for i, sub_group in enumerate(infile[faculty].keys()):
             if i == 0:
                 data.append((f"{faculty}", f'{sub_group}'))
             else:
-                data.append((f"  ", f'{sub_group}'))
+                data.append((f"-", f'{sub_group}'))
+    # print("DATA+++",data)
 
     w, h = A4
     h = h - 100
@@ -357,6 +359,8 @@ def main(
     c.setFontSize(12)
     c.drawCentredString(300, 745, title)
     c.setFontSize(10)
+    print(infile)
+    faculty_=" "
     for rows in grouper(data, max_rows_per_page):
         rows = tuple(filter(bool, rows))
         # print("Rows=====", rows)
@@ -365,26 +369,28 @@ def main(
         for y, row in zip(ylist[:-1], rows):
             count += 1
             # print("Row", row)
+            # print("Row", row[0])
+            if row[0] !="-":
+                faculty_=row[0]
             for x, cell in zip(xlist, row):
                 # Check if the cell is the name field
-                for faculty in infile.keys():
-                    if faculty == str(cell):
+                if str(cell) in infile.keys():
                         c.drawString(x + 2, y - padding + 3, str(cell))
+                else:
+                    for sub_group in infile[faculty_].keys():
+                        if sub_group == str(cell):
+                            toc_item = f"{count}.{str(cell)}"
+                            # print("XCELL___", x, cell)
+                            dest_name = str(cell)
+                            # print("dest", dest_name)
+                            # Rect_cords = (100, y - 10, 400, y + 5)
+                            c.drawString(x + 2, y - padding + 3, toc_item)
+                            # c.rect(*Rect_cords)
+                            c.linkAbsolute(toc_item, dest_name, Rect=(100, y - 10, 400, y + 5))
 
-                for sub_group in infile[faculty].keys():
-                    if sub_group == str(cell):
-                        toc_item = f"{count}.{str(cell)}"
-                        print("XCELL___", x, cell)
-                        dest_name = str(cell)
-                        print("dest",dest_name)
-                        Rect_cords = (100, y - 10, 400, y + 5)
-                        c.drawString(x + 2, y - padding + 3, toc_item)
-                        # c.rect(*Rect_cords)
-                        c.linkAbsolute(toc_item, dest_name, Rect=(100, y-10, 400, y+5))
-
-                    elif str(cell) == "":
-                        print("XCELL", x, cell)
-                        c.drawString(x + 2, y - padding + 3, str(cell + "-----------"))
+                        elif str(cell) == "":
+                            # print("XCELL", x, cell)
+                            c.drawString(x + 2, y - padding + 3, str(cell + "-----------"))
 
         c.showPage()
 

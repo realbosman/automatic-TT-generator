@@ -41,9 +41,9 @@ class View(tk.Frame):
         ttk.Frame.__init__(self, parent)
 
         for arg in cls:
-            self.listener_View=arg
+            self.listener_View = arg
 
-        self.NameListener=self.listener_View.timeTableNameListener
+        self.NameListener = self.listener_View.timeTableNameListener
 
         self.visualize_Time_table_thread()
 
@@ -102,7 +102,7 @@ class View(tk.Frame):
         self.update_thread()
 
     def visualize_Time_table(self, parent, name):
-        time.sleep(5)
+        time.sleep(.2)
         for widget in parent.winfo_children():
             # print("running widget 1")
             widget.destroy()
@@ -111,7 +111,7 @@ class View(tk.Frame):
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
         # Create a canvas
-        self.canvas = tk.Canvas(parent, width=700, height=600, yscrollcommand=self.scrollbar.set)
+        self.canvas = tk.Canvas(parent, width=800, height=600, yscrollcommand=self.scrollbar.set)
         self.canvas.place(relx=.5, rely=.5, anchor=tk.CENTER)
         # self.canvas.tkraise()
 
@@ -123,16 +123,17 @@ class View(tk.Frame):
 
         # Create a frame inside the canvas to hold the images
         self.frame_images = tk.Frame(self.canvas)
-        self.canvas.create_window((0, 0), window=self.frame_images, anchor=tk.NW)
+        self.canvas.create_window((0, 0), window=self.frame_images, anchor=tk.CENTER)
 
         # Open the PDF file
         # self.listener__ = Listener()
         if name == "":
             print("Name:", name)
-            messagebox.showerror(title="Error",message=f'<{name}>')
+            messagebox.showerror(title="Error", message=f'<{name}>')
             return
+        print('Before')
         pdf_document = fitz.open(rf'{Listener.get_app_path()}\{name}.pdf')
-
+        print('After')
 
         # Load and display each page of the PDF as a resized image
         self.images = []
@@ -140,21 +141,26 @@ class View(tk.Frame):
             page = pdf_document.load_page(page_number)
             pixmap = page.get_pixmap(matrix=fitz.Matrix(2, 2))
             # Resize the image
-            img = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples).resize((700, 700))
-            img = ImageTk.PhotoImage(image=img)
+            img: Image = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples).resize((800, 800))
+            img: Image = ImageTk.PhotoImage(image=img)
             self.images.append(img)
             self.canvas.create_image(10, 10 + page_number * (img.height() + 10), anchor=NW, image=img)
+            print('Loop==',page_number)
+
         # Update the scroll region to include all the images
         self.frame_images.update_idletasks()
         self.canvas.config(scrollregion=self.canvas.bbox("all"))
 
     def on_mousewheel(self, event):
-        self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        try:
+          self.canvas.yview_scroll(int(-1 * (event.delta / 120)), "units")
+        except:
+            print("Exception,canvas not visible")
 
     def visualize_Time_table_thread(self):
         # print("FROM VISUAL Before ==", self.get_metadata.time_table_name,)
         # TODO STACK HERE
-        time.sleep(.4)
+        time.sleep(0)
         new_thread_ = Thread(target=self.visualize_Time_table, daemon=True, args=(self,
                                                                                   Listener.timeTableNameListener,))  # I can pass args = "any" for the target
         new_thread_.start()
