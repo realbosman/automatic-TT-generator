@@ -7,6 +7,7 @@ from queue import Queue
 from enum import Enum, auto
 
 # -------------------------- DEFINING GLOBAL VARIABLES -------------------------
+from Algorithm.TimetableMetaData import TimetableMetaData
 from Models.Listener import Listener
 
 selectionbar_color = '#3C3F3F'
@@ -24,6 +25,8 @@ class Home(tk.Frame):
     def __init__(self, parent, *cls):
         ttk.Frame.__init__(self, parent)
 
+
+        print("TimetableMetaData.isInfoSet==",TimetableMetaData.isInfoSet)
         self.timeTableMetaData__,self.td,self.listenerr = cls
         # print(self.listenerr.getStateHome())
         Listener.set_state_home(True)
@@ -204,7 +207,7 @@ class Home(tk.Frame):
         self.terms_frame = ttk.LabelFrame(self.frame_, text="Terms & Conditions")
         self.terms_frame.grid(row=2, column=0, sticky="news", padx=20, pady=10)
 
-        self.terms_check = tk.Label(self.terms_frame, text="Please note, All time are in 24 HOURS clock.")
+        self.terms_check = tk.Label(self.terms_frame, text="Please Note, All time is in 24 HOURS clock.")
         self.terms_check.grid(row=0, column=0)
 
         # Button
@@ -218,19 +221,19 @@ class Home(tk.Frame):
         #############################################################################
 
     def updateUI(self):
-        if self.timeTableMetaData__.get_is_info_set():
+        if TimetableMetaData.isInfoSet:
             # print(self.timeTableMetaData__.time_table_name)
             # print(self.timeTableMetaData__.preferences_list[0])
-            self.project_name_var.set(self.timeTableMetaData__.time_table_name)
-            self.project_creator_var.set(self.timeTableMetaData__.creator_name)
-            self.project_email_var.set(self.timeTableMetaData__.creators_email)
-            self.project_institute_var.set(self.timeTableMetaData__.institute_name)
-            self.space_status_var.set(self.timeTableMetaData__.preferences_list[0])
-            self.session_status_var.set(self.timeTableMetaData__.preferences_list[1])
-            self.tutor_status_var.set(self.timeTableMetaData__.preferences_list[2])
+            self.project_name_var.set(TimetableMetaData.time_table_name)
+            self.project_creator_var.set(TimetableMetaData.creator_name)
+            self.project_email_var.set(TimetableMetaData.creators_email)
+            self.project_institute_var.set(TimetableMetaData.institute_name)
+            self.space_status_var.set(TimetableMetaData.preferences_list_[0])
+            self.session_status_var.set(TimetableMetaData.preferences_list_[1])
+            self.tutor_status_var.set(TimetableMetaData.preferences_list_[2])
 
         mylist=self.refresh_list_Home_timetable_metadata(self.td.Days)
-        print("myyy-",mylist)
+        # print("myyy-",mylist)
         self.mon_status_var.set(mylist[0])
         self.tue_status_var.set(mylist[1])
         self.wed_status_var.set(mylist[2])
@@ -257,6 +260,11 @@ class Home(tk.Frame):
             messagebox.showerror(title="Timetable Metadata Error",
                                  message="Fields can't be left blank.")
             return
+        elif self.space_status_var.get()[-1]=="_" or self.session_status_var.get()[-1]=="_" or self.tutor_status_var.get()[-1]=="_":
+            messagebox.showerror(title="Timetable Metadata Error",
+                                 message="Fields can't be left blank.")
+            return
+
         else:
             self.days__.clear()
             self.preference_lst__.clear()

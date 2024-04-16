@@ -60,11 +60,12 @@ class TkinterApp(tk.Tk):
 
         self.listener_ = Listener()
         self.isTimetabecreatedMainThread = False
-        print("Path to the Documents folder", self.listener_.get_app_path())
+        # print("Path to the Documents folder", self.listener_.get_app_path())
         self.space_ = SpaceManager()
         self.lectures_ = SessionManager()
         self.lecturers_ = TutorsManager()
         self.is_Option_Update = False
+        self.current_frame = "Splash"  # Initially
 
         self.timeDimension = TimeDimension()
         self.timetableMetadata = TimetableMetaData(self.timeDimension)
@@ -81,22 +82,6 @@ class TkinterApp(tk.Tk):
         self.queue_message = Queue()
         self.bind("<<CheckQueue_Main>>", self.Check_Queue)
         self.run_after_period_thread()
-
-        # # create a horizontal scrollbar by
-        # # setting orient to horizontal
-        # h = tk.Scrollbar(self, orient='horizontal')
-        # # attach Scrollbar to root window at
-        # # the bootom
-        # h.pack(side=tk.BOTTOM, fill=tk.X)
-        #
-        # # create a vertical scrollbar-no need
-        # # to write orient as it is by
-        # # default vertical
-        # v = tk.Scrollbar(self)
-        #
-        # # attach Scrollbar to root window on
-        # # the side
-        # v.pack(side=tk.RIGHT, fill=tk.Y)
 
         # ------------- BASIC APP LAYOUT -----------------
 
@@ -245,8 +230,7 @@ class TkinterApp(tk.Tk):
             # print(count)
             # print("After Updated", Listener.preferenceList)
 
-
-            if Listener.isOptionsUpdated==True:
+            if Listener.isOptionsUpdated == True:
                 for widget in self.submenu_frame.winfo_children():
                     # print("running widget 1")
                     widget.destroy()
@@ -254,7 +238,6 @@ class TkinterApp(tk.Tk):
                                 ticket_value=1)
                 self.queue_message.put(ticket)
                 self.event_generate("<<CheckQueue_Main>>", when="tail")
-
 
                 # self.update_Options(3)
 
@@ -303,8 +286,8 @@ class TkinterApp(tk.Tk):
             # print("StateHome",self.listener_.getStateHome())
             time.sleep(.6)
             # Make count 10
-            if count >1000:
-                count=10
+            if count > 1000:
+                count = 10
 
     def run_after_period_thread(self):
         new_thread = Thread(target=self.run_after_period, daemon=True,
@@ -336,7 +319,7 @@ class TkinterApp(tk.Tk):
         if msg.ticket_type == TicketPurpose.UPDATE_OPTIONS:
             if msg.ticket_value == 1:
                 self.update_Options()
-                Listener.isOptionsUpdated=False
+                Listener.isOptionsUpdated = False
             print("OPTIONS UPDATE", Listener.preferenceList)
 
     def view_time_table(self):
@@ -349,9 +332,9 @@ class TkinterApp(tk.Tk):
                 self.show_frame(View, "Time table Metadata", self.timetableMetadata,
                                 self.timeDimension, self.listener_)
             else:
-                messagebox.showerror(title="View TimeTable", message="No timetable information available")
+                messagebox.showerror(title="Automatic Timetable Generator", message="No timetable information available")
         else:
-            messagebox.showerror(title="View", message="No timetable information available")
+            messagebox.showerror(title="Automatic Timetable Generator", message="No timetable information available")
 
     # function to change properties of button on hover
     def changeOnHover(self, view, colorOnHover, colorOnLeave):
@@ -422,17 +405,24 @@ class TkinterApp(tk.Tk):
         Returns:
         None
         """
+
         if self.isHomeSaved == True:
             self.isHomeSaved == False
             pass
         else:
-            isTrue = ShowMsg().pop_msg(title="Home", qn="Do want to continue without saving?")
+            isTrue = ShowMsg().pop_msg(title="Automatic Timetable Generator", qn="Do want to continue without saving?")
 
             if isTrue == True:
                 self.isHomeSaved = True
                 Listener.set_state_home(False)
+                messagebox.showerror(title="Automatic Timetable Generator", message="This might lead to problems!")
                 pass
             else:
+                return
+
+        if self.current_frame == "Session'>":
+            if self.lectures_.check_for_empty_slots():
+                messagebox.showerror(title="Automatic Timetable Generator", message="Some fields are empty, Please fill them or delete the row.")
                 return
 
         # frame = self.frames[cont]
@@ -449,15 +439,12 @@ class TkinterApp(tk.Tk):
                          bg=header_color,
                          fg=TEXT_COLOR)
 
-        # if title != "HOME":
-        #     isTrue = ShowMsg().pop_msg("Automatic Timetable Generator","Are you sure you want to continue.")
-        #     if isTrue:
-        #         self.show_frame(GenerateTimeTable, "Generate Time Table", cls=self.timeDimension)
-        #     else:
-        #         print(' Generation faild')
-
         self.on_call_create(cont, *cls)
+        print("Current FRAME ==", cont)
+        print(str(cont).split(".", -1)[-1])
+        print("Splash'>")
         label.pack(side=tk.LEFT, padx=0, fill='both')
+        self.current_frame = str(cont).split(".", -1)[-1]
         # frame.tkraise()
 
     def update_Options(self):

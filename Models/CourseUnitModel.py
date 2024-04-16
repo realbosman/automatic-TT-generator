@@ -88,10 +88,9 @@ class SessionManager:
             for i, Name in enumerate(lst):
                 if Name == new_session[1]:
                     # TODO if at all a lecture teaches more than one
-                    break
-            else:
-                lst_ = [f'{new_session[1]}', f'{new_session[0]}', '--------']
-                self.tutor.add_new_tutor(lst_, index=-1)
+                    return
+        lst_ = [f'{new_session[1]}', f'{new_session[0]}', '--------']
+        self.tutor.add_new_tutor(lst_, index=None)
 
     def set_groups_cu(self):
         for index, lst in enumerate(self.Session_List):
@@ -129,3 +128,13 @@ class SessionManager:
             else:
                 algo_list.append(f'<{lst[2]}><{lst[3]}><{lst[0]}><{lst[1]}>')
         return algo_list
+
+
+    def check_for_empty_slots(self)-> bool:
+        for lst in self.Session_List:
+            for item  in lst:
+                if item == '--------':
+                    return True
+
+
+
