@@ -30,7 +30,7 @@ class TtGenerator:
         self.progress_var = 0
         self.Full_Time_table_dict = dict()
         self.Full_Time_table_list = list()
-        self.Tutor_tracking=list()
+        self.Tutor_tracking = list()
         self.TimeTable = {
             "MON": [],
             "TUE": [],
@@ -42,11 +42,11 @@ class TtGenerator:
         }
         self.list_ = list()
         self.list_Merged_Time_dict = dict()
-        self.timeslots_lst = list()
+        self.tutor_lst = list()
         self.class_rooms_lst = list()
         self.created_lectures_details_lst = list()
 
-    def random_generator(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst, title, creator):
+    def random_generator(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst, title, creator, tutor_lst):
         """
         This method generates the time table through the combiation of the functions in this class
         :param timeslots_lst:
@@ -56,6 +56,16 @@ class TtGenerator:
         :param creator:
         :return None:
         """
+        # First clear / refresh these variables
+        self.list_.clear()
+        self.list_Merged_Time_dict =  dict()
+        self.tutor_lst.clear()
+        self.class_rooms_lst.clear()
+        self.created_lectures_details_lst.clear()
+        self.progress_var = 0
+        self.Full_Time_table_dict = dict()
+        self.Full_Time_table_list = list()
+        self.Tutor_tracking = list()
 
 
         self.class_rooms_lst = class_rooms_lst
@@ -63,18 +73,20 @@ class TtGenerator:
         self.list_.clear()
         self.is_merge_timeslots = False
         count_created_lectures = len(self.created_lectures_details_lst)
+        self.tutor_lst = tutor_lst
+        # print("self.tutor_lst = ", tutor_lst)
 
         # Making  copy of lists from the time
         # Every subgroup has to be with its own timeslots to prvent overlapping of time
         for item in self.Groups.get_sub_groups():
-                self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", item)[1]}')]=list()
+            self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", item)[1]}')] = list()
 
         # TODO: Give each subgroup its own timeslots so that they don't overlap or share the same Reference from  timeslots_lst(Also check others to see)
         for item in self.Groups.get_sub_groups():
             # print("item,", str(f'{re.findall(r"<(.*?)>", item)[1]}'))
             for value in timeslots_lst:
                 self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", item)[1]}')].append(value)
-                self.timeslots_lst.append(value)
+
         # print("self.list_Merged_Time_dict", self.list_Merged_Time_dict)
 
         for i in range(count_created_lectures):
@@ -87,8 +99,6 @@ class TtGenerator:
             lecture_picked = ""
             space_picked = ""
 
-
-            # TODO this is where if a lecturer has already got or picked time first priority
             lecture_picked = random.choice(self.created_lectures_details_lst)
 
             # Randomly Picking time  from the corresponding timeslot
@@ -98,8 +108,8 @@ class TtGenerator:
             if len(sep_) <= 1:
 
                 try:
-                  time_picked = random.choice(
-                    self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
+                    time_picked = random.choice(
+                        self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
                 except:
                     # print("So this is the problem==", lecture_picked,self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
                     return
@@ -119,36 +129,13 @@ class TtGenerator:
             # TODO if the rooms are over go get a brand new class rooms
             space_picked = random.choice(self.class_rooms_lst)
 
-
-
-            tutor_and_time=f'<{re.findall(r"<(.*?)>", lecture_picked)[3]}><{time_picked}>'
-            # Check if the Tutor is already in the tutor tracking list
-            if tutor_and_time in self.Tutor_tracking:
-                # Find free time for the Tutor
-                if len(sep_) <= 1:
-                    # print("Ohh Ohh Tutor overlaping <=1")
-                    for new_time in self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')]:
-                        if new_time != time_picked:
-                            time_picked=new_time
-                else:
-                    # print("Ohh Ohh Tutor overlaping >1")
-                    # TODO something if the more groups share the same Tutor and Tutor is occupied at that time
-                    pass
-            else:
-                # Add the Tutor and timeslot to the tutor tracking list if there is no overlap
-                self.Tutor_tracking.append(tutor_and_time)
-
-
-
-
-
             # Packing the values into a list to hold all the occurrences
             self.Full_Time_table_list.append(
                 f'<{re.findall(r"<(.*?)>", lecture_picked)[2]}><{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[0]}><{re.findall(r"<(.*?)>", time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'
             )
 
-            self.TimeTable[re.findall(r'<(.*?)>', time_picked)[0]].append(
-                str(f'<{re.findall(r"<(.*?)>", lecture_picked)[2]}><{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'))
+            # self.TimeTable[re.findall(r'<(.*?)>', time_picked)[0]].append(
+            #     str(f'<{re.findall(r"<(.*?)>", lecture_picked)[2]}><{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'))
 
             if self.is_merge_timeslots == True:
                 # print("Reaching ................................................")
@@ -168,13 +155,13 @@ class TtGenerator:
                 self.created_lectures_details_lst)) / count_created_lectures)) * 100)
             # print("Progress:", self.progress_var)
 
-            # TODO: Check all the timeslots to see if the list are not empty
+        self.check_tutor_overlap()
 
-            # time.sleep(3)
-
-        generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator)
+        try:
+            generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator)
+        except:
+            print("Exception occurred in the algorithm")
         time.sleep(3)
-
 
     def get__pdf_resources(self) -> list:
         """
@@ -313,10 +300,94 @@ class TtGenerator:
         This function removes the time_slot from the list of subgroups
         :param subgroups:
         :param time_slot:
-        :return:
+        :return None:
         """
-        print("These are the groups",subgroups)
+
+        # print("These are the groups", subgroups)
         for group in subgroups:
             for index, time_slot_ in enumerate(self.list_Merged_Time_dict[group]):
                 if time_slot_ == time_slot:
                     self.list_Merged_Time_dict[group].remove(time_slot_)
+
+    def check_tutor_overlap(self):
+        """
+        this function check for tutor overlap and immediately corrects the overlap if necessary or else the resources are not available.
+        :return None:
+        """
+
+        for tutor in self.tutor_lst:
+            temp_lst = list()
+            temp_lst.clear()
+
+            for pos,session_ in enumerate(self.Full_Time_table_list):
+                # print("Full_Time_table_list ==",self.Full_Time_table_list[0],pos)
+                # print(str(f'{re.findall(r"<(.*?)>", session_)[6]}'))
+                if tutor == str(f'{re.findall(r"<(.*?)>", session_)[6]}'):
+                    temp_lst.append(
+                        str(f'<{re.findall(r"<(.*?)>", session_)[6]}><{re.findall(r"<(.*?)>", session_)[4]}><{re.findall(r"<(.*?)>", session_)[5]}><{re.findall(r"<(.*?)>", session_)[3]}><{pos}>'))
+
+            # print("temp_lst == ", set(temp_lst))
+
+            # This loop iterates over th temp_lst storing the tutor sessions
+            for index, item in enumerate(list(set(temp_lst))):
+                # item={NAME DAY TIME SUBGROUP,POS}
+
+                for j in list(set(temp_lst))[index + 1:]:
+                    if str(f'<{re.findall(r"<(.*?)>", item)[1]}><{re.findall(r"<(.*?)>", item)[2]}>') == str(
+                            f'<{re.findall(r"<(.*?)>", j)[1]}><{re.findall(r"<(.*?)>", j)[2]}>'):
+                        sep_ = str(f'{re.findall(r"<(.*?)>", item)[3]}').split(',', -1)
+
+                        # Implement here the logic to swap the timeslot
+                        if len(sep_) <= 1:
+                            # print('less== ', item)
+
+                            # check if there is any free time slot
+                            len_of_subgroup_timeslot =len(self.list_Merged_Time_dict[sep_[0]])
+                            if len_of_subgroup_timeslot > 0:
+                                # print(f'LENGTH== {sep_[0]}', len_of_subgroup_timeslot,)
+
+                                # pick new time
+                                time_picked = random.choice(
+                                    self.list_Merged_Time_dict[str(sep_[0])])
+                                # Original string
+                                original_string = self.Full_Time_table_list[int(re.findall(r"<(.*?)>", j)[-1])]
+
+                                # New time to replace the existing time
+                                new_time = time_picked
+
+                                # old time
+                                old_time = f'<{re.findall(r"<(.*?)>", j)[1]}><{re.findall(r"<(.*?)>", j)[2]}>'
+
+                                # Find the position of the existing time within the string
+                                start_index = original_string.find(f'<{re.findall(r"<(.*?)>", j)[1]}><{re.findall(r"<(.*?)>", j)[2]}>')
+                                end_index = start_index + len(f'<{re.findall(r"<(.*?)>", j)[1]}><{re.findall(r"<(.*?)>", j)[2]}>')
+
+                                # Construct the modified string with the new time
+                                modified_string = original_string[:start_index] + new_time + original_string[end_index:]
+
+
+                                print("ORI ==",original_string," MOD ==",modified_string)
+
+                                # put it back to the list at that position
+                                self.Full_Time_table_list.insert(int(re.findall(r"<(.*?)>", j)[-1]),modified_string)
+                                print("FF NOW",self.Full_Time_table_list[int(re.findall(r"<(.*?)>", j)[-1])])
+
+                                # remove the newly picked time from the subgroup
+                                self.list_Merged_Time_dict[str(sep_[0])].remove(time_picked)
+
+
+                                # Now insert the time back into its original subgroup
+                                self.list_Merged_Time_dict[str(sep_[0])].append(old_time)
+
+                            # To handle what if the time slots are empty maybe make the timeslots for each group more by 1 in the UI GenerateTimeTable  command
+                            else:
+                                pass
+                        #
+
+
+
+                        else:
+                            print('More== ', item)
+
+                        # Have to break to prevent repetition
+                        break

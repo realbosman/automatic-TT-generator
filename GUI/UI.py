@@ -91,6 +91,7 @@ class TkinterApp(tk.Tk):
         self.config(background=selectionbar_color)
         icon = tk.PhotoImage(file=PATH / 'LU_logo.png')
         self.iconphoto(True, icon)
+        self.protocol("WM_DELETE_WINDOW",self.on_closing)
 
         # Creating Menubar
         menubar = tk.Menu(self)
@@ -102,7 +103,7 @@ class TkinterApp(tk.Tk):
         file.add_command(label='Open...', command=None)
         file.add_command(label='Save', command=None)
         file.add_separator()
-        file.add_command(label='Exit', command=self.destroy)
+        file.add_command(label='Exit', command=self.on_closing)
 
         # Adding Home Menu
         menubar.add_command(label='Home',
@@ -161,25 +162,27 @@ class TkinterApp(tk.Tk):
             command=lambda: self.show_frame(Space, f"Create {Listener.preferenceList[2]}", self.space_, )
         )
         resource_submenu.options[Listener.preferenceList[4]].config(
-            command=lambda: self.show_frame(Tutor, f"{Listener.preferenceList[4]}", self.lecturers_, )
+            command=lambda: self.show_frame(Tutor, f"{Listener.preferenceList[4]}", self.lectures_, )
         )
         resource_submenu.options[Listener.preferenceList[3]].config(
-            command=lambda: self.show_frame(Session, f"{Listener.preferenceList[4]}", self.lectures_, )
+            command=lambda: self.show_frame(Session, f"{Listener.preferenceList[3]}", self.lectures_, )
         )
         resource_submenu.options["Groups"].config(
             command=lambda: self.show_frame(Groups_, "Groups", self.lectures_, )
         )
 
         self.changeOnHover(resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
-        self.changeOnHover(resource_submenu.options["Classroom/Room/Space"], visualisation_frame_color, sidebar_color)
-        self.changeOnHover(resource_submenu.options["Instructor/Lecturer/Tutor"], visualisation_frame_color,
+        self.changeOnHover(resource_submenu.options[Listener.preferenceList[2]], visualisation_frame_color,
                            sidebar_color)
-        self.changeOnHover(resource_submenu.options["Course/Class/Session"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(resource_submenu.options[Listener.preferenceList[3]], visualisation_frame_color,
+                           sidebar_color)
+        self.changeOnHover(resource_submenu.options[Listener.preferenceList[4]], visualisation_frame_color,
+                           sidebar_color)
         self.changeOnHover(resource_submenu.options["Groups"], visualisation_frame_color, sidebar_color)
 
         resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
 
-        Generator_time_table = SidebarSubMenu(self.submenu_frame,
+        generator_time_table = SidebarSubMenu(self.submenu_frame,
                                               sub_menu_heading='Time Table',
                                               sub_menu_options=["Generate Time Table",
                                                                 "View TimeTable",
@@ -188,22 +191,22 @@ class TkinterApp(tk.Tk):
 
                                               )
 
-        Generator_time_table.options["Generate Time Table"].config(
-            command=lambda: self.start_time_table_generation()  # self.start_time_table_generation()
+        generator_time_table.options["Generate Time Table"].config(
+            command=lambda: self.start_time_table_generation_thread()  # self.start_time_table_generation()
         )
-        Generator_time_table.options["View TimeTable"].config(
+        generator_time_table.options["View TimeTable"].config(
             command=self.view_time_table
         )
-        Generator_time_table.options["Generate PDF"].config(
+        generator_time_table.options["Generate PDF"].config(
             command=lambda: print("Generate PDF")
         )
 
-        self.changeOnHover(Generator_time_table.options["Generate Time Table"], visualisation_frame_color,
+        self.changeOnHover(generator_time_table.options["Generate Time Table"], visualisation_frame_color,
                            sidebar_color)
-        self.changeOnHover(Generator_time_table.options["View TimeTable"], visualisation_frame_color, sidebar_color)
-        self.changeOnHover(Generator_time_table.options["Generate PDF"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(generator_time_table.options["View TimeTable"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(generator_time_table.options["Generate PDF"], visualisation_frame_color, sidebar_color)
 
-        Generator_time_table.place(relx=0, rely=0.4, relwidth=1, relheight=0.3)
+        generator_time_table.place(relx=0, rely=0.4, relwidth=1, relheight=0.3)
 
         # --------------------  MULTI PAGE SETTINGS ----------------------------
 
@@ -348,7 +351,24 @@ class TkinterApp(tk.Tk):
         view.bind("<Leave>", func=lambda e: view.config(
             background=colorOnLeave))
 
+    def on_closing(self):
+        isTrue = messagebox.askyesno(title="Automatic Timetable Generator",message="Do you want to save this project.")
+        if isTrue:
+            messagebox.showinfo(title="Automatic Timetable Generator",message="Saved successfully")
+            self.destroy()
+        else:
+            self.destroy()
+
+
+
+
+
     def start_time_table_generation(self):
+        num_tracker=self.lectures_.get_largest_session_number_in_a_subgroup()+1  #Add 1 to prevent overlapping
+        if len(self.timeDimension.get_algo_reources())<num_tracker:
+            messagebox.showwarning(title="Automatic Timetable Generator",message=f"Please Timeslot resources are not enough, add aleast {num_tracker-len(self.timeDimension.get_algo_reources())} more")
+            return
+
         isTrue = ShowMsg().pop_msg()
         if isTrue:
 
@@ -357,6 +377,11 @@ class TkinterApp(tk.Tk):
                             self.lectures_, self.lecturers_, self.algorithm_, self.listener_)
         else:
             print(' Generation faild')
+
+    def start_time_table_generation_thread(self):
+        thread = Thread(target=self.start_time_table_generation, daemon=True)  # I can pass args = "any" for the target
+        thread.start()
+
 
     def on_call_create(self, F, *cls):
         for w in self.container.winfo_children():
@@ -415,7 +440,7 @@ class TkinterApp(tk.Tk):
             if isTrue == True:
                 self.isHomeSaved = True
                 Listener.set_state_home(False)
-                messagebox.showerror(title="Automatic Timetable Generator", message="This might lead to problems!")
+                messagebox.showwarning(title="Automatic Timetable Generator", message="This might lead to problems!")
                 pass
             else:
                 return
@@ -462,7 +487,7 @@ class TkinterApp(tk.Tk):
             command=lambda: self.show_frame(Space, f"Create {Listener.preferenceList[2]}", self.space_, )
         )
         resource_submenu.options[Listener.preferenceList[4]].config(
-            command=lambda: self.show_frame(Tutor, f"{Listener.preferenceList[4]}", self.lecturers_, )
+            command=lambda: self.show_frame(Tutor, f"{Listener.preferenceList[4]}", self.lectures_, )
         )
         resource_submenu.options[Listener.preferenceList[3]].config(
             command=lambda: self.show_frame(Session, f"{Listener.preferenceList[3]}", self.lectures_, )
@@ -492,7 +517,7 @@ class TkinterApp(tk.Tk):
                                               )
 
         generator_time_table.options["Generate Time Table"].config(
-            command=lambda: self.start_time_table_generation()  # self.start_time_table_generation()
+            command=lambda: self.start_time_table_generation_thread()  # self.start_time_table_generation()
         )
         generator_time_table.options["View TimeTable"].config(
             command=self.view_time_table

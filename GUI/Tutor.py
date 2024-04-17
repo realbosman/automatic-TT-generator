@@ -5,6 +5,7 @@ from tkinter import ttk
 # import openpyxl
 
 # -------------------------- DEFINING GLOBAL VARIABLES -------------------------
+from Models.Tutor_Model import TutorsManager
 
 selectionbar_color = '#3C3F3F'
 sidebar_color = '#3C3F3F'
@@ -22,8 +23,13 @@ class Tutor(tk.Frame):
         ttk.Frame.__init__(self, parent)
 
 
-        for arg in cls:
-            self.tutor__ = arg
+        for index,arg in enumerate(cls):
+
+            if index == 0:
+               self.cuModel=arg
+
+
+
         # self.config(bg=visualisation_frame_color)
         self.combo = tk.StringVar()
         self.combo2 = tk.StringVar()
@@ -58,7 +64,7 @@ class Tutor(tk.Frame):
         self.separator.pack()
 
         self.treeFrame = ttk.Frame(self)
-        self.treeFrame.pack(expand=1, anchor=tk.CENTER, fill=tk.BOTH)
+        self.treeFrame.pack(expand=1, anchor=tk.CENTER, fill=tk.BOTH,pady=(0,15),padx=(10,10))
         # self.treeFrame.place(relx=.3, rely=.05, relwidth=.7, relheight=.85)
         self.treeScroll = ttk.Scrollbar(self.treeFrame)
         self.treeScroll.pack(side="right", fill="y")
@@ -70,7 +76,7 @@ class Tutor(tk.Frame):
         self.style = ttk.Style()
         self.style.configure("Custom.Treeview", rowheight=30)  # Set your desired row height here
 
-        cols = self.tutor__.get_column_headers()
+        cols = TutorsManager.get_column_headers()
         print(cols)
         self.treeview = ttk.Treeview(self.treeFrame, show="headings", columns=cols,
                                      xscrollcommand=self.treeScroll_x.set,
@@ -79,7 +85,7 @@ class Tutor(tk.Frame):
 
         # TODO to check and update the size of the column
 
-        self.treeview['columns'] = self.tutor__.get_column_headers()
+        self.treeview['columns'] = TutorsManager.get_column_headers()
 
         self.treeview.pack(expand=tk.TRUE, fill=tk.BOTH, side=tk.LEFT)
         self.treeScroll.config(command=self.treeview.yview)
@@ -91,23 +97,31 @@ class Tutor(tk.Frame):
 
     def updateUI(self):
 
-        headings = self.tutor__.get_column_headers()
+        headings = TutorsManager.get_column_headers()
 
         print("heads", headings)
         for col_ in headings:
-            self.treeview.column(col_,width=50,anchor='c')
+            self.treeview.column(col_,width=50,anchor='w',stretch=tk.YES)
             self.treeview.heading(col_,text=col_)
 
-        for i in range(int(self.tutor__.get_tutors_length())):
-            self.treeview.insert('', tk.END, values=self.tutor__.get_tutors()[i])
+        # print(' self.cuModel.get_tutors_()',self.cuModel.get_tutors_())
+        for i in range(int(len(self.cuModel.get_tutors_()))):
+            values = self.cuModel.get_tutors_()[i]
+            for col_index, value in enumerate(values):
+                col_width = len(str(value)) * 10  # Adjust the multiplier as needed
+                current_width = self.treeview.column(headings[col_index], option="width")
+                if col_width > current_width:
+                    self.treeview.column(headings[col_index], width=col_width)
+            self.treeview.insert('', tk.END, values=values)
 
     def add_new_session(self, event):
         values_lst = list()
-        for i in range(len(self.tutor__.get_column_headers())):
+
+        for i in range(len(TutorsManager.get_column_headers())):
             values_lst.append('--------')
 
         self.treeview.insert('', tk.END, values=values_lst)
-        self.tutor__.add_new_tutor(values_lst)
+        TutorsManager.add_new_tutor(values_lst)
 
     def on_double_clicked(self, event):
         region_clicked = self.treeview.identify_region(event.x, event.y)
@@ -155,30 +169,30 @@ class Tutor(tk.Frame):
                 break
 
         if str(self.treeview.focus()) != '':
-            if int(self.tutor__.get_tutors_length()) == 1:
+            if int(TutorsManager.get_tutors_length()) == 1:
                 values_lst = list()
-                for i in range(len(self.tutor__.get_column_headers())):
+                for i in range(len(TutorsManager.get_column_headers())):
                     values_lst.append('--------')
 
-                self.tutor__.add_new_tutor(values_lst)
+                TutorsManager.add_new_tutor(values_lst)
                 self.treeview.insert('', tk.END,
                                      values=values_lst)
-                self.tutor__.delete_tutor(index_to_delete)
+                TutorsManager.delete_tutor(index_to_delete)
 
                 self.treeview.delete(self.treeview.focus())
                 # self.updateUI()
                 print(self.treeview.get_children())
-                print(self.tutor__.get_sessions())
+                print(TutorsManager.get_sessions())
 
 
             else:
 
-                self.tutor__.delete_tutor(index_to_delete)
+                TutorsManager.delete_tutor(index_to_delete)
                 self.treeview.delete(self.treeview.focus())
 
                 print(self.treeview.get_children())
                 # print(self.treeview.item(*self.treeview.get_children()))
-                print(self.tutor__.get_tutors())
+                print(TutorsManager.get_tutors())
 
 
 
@@ -204,12 +218,12 @@ class Tutor(tk.Frame):
                 index_to_add = index
                 break
         e.widget.destroy()
-        self.tutor__.edit_tutors(index_to_add, current_values)
+        TutorsManager.edit_tutors(index_to_add, current_values)
 
         # print(current_values)
 
     def onFocusOut(self, e):
-        print("running")
+        # print("running")
         e.widget.destroy()
 
     def on_save(self, event):

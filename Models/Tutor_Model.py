@@ -1,3 +1,6 @@
+
+
+
 class Lecturer_Model:
     '''
       This is a class shows a list Tutors with the necessary info about them
@@ -22,57 +25,52 @@ class TutorsManager:
     instance = None
     countInstance = 0
 
-    def __init__(self):
-        self.Headers = {
-            "headers": ["Name","Session", "Faculty" ]
-        }
 
-        self.Space_List = [
+    Headers = {
+        "headers": ["Name", "Session", "Faculty"]
+    }
 
-            [ "Mr.Kasozi", "OOP","Science"],
-            [ "Mr.TONY","PYTHON", "Science"],
-            [ "Mr.REAGAN","POP", "Science"],
-            [ "Madam MIREMBE","WEB", "Science"]
+    Space_List = [
 
-        ]
+        ["Mr.Kasozi", "OOP", "Science"],
+        ["Mr.TONY", "PYTHON", "Science"],
+        ["Mr.REAGAN", "POP", "Science"],
+        ["Madam MIREMBE", "WEB", "Science"]
 
-    def __new__(cls, *args, **kwargs):
-        if not isinstance(cls.instance, cls):
-            cls.instance = object.__new__(cls)
-            cls.countInstance += 1
-            print(cls.countInstance)
-        else:
+    ]
 
-            print(cls.countInstance)
 
-        return cls.instance
+    @staticmethod
+    def get_column_headers():
+        return TutorsManager.Headers["headers"]
 
-    def get_column_headers(self):
-        return self.Headers["headers"]
+    @staticmethod
+    def get_tutors() -> list:
+        return TutorsManager.Space_List
 
-    def get_tutors(self) -> list:
-        return self.Space_List
+    @staticmethod
+    def get_tutors_length() -> int:
+        return int(len(TutorsManager.Space_List))
 
-    def get_tutors_length(self) -> int:
-        return int(len(self.Space_List))
+    @staticmethod
+    def edit_tutors(index, new_session):
+        TutorsManager.Space_List[index] = new_session
 
-    def edit_tutors(self, index, new_session):
-        self.Space_List[index] = new_session
+    @staticmethod
+    def delete_tutor(index):
+        TutorsManager.Space_List.pop(index + 1)
 
-    def delete_tutor(self, index):
-        self.Space_List.pop(index+1)
-
-    def add_new_tutor(self, new_session,index=None):
+    @staticmethod
+    def add_new_tutor(new_session, index=None):
         if index is None:
-            self.Space_List.append(new_session)
+            TutorsManager.Space_List.append(new_session)
         else:
-            self.Space_List[index]=new_session
+            TutorsManager.Space_List[index] = new_session
 
-
-
-    def get_algo_reources(self) -> list:
+    @staticmethod
+    def get_algo_reources() -> list:
         algo_list = list()
-        for lst in self.Space_List:
+        for lst in TutorsManager.Space_List:
             if lst[0] == '--------':
                 pass
             else:

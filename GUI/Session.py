@@ -27,6 +27,8 @@ class Session(tk.Frame):
         self.combo = tk.StringVar()
         self.combo2 = tk.StringVar()
         self.combo3 = tk.StringVar()
+        # these are default values
+        self.storeWidth=[100,100,100,100]
 
         # TODO: call all the timeslots methods here to show up when th ui is created
 
@@ -56,7 +58,7 @@ class Session(tk.Frame):
         self.separator.pack()
 
         self.treeFrame = ttk.Frame(self)
-        self.treeFrame.pack(expand=1, anchor=tk.CENTER, fill=tk.BOTH,pady=(0,10))
+        self.treeFrame.pack(expand=1, anchor=tk.CENTER, fill=tk.BOTH,pady=(0,15),padx=(10,10))
         # self.treeFrame.place(relx=.3, rely=.05, relwidth=.7, relheight=.85)
         self.treeScroll = ttk.Scrollbar(self.treeFrame)
         self.treeScroll.pack(side="right", fill="y")
@@ -103,6 +105,7 @@ class Session(tk.Frame):
                 current_width = self.treeview.column(headings[col_index], option="width")
                 if col_width > current_width:
                     self.treeview.column(headings[col_index], width=col_width)
+                    self.storeWidth[col_index]=col_width
             self.treeview.insert('', tk.END, values=values)
 
     def add_new_session(self, event):
@@ -123,18 +126,41 @@ class Session(tk.Frame):
             return
 
         column = self.treeview.identify_column(event.x)
-        print(self.treeview.selection(), "///", )
+        # print(self.treeview.selection(), "///", )
         columnIndex = int(column[1:]) - 1
         selected_iid = self.treeview.focus()
         selected_values = self.treeview.item(selected_iid)
         selected_text = selected_values.get("values")
         print(self.treeview.selection(), "///", selected_values)
         column_box = self.treeview.bbox(selected_iid, column)
-        print(self.treeview.selection(), "///", column_box)
+        print(self.treeview.selection(), "///", column_box,"///",self.storeWidth)
 
         # TODO Test this with bigger row tex to ensure that this below stands out
-        if ((1307 / column_box[0]) > 2.3):
-            entry_edit = ttk.Entry(self.treeview, width=column_box[2])
+
+
+        if column_box[2]==self.storeWidth[-2]:
+            print("ON ME",column_box[0])
+            entry_edit = ttk.Combobox(self.treeview, width=column_box[2],values=list(self.session__.get_faculty_cu()))
+            # record the column index and id
+            entry_edit.editing_column_index = columnIndex
+            entry_edit.editing_item_iid = selected_iid
+            entry_edit.insert(0, selected_text[columnIndex])
+            print(selected_text[columnIndex])
+            entry_edit.select_range(0, tk.END)
+
+            entry_edit.focus()
+
+            entry_edit.place(x=column_box[0],
+                             y=column_box[1],
+                             w=column_box[2],
+                             h=column_box[3],
+                             )
+
+            entry_edit.bind("<FocusOut>", self.onFocusOut)
+            entry_edit.bind("<Return>", self.on_enter_press)
+        elif column_box[2]==self.storeWidth[-1]:
+            print("ON ME",column_box[0])
+            entry_edit = ttk.Combobox(self.treeview, width=column_box[2],values=self.session__.get_sub_groups_commbo())
             # record the column index and id
             entry_edit.editing_column_index = columnIndex
             entry_edit.editing_item_iid = selected_iid
@@ -153,7 +179,7 @@ class Session(tk.Frame):
             entry_edit.bind("<FocusOut>", self.onFocusOut)
             entry_edit.bind("<Return>", self.on_enter_press)
         else:
-            entry_edit = ttk.Combobox(self.treeview, width=column_box[2],values=["BSC IT 1","BSC CS 1"])
+            entry_edit = ttk.Entry(self.treeview, width=column_box[2])
             # record the column index and id
             entry_edit.editing_column_index = columnIndex
             entry_edit.editing_item_iid = selected_iid
