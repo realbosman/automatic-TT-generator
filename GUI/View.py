@@ -132,7 +132,7 @@ class View(tk.Frame):
             messagebox.showerror(title="Error", message=f'<{name}>')
             return
         print('Before')
-        pdf_document = fitz.open(rf'{Listener.get_app_path()}\{name}.pdf')
+        pdf_document = fitz.open(rf'{Listener.get_app_path_docs()}\{name}.pdf')
         print('After')
 
         # Load and display each page of the PDF as a resized image

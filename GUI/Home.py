@@ -290,6 +290,7 @@ class Home(tk.Frame):
             Listener.preferenceList[3] = self.session_status_var.get()
             Listener.preferenceList[4] = self.tutor_status_var.get()
             Listener.isOptionsUpdated =True
+            Listener.timeTableNameListener=self.project_name__
             print("Updated", Listener.preferenceList)
 
             self.timeTableMetaData__.set_timetable_information(

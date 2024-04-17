@@ -205,7 +205,7 @@ class GenerateTimeTable(tk.Frame):
         Listener.isTimeTableCreated = False
 
         try:
-            pdf_document = fitz.open(rf'{Listener.get_app_path()}\{Listener.timeTableNameListener}.pdf')
+            pdf_document = fitz.open(rf'{Listener.get_app_path_docs()}\{Listener.timeTableNameListener}.pdf')
         except:
             messagebox.showerror(title="Error", message="Timetable generation error")
 

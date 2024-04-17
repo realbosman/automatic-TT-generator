@@ -7,8 +7,9 @@ from tkinter import ttk, messagebox
 from threading import Thread
 from queue import Queue
 from enum import Enum, auto
+import pickle
+from tkinter.filedialog import askdirectory
 
-# -------------------------- DEFINING GLOBAL VARIABLES -------------------------
 from Algorithm.Algo import TtGenerator
 from Algorithm.TimetableMetaData import TimetableMetaData
 from GUI import Tutor
@@ -31,6 +32,7 @@ from Models.Tutor_Model import TutorsManager
 from Models.Listener import Listener, TimeTableManager
 from Models.TimeDimension import TimeDimension
 
+# -------------------------- DEFINING GLOBAL VARIABLES -------------------------
 selectionbar_color = '#3C3F3F'
 sidebar_color = '#3C3F3F'
 header_color = '#3C3F3F'
@@ -91,7 +93,7 @@ class TkinterApp(tk.Tk):
         self.config(background=selectionbar_color)
         icon = tk.PhotoImage(file=PATH / 'LU_logo.png')
         self.iconphoto(True, icon)
-        self.protocol("WM_DELETE_WINDOW",self.on_closing)
+        self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         # Creating Menubar
         menubar = tk.Menu(self)
@@ -100,8 +102,8 @@ class TkinterApp(tk.Tk):
         file = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label='File', menu=file)
         file.add_command(label='New File', command=None)
-        file.add_command(label='Open...', command=None)
-        file.add_command(label='Save', command=None)
+        file.add_command(label='Open...', command=self.open_recent_files)
+        file.add_command(label='Save', command=self.on_save)
         file.add_separator()
         file.add_command(label='Exit', command=self.on_closing)
 
@@ -335,7 +337,8 @@ class TkinterApp(tk.Tk):
                 self.show_frame(View, "Time table Metadata", self.timetableMetadata,
                                 self.timeDimension, self.listener_)
             else:
-                messagebox.showerror(title="Automatic Timetable Generator", message="No timetable information available")
+                messagebox.showerror(title="Automatic Timetable Generator",
+                                     message="No timetable information available")
         else:
             messagebox.showerror(title="Automatic Timetable Generator", message="No timetable information available")
 
@@ -351,22 +354,57 @@ class TkinterApp(tk.Tk):
         view.bind("<Leave>", func=lambda e: view.config(
             background=colorOnLeave))
 
+    def open_recent_files(self):
+        path = askdirectory(title="Please select Project", initialdir=Listener.get_app_path_files())
+        print(rf'{path}')
+        print(f'{path}')
+
+        # iterate through the files to restore the last state
+
+    def on_save(self):
+
+        # Specify the file path
+        file_path = os.path.join(Listener.get_app_path_files(), f'{Listener.timeTableNameListener}')
+        if not os.path.exists(file_path):
+            os.makedirs(file_path)
+
+        # TODO: SAVE ALL THE STATES
+        file_path = os.path.join(file_path, "listener.pickle")
+
+        # Open the file in binary write mode
+        with open(file_path, "wb") as file:
+            # Serialize and save the object to the file
+            pickle.dump(Listener.timeTableNameListener, file)
+            # pass
+
+        messagebox.showinfo(title="Automatic Timetable Generator", message="Saved successfully")
+
     def on_closing(self):
-        isTrue = messagebox.askyesno(title="Automatic Timetable Generator",message="Do you want to save this project.")
+        isTrue = messagebox.askyesno(title="Automatic Timetable Generator", message="Do you want to save this project.")
         if isTrue:
-            messagebox.showinfo(title="Automatic Timetable Generator",message="Saved successfully")
+            # Specify the file path
+            file_path = os.path.join(Listener.get_app_path_files(), f'{Listener.timeTableNameListener}')
+            if not os.path.exists(file_path):
+                os.makedirs(file_path)
+
+            file_path = os.path.join(file_path, "listener.pickle")
+
+            # Open the file in binary write mode
+            with open(file_path, "wb") as file:
+                # Serialize and save the object to the file
+                pickle.dump(Listener, file)
+                # pass
+
+            messagebox.showinfo(title="Automatic Timetable Generator", message="Saved successfully")
             self.destroy()
         else:
             self.destroy()
 
-
-
-
-
     def start_time_table_generation(self):
-        num_tracker=self.lectures_.get_largest_session_number_in_a_subgroup()+1  #Add 1 to prevent overlapping
-        if len(self.timeDimension.get_algo_reources())<num_tracker:
-            messagebox.showwarning(title="Automatic Timetable Generator",message=f"Please Timeslot resources are not enough, add aleast {num_tracker-len(self.timeDimension.get_algo_reources())} more")
+        num_tracker = self.lectures_.get_largest_session_number_in_a_subgroup() + 1  # Add 1 to prevent overlapping
+        if len(self.timeDimension.get_algo_reources()) < num_tracker:
+            messagebox.showwarning(title="Automatic Timetable Generator",
+                                   message=f"Please Timeslot resources are not enough, add aleast {num_tracker - len(self.timeDimension.get_algo_reources())} more")
             return
 
         isTrue = ShowMsg().pop_msg()
@@ -381,7 +419,6 @@ class TkinterApp(tk.Tk):
     def start_time_table_generation_thread(self):
         thread = Thread(target=self.start_time_table_generation, daemon=True)  # I can pass args = "any" for the target
         thread.start()
-
 
     def on_call_create(self, F, *cls):
         for w in self.container.winfo_children():
@@ -447,7 +484,8 @@ class TkinterApp(tk.Tk):
 
         if self.current_frame == "Session'>":
             if self.lectures_.check_for_empty_slots():
-                messagebox.showerror(title="Automatic Timetable Generator", message="Some fields are empty, Please fill them or delete the row.")
+                messagebox.showerror(title="Automatic Timetable Generator",
+                                     message="Some fields are empty, Please fill them or delete the row.")
                 return
 
         # frame = self.frames[cont]
