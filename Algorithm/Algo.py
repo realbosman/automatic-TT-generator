@@ -1,6 +1,8 @@
 import random
 import re
 import time
+from typing import Dict, Any
+
 from Pdf_Generator.pdf_generator import main as generate_pdf_schedule
 
 
@@ -31,15 +33,7 @@ class TtGenerator:
         self.Full_Time_table_dict = dict()
         self.Full_Time_table_list = list()
         self.Tutor_tracking = list()
-        self.TimeTable = {
-            "MON": [],
-            "TUE": [],
-            "WED": [],
-            "THUR": [],
-            "FRI": [],
-            "SAT": [],
-            "SUN": [],
-        }
+
         self.list_ = list()
         self.list_Merged_Time_dict = dict()
         self.tutor_lst = list()
@@ -69,13 +63,13 @@ class TtGenerator:
         self.Full_Time_table_list = list()
         self.Tutor_tracking = list()
 
+        # Assign the values to the  class variables
         self.class_rooms_lst = class_rooms_lst
         self.created_lectures_details_lst = created_lectures_details_lst
         self.list_.clear()
         self.is_merge_timeslots = False
         count_created_lectures = len(self.created_lectures_details_lst)
         self.tutor_lst = tutor_lst
-        # print("self.tutor_lst = ", tutor_lst)
 
         # Making  copy of lists from the time
         # Every subgroup has to be with its own timeslots to prvent overlapping of time
@@ -88,18 +82,14 @@ class TtGenerator:
             for value in timeslots_lst:
                 self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", item)[1]}')].append(value)
 
-        # print("self.list_Merged_Time_dict", self.list_Merged_Time_dict)
+
 
         for i in range(count_created_lectures):
-            # print("DIP CS 1===", self.list_Merged_Time_dict["DIP CS 1"])
-            # print("BSC IT 1===", self.list_Merged_Time_dict["BSC IT 1"])
-            # print("BSC CS 1===", self.list_Merged_Time_dict["BSC CS 1"])
-            # print("Self.timeslots_lst",  self.timeslots_lst)
-            # print("timeslots_lst", timeslots_lst)
             time_picked = ""
             lecture_picked = ""
             space_picked = ""
 
+            # Randomly pick a session
             lecture_picked = random.choice(self.created_lectures_details_lst)
 
             # Randomly Picking time  from the corresponding timeslot
@@ -112,15 +102,13 @@ class TtGenerator:
                     time_picked = random.choice(
                         self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
                 except:
-                    # print("So this is the problem==", lecture_picked,self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
                     return
 
             else:
                 self.is_merge_timeslots = True
-                # print("SET =", self.intersection_of_n_sets(self.set_list_of_sets(sep_)))
                 inter_set = self.intersection_of_n_sets(self.set_list_of_sets(sep_))
-                # Handle the empty set in case there is no intersection.
 
+                # Handle the empty set in case there is no intersection.
                 if len(inter_set) == 0:
                     # TODO what if no intersection
                     pass
@@ -135,26 +123,19 @@ class TtGenerator:
                 f'<{re.findall(r"<(.*?)>", lecture_picked)[2]}><{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[0]}><{re.findall(r"<(.*?)>", time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'
             )
 
-            # self.TimeTable[re.findall(r'<(.*?)>', time_picked)[0]].append(
-            #     str(f'<{re.findall(r"<(.*?)>", lecture_picked)[2]}><{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'))
 
             if self.is_merge_timeslots == True:
-                # print("Reaching ................................................")
                 self.remove_time_slot(sep_, time_picked)
                 self.is_merge_timeslots = False
-                # print("POPPED-- :", self.list_Merged_Time_dict,
-                #       lecture_picked)
 
             else:
                 self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')].remove(time_picked)
-                # print("POPPED :",self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')],lecture_picked)
 
             self.created_lectures_details_lst.remove(lecture_picked)
             self.class_rooms_lst.remove(space_picked)
 
             self.progress_var = int((((count_created_lectures - len(
                 self.created_lectures_details_lst)) / count_created_lectures)) * 100)
-            # print("Progress:", self.progress_var)
 
         self.check_tutor_overlap()
 
@@ -164,7 +145,7 @@ class TtGenerator:
             print("Exception occurred in the algorithm")
         time.sleep(3)
 
-    def get__pdf_resources(self) -> list:
+    def get__pdf_resources(self) -> dict[Any, Any]:
         """
         This function generates the PDF resources, after the timetable has been created.
         :return dict():
@@ -260,8 +241,6 @@ class TtGenerator:
 
                             self.Full_Time_table_dict[faculty][txt_item].append(dict_)
 
-        # print("This fine")
-        # print(self.Full_Time_table_dict)
         return self.Full_Time_table_dict
 
     def intersection_of_n_sets(self, list_of_sets):

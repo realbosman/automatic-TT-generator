@@ -24,7 +24,7 @@ class Listener:
     def get_app_path_files():
         # Static method to get the path to the app's Recent files folder
         documents_folder = os.path.join(os.environ["USERPROFILE"], "Documents")
-        app_recent_files_folder = os.path.join(documents_folder, "Automated TimeTable Generator\\Recent files")
+        app_recent_files_folder = os.path.join(documents_folder, r"Automated TimeTable Generator\\Recent files")
         if not os.path.exists(app_recent_files_folder):
             os.makedirs(app_recent_files_folder)
         return app_recent_files_folder

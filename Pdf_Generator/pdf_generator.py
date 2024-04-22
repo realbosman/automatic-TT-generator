@@ -15,8 +15,6 @@ from reportlab.lib.units import inch
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.pdfgen.canvas import Canvas
-import yaml
-
 from Models.Listener import Listener
 
 EM = 0.6  ### TODO: Eliminate
@@ -464,8 +462,4 @@ def timediff(t1, t2):
 
 def available_fonts():
     return Canvas("").getAvailableFonts()
-    # return pdfmetrics.standardFonts
 
-
-if __name__ == "__main__":
-    main("./yaml-editor-online.txt")
