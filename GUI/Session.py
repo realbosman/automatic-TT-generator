@@ -29,6 +29,11 @@ class Session(tk.Frame):
         self.combo3 = tk.StringVar()
         # these are default values
         self.storeWidth=[100,100,100,100]
+        v = tk.Scrollbar(self)
+
+        # attach Scrollbar to root window on
+        # the side
+        v.pack(side=tk.RIGHT, fill=tk.Y)
 
         # TODO: call all the timeslots methods here to show up when th ui is created
 

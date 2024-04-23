@@ -52,6 +52,11 @@ class Home(tk.Frame):
         self.session_status_var = tk.StringVar(value="CourseUnit")
         self.space_status_var = tk.StringVar(value="Classroom")
         self.update_thread()
+        v = tk.Scrollbar(self)
+
+        # attach Scrollbar to root window on
+        # the side
+        v.pack(side=tk.RIGHT, fill=tk.Y)
 
         #############################################################################
         self.width__ = 87

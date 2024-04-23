@@ -23,6 +23,11 @@ class TimeSlots(tk.Frame):
     def __init__(self, parent, *cls):
         ttk.Frame.__init__(self, parent)
         print("TIME CLS",cls)
+        v = tk.Scrollbar(self)
+
+        # attach Scrollbar to root window on
+        # the side
+        v.pack(side=tk.RIGHT, fill=tk.Y)
 
         for arg in cls:
             self.timeDimension__= arg

@@ -22,6 +22,12 @@ class Tutor(tk.Frame):
     def __init__(self, parent, *cls):
         ttk.Frame.__init__(self, parent)
 
+        v = tk.Scrollbar(self)
+
+        # attach Scrollbar to root window on
+        # the side
+        v.pack(side=tk.RIGHT, fill=tk.Y)
+
 
         for index,arg in enumerate(cls):
 

@@ -36,6 +36,11 @@ class Groups_(tk.Frame):
         self.cf = CollapsingFrame(self)
         self.cf.pack(fill=tk.BOTH)
         print(IMG_PATH)
+        v = tk.Scrollbar(self)
+
+        # attach Scrollbar to root window on
+        # the side
+        v.pack(side=tk.RIGHT, fill=tk.Y)
 
         # option group 1
 

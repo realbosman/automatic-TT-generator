@@ -74,6 +74,7 @@ class TkinterApp(tk.Tk):
         self.algorithm_ = TtGenerator(self.lectures_)
         self.isHomeSaved = True
 
+
         self.style = ttk.Style(self)
         self.call("source", PATH_)
         self.call("source", PATH__)
@@ -271,6 +272,7 @@ class TkinterApp(tk.Tk):
                 self.event_generate("<<CheckQueue_Main>>", when="tail")
 
             if count == 5:
+
                 ticket = Ticket(ticket_type=TicketPurpose.REMOVE_SPLASH,
                                 ticket_value="splash")
 
@@ -317,6 +319,7 @@ class TkinterApp(tk.Tk):
 
         if msg.ticket_type == TicketPurpose.REMOVE_SPLASH:
             if msg.ticket_value == "splash":
+                self.new_file_()
                 for page in self.container.winfo_children():
                     # print(type(Splash),"I want SPlASH", type(page))
                     page.destroy()

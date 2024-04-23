@@ -22,6 +22,11 @@ class Space(tk.Frame):
         ttk.Frame.__init__(self, parent)
         for arg in cls:
             self.space__ = arg
+        v = tk.Scrollbar(self)
+
+        # attach Scrollbar to root window on
+        # the side
+        v.pack(side=tk.RIGHT, fill=tk.Y)
 
 
         # self.config(bg=visualisation_frame_color)
