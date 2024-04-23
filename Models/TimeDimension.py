@@ -1,6 +1,6 @@
 from threading import Thread
 
-
+from Models.Listener import Listener
 
 
 class TimeDimension:
@@ -219,6 +219,29 @@ class TimeDimension:
                 list_two.append(str_)
 
         return  list_two
+
+    def  save_instance_(self):
+        Listener.saveInstanceDict["TimeDimension"]={
+            "Days": self.Days,
+            "Sessions_List":self.Sessions_List
+        }
+
+    # Reset every variable to pepare new file
+    def new_file_(self):
+        self.Days = {
+            "headers": ["MON", "TUE", "WED", "THUR", "FRI", "SAT", "SUN"]
+        }
+
+        self.Sessions_List = [
+
+            ['--------', "--------", "--------", "--------", "--------", "--------",
+             "--------"],
+
+        ]
+
+    def save_instance_reload(self):
+        self.Days=Listener.saveInstanceDict["TimeDimension"]["Days"]
+        self.Sessions_List=  Listener.saveInstanceDict["TimeDimension"]["Sessions_List"]
 
 
 

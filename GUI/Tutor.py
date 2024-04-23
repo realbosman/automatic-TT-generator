@@ -201,6 +201,7 @@ class Tutor(tk.Frame):
 
     def on_enter_press(self, e):
         new_text = e.widget.get()
+        new_text = new_text.upper()
 
         if new_text == '':
             # TODO add a popup to alert tyhe user that this field in blank either fill it or leave it

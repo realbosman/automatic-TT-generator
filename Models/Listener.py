@@ -7,10 +7,13 @@ class Listener:
     stateHome = False
     timeTableNameListener = "Timetbale Name"
     isTimeTableCreated = False
-    isWeekendInclusive=False
-    isOptionsUpdated=False
+    isWeekendInclusive = False
+    isOptionsUpdated = False
     preferenceList = ["TimeSlots", "Groups", "Classroom/Room/Space", "Course/Class/Session",
                       "Instructor/Lecturer/Tutor"]
+    saveInstanceDict = {
+
+    }
 
     @staticmethod
     def get_app_path_docs():
@@ -50,17 +53,37 @@ class Listener:
         # Static method to get the timetable name
         return Listener.timeTableNameListener
 
+    @staticmethod
+    def save_instance_():
+        Listener.saveInstanceDict["Listener"] = {
+            "stateHome": Listener.stateHome,
+            "timeTableNameListener": Listener.timeTableNameListener,
+            "isTimeTableCreated": Listener.isTimeTableCreated,
+            "isWeekendInclusive": Listener.isWeekendInclusive,
+            "isOptionsUpdated": Listener.isOptionsUpdated,
+            "preferenceList": Listener.preferenceList
+        }
 
-class TimeTableManager:
-    # Static variable to store the timetable name
-    timeTableNameListener = ""
+    # Reset every variable to pepare new file
+    @staticmethod
+    def new_file_():
+        Listener.stateHome = False
+        Listener.timeTableNameListener = "Timetbale Name"
+        Listener.isTimeTableCreated = False
+        Listener.isWeekendInclusive = False
+        Listener.isOptionsUpdated = False
+        Listener.preferenceList = ["TimeSlots", "Groups", "Classroom/Room/Space", "Course/Class/Session",
+                                   "Instructor/Lecturer/Tutor"]
+        Listener.saveInstanceDict = {
+
+        }
 
     @staticmethod
-    def set_time_table_name(name):
-        # Setter method to update the timetable name
-        TimeTableManager.timeTableNameListener = name
+    def save_instance_reload():
 
-    @staticmethod
-    def get_time_table_name():
-        # Getter method to retrieve the timetable name
-        return TimeTableManager.timeTableNameListener
+        Listener.stateHome = Listener.saveInstanceDict["Listener"]["stateHome"]
+        Listener.timeTableNameListener = Listener.saveInstanceDict["Listener"]["timeTableNameListener"]
+        Listener.isTimeTableCreated = Listener.saveInstanceDict["Listener"]["isTimeTableCreated"]
+        Listener.isWeekendInclusive = Listener.saveInstanceDict["Listener"]["isWeekendInclusive"]
+        Listener.isOptionsUpdated = Listener.saveInstanceDict["Listener"]["isOptionsUpdated"]
+        Listener.preferenceList = Listener.saveInstanceDict["Listener"]["preferenceList"]

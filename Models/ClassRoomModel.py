@@ -1,3 +1,6 @@
+from Models.Listener import Listener
+
+
 class ClassRoomModel:
     '''
     This is ClassRoomModel ,on initialization is takes classRoom data
@@ -110,3 +113,30 @@ class SpaceManager:
             else:
                 algo_list.append(f'{lst[0]}')
         return algo_list
+
+    def  save_instance_(self):
+        Listener.saveInstanceDict["SpaceManager"]={
+            "Space_List": self.Space_List
+        }
+
+    # Reset every variable to pepare new file
+    def new_file_(self):
+        self.Headers = {
+            "headers": ["Name", "Faculty", "Capacity"]
+        }
+
+        self.Space_List = [
+
+            ["--------", "--------", "--------"],
+
+
+        ]
+
+    def save_instance_reload(self):
+
+
+        self.Space_List= Listener.saveInstanceDict["SpaceManager"]["Space_List"]
+
+
+
+

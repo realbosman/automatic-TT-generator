@@ -1,5 +1,6 @@
 import re
 
+from Models.Listener import Listener
 from Models.Tutor_Model import TutorsManager
 
 
@@ -185,6 +186,7 @@ class SessionManager:
                 if item == '--------':
                     return True
 
+
     # make sure to run this in the background
     def get_largest_session_number_in_a_subgroup(self) -> int:
         lst = self.get_sub_groups_commbo()
@@ -231,3 +233,36 @@ class SessionManager:
             tutors_set.add(lst[1])
             # print(tutors_set)
         return list(tutors_set)
+
+    def  save_instance_(self):
+        Listener.saveInstanceDict["SessionManager"]={
+            "Session_List":self.Session_List
+        }
+
+
+    # Reset every variable to pepare new file
+    def new_file_(self):
+        self.Groups_set = set()
+        self.faculty_set = set()
+
+        self.Headers = {
+            "headers": ["Name", "Tutor", "Faculty", "Group"]
+        }
+
+        self.Session_List = [
+            ["Session Name", "Tutor Name", "Faculty Name", "Group Name"],
+
+        ]
+        self.session_number_tracker = list()
+        self.session_number_tracker.append(0)
+        self.count_session_number = 0
+
+        self.set_groups_cu()
+
+    def save_instance_reload(self):
+
+
+        self.Session_List= Listener.saveInstanceDict["SessionManager"]["Session_List"]
+
+
+

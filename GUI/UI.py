@@ -29,7 +29,7 @@ from GUI.variables_ import Global_variables
 from Models.ClassRoomModel import SpaceManager
 from Models.CourseUnitModel import SessionManager
 from Models.Tutor_Model import TutorsManager
-from Models.Listener import Listener, TimeTableManager
+from Models.Listener import Listener
 from Models.TimeDimension import TimeDimension
 
 # -------------------------- DEFINING GLOBAL VARIABLES -------------------------
@@ -101,9 +101,10 @@ class TkinterApp(tk.Tk):
         # Adding File Menu and commands
         file = tk.Menu(menubar, tearoff=0)
         menubar.add_cascade(label='File', menu=file)
-        file.add_command(label='New File', command=None)
+        file.add_command(label='New File', command=self.new_file_)
         file.add_command(label='Open...', command=self.open_recent_files)
         file.add_command(label='Save', command=self.on_save)
+        file.add_command(label='Demo', command=self.demo)
         file.add_separator()
         file.add_command(label='Exit', command=self.on_closing)
 
@@ -354,12 +355,57 @@ class TkinterApp(tk.Tk):
         view.bind("<Leave>", func=lambda e: view.config(
             background=colorOnLeave))
 
+    def demo(self):
+
+
+        with open(rf'./DumpFile.pickle',
+                  "rb") as file:
+            loaded_obj = pickle.load(file)
+
+        Listener.saveInstanceDict = loaded_obj
+        self.space_.save_instance_reload()
+        self.lectures_.save_instance_reload()
+        self.timetableMetadata.save_instance_reload()
+        TutorsManager.save_instance_reload()
+        Listener.save_instance_reload()
+        self.timeDimension.save_instance_reload()
+        self.show_frame(Home, "Time table Metadata", self.timetableMetadata,
+                        self.timeDimension, self.listener_)
+
     def open_recent_files(self):
         path = askdirectory(title="Please select Project", initialdir=Listener.get_app_path_files())
         print(rf'{path}')
         print(f'{path}')
 
+        file_path = os.path.join(path, "DumpFile.pickle")
+
+        with open(rf'{file_path}',
+                  "rb") as file:
+            loaded_obj = pickle.load(file)
+
+        Listener.saveInstanceDict=loaded_obj
+        self.space_.save_instance_reload()
+        self.lectures_.save_instance_reload()
+        self.timetableMetadata.save_instance_reload()
+        TutorsManager.save_instance_reload()
+        Listener.save_instance_reload()
+        self.timeDimension.save_instance_reload()
+        self.show_frame(Home, "Time table Metadata", self.timetableMetadata,
+                        self.timeDimension, self.listener_)
+
+
         # iterate through the files to restore the last state
+
+    def new_file_(self):
+        self.space_.new_file_()
+        self.lectures_.new_file_()
+        self.timetableMetadata.new_file_()
+        TutorsManager.new_file_()
+        Listener.new_file_()
+        self.timeDimension.new_file_()
+        print("executed")
+        self.show_frame(Home, "Time table Metadata", self.timetableMetadata,
+                        self.timeDimension, self.listener_)
 
     def on_save(self):
 
@@ -369,12 +415,20 @@ class TkinterApp(tk.Tk):
             os.makedirs(file_path)
 
         # TODO: SAVE ALL THE STATES
-        file_path = os.path.join(file_path, "listener.pickle")
+        file_path = os.path.join(file_path, "DumpFile.pickle")
+
+        # save the instances in the LIstener dictionary
+        self.space_.save_instance_()
+        self.lectures_.save_instance_()
+        self.timeDimension.save_instance_()
+        TutorsManager.save_instance_()
+        self.timetableMetadata.save_instance_()
+        Listener.save_instance_()
 
         # Open the file in binary write mode
         with open(file_path, "wb") as file:
             # Serialize and save the object to the file
-            pickle.dump(Listener.timeTableNameListener, file)
+            pickle.dump(Listener.saveInstanceDict, file)
             # pass
 
         messagebox.showinfo(title="Automatic Timetable Generator", message="Saved successfully")
@@ -387,12 +441,21 @@ class TkinterApp(tk.Tk):
             if not os.path.exists(file_path):
                 os.makedirs(file_path)
 
-            file_path = os.path.join(file_path, "listener.pickle")
+            file_path = os.path.join(file_path, "DumpFile.pickle")
+
+
+            # save the instances in the LIstener dictionary
+            self.space_.save_instance_()
+            self.lectures_.save_instance_()
+            self.timeDimension.save_instance_()
+            TutorsManager.save_instance_()
+            self.timetableMetadata.save_instance_()
+            Listener.save_instance_()
 
             # Open the file in binary write mode
             with open(file_path, "wb") as file:
                 # Serialize and save the object to the file
-                pickle.dump(Listener, file)
+                pickle.dump(Listener.saveInstanceDict, file)
                 # pass
 
             messagebox.showinfo(title="Automatic Timetable Generator", message="Saved successfully")

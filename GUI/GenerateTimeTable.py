@@ -8,7 +8,7 @@ from pathlib import Path
 from tkinter import *
 from PIL import ImageTk, Image
 
-from Models.Listener import Listener, TimeTableManager
+from Models.Listener import Listener
 
 _PATH = Path(__file__).parent / 'assets'
 from tkinter import *

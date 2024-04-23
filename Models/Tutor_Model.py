@@ -1,4 +1,4 @@
-
+from Models.Listener import Listener
 
 
 class Lecturer_Model:
@@ -76,3 +76,31 @@ class TutorsManager:
             else:
                 algo_list.append(f'{lst[0]}')
         return algo_list
+
+    @staticmethod
+    def  save_instance_():
+        Listener.saveInstanceDict["TutorsManager"]={
+            "Space_List": TutorsManager.Space_List
+        }
+
+    # Reset every variable to pepare new file
+    @staticmethod
+    def new_file_():
+        TutorsManager.Headers = {
+            "headers": ["Name", "Session", "Faculty"]
+        }
+
+        TutorsManager.Space_List = [
+
+            ["--------", "--------", "--------"],
+
+        ]
+
+    @staticmethod
+    def save_instance_reload():
+        TutorsManager.Space_List=Listener.saveInstanceDict["TutorsManager"]["Space_List"]
+
+
+
+
+
