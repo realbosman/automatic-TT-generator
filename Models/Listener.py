@@ -1,11 +1,13 @@
 import os
 import os
+import time
 
 
 class Listener:
     # Static variables to store state and timetable name
     stateHome = False
     timeTableNameListener = "Timetbale Name"
+    timeZone=str(time.tzname[0])
     isTimeTableCreated = False
     isWeekendInclusive = False
     isOptionsUpdated = False

@@ -205,9 +205,12 @@ class GenerateTimeTable(tk.Frame):
         Listener.isTimeTableCreated = False
 
         try:
+            print("Listener.timeTableNameListener}======",Listener.timeTableNameListener)
             pdf_document = fitz.open(rf'{Listener.get_app_path_docs()}\{Listener.timeTableNameListener}.pdf')
+            # print()
         except:
-            messagebox.showerror(title="Error", message="Timetable generation error")
+            messagebox.showerror(title="Error", message="Timetable generation error invalid file name")
+            return
 
         # Load and display each page of the PDF as a resized image
         self.images = []

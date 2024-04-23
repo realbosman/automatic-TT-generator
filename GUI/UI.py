@@ -372,6 +372,8 @@ class TkinterApp(tk.Tk):
         TutorsManager.save_instance_reload()
         Listener.save_instance_reload()
         self.timeDimension.save_instance_reload()
+        self.isHomeSaved = True
+
         self.show_frame(Home, "Time table Metadata", self.timetableMetadata,
                         self.timeDimension, self.listener_)
 
@@ -400,6 +402,7 @@ class TkinterApp(tk.Tk):
         # iterate through the files to restore the last state
 
     def new_file_(self):
+
         self.space_.new_file_()
         self.lectures_.new_file_()
         self.timetableMetadata.new_file_()
@@ -407,8 +410,10 @@ class TkinterApp(tk.Tk):
         Listener.new_file_()
         self.timeDimension.new_file_()
         print("executed")
+
         self.show_frame(Home, "Time table Metadata", self.timetableMetadata,
                         self.timeDimension, self.listener_)
+
 
     def on_save(self):
 
@@ -543,7 +548,7 @@ class TkinterApp(tk.Tk):
             if isTrue == True:
                 self.isHomeSaved = True
                 Listener.set_state_home(False)
-                messagebox.showwarning(title="Automatic Timetable Generator", message="This might lead to problems!")
+                messagebox.showwarning(title="Automatic Timetable Generator", message="This might lead to Timetable generation problems!")
                 pass
             else:
                 return

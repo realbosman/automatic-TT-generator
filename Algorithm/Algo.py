@@ -141,7 +141,8 @@ class TtGenerator:
         self.check_tutor_overlap()
 
         try:
-            generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,no_weekends= Listener.isWeekendInclusive)
+            ispdf=generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,no_weekends= Listener.isWeekendInclusive)
+            print("ISPDF generated====",ispdf)
         except:
             print("Exception occurred in the algorithm")
         time.sleep(3)
@@ -242,6 +243,7 @@ class TtGenerator:
 
                             self.Full_Time_table_dict[faculty][txt_item].append(dict_)
 
+        print(self.Full_Time_table_dict)
         return self.Full_Time_table_dict
 
     def intersection_of_n_sets(self, list_of_sets):
