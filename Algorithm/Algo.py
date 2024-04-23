@@ -3,6 +3,7 @@ import re
 import time
 from typing import Dict, Any
 
+from Models.Listener import Listener
 from Pdf_Generator.pdf_generator import main as generate_pdf_schedule
 
 
@@ -140,7 +141,7 @@ class TtGenerator:
         self.check_tutor_overlap()
 
         try:
-            generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator)
+            generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,no_weekends= Listener.isWeekendInclusive)
         except:
             print("Exception occurred in the algorithm")
         time.sleep(3)

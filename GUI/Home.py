@@ -25,9 +25,8 @@ class Home(tk.Frame):
     def __init__(self, parent, *cls):
         ttk.Frame.__init__(self, parent)
 
-
-        print("TimetableMetaData.isInfoSet==",TimetableMetaData.isInfoSet)
-        self.timeTableMetaData__,self.td,self.listenerr = cls
+        print("TimetableMetaData.isInfoSet==", TimetableMetaData.isInfoSet)
+        self.timeTableMetaData__, self.td, self.listenerr = cls
         # print(self.listenerr.getStateHome())
         Listener.set_state_home(True)
         # print(self.listenerr.getStateHome())
@@ -37,7 +36,6 @@ class Home(tk.Frame):
         self.email__ = ""
         self.days__ = list()
         self.preference_lst__ = list()
-
 
         self.project_name_var = tk.StringVar(value="Time table name")
         self.project_creator_var = tk.StringVar(value="Creator")
@@ -58,7 +56,7 @@ class Home(tk.Frame):
         #############################################################################
         self.width__ = 87
         self.frame_ = ttk.Frame(self)
-        self.frame_.pack(expand=True,padx=(0,20))
+        self.frame_.pack(expand=True, padx=(0, 20))
         # Saving User Info
         self.user_info_frame = ttk.LabelFrame(self.frame_, text="Timetable Metadata")
         self.user_info_frame.grid(row=0, column=0, padx=5, pady=10)
@@ -114,18 +112,14 @@ class Home(tk.Frame):
         self.mon_check = ttk.Checkbutton(self.courses_frame, text="MON",
                                          variable=self.mon_status_var, onvalue="MON", offvalue="MON_")
 
-
         self.tue_check = ttk.Checkbutton(self.courses_frame, text="TUE",
                                          variable=self.tue_status_var, onvalue="TUE", offvalue="TUE_")
-
 
         self.wed_check = ttk.Checkbutton(self.courses_frame, text="WED",
                                          variable=self.wed_status_var, onvalue="WED", offvalue="WED_")
 
-
         self.thur_check = ttk.Checkbutton(self.courses_frame, text="THUR",
                                           variable=self.thur_status_var, onvalue="THUR", offvalue="THUR_")
-
 
         self.fri_check = ttk.Checkbutton(self.courses_frame, text="FRI",
                                          variable=self.fri_status_var, onvalue="FRI", offvalue="FRI_")
@@ -135,7 +129,6 @@ class Home(tk.Frame):
 
         self.sun_check = ttk.Checkbutton(self.courses_frame, text="SUN",
                                          variable=self.sun_status_var, onvalue="SUN", offvalue="SUN_")
-
 
         self.days_label.grid(row=0, column=0, sticky='w')
         self.mon_check.grid(row=1, column=0)
@@ -232,7 +225,7 @@ class Home(tk.Frame):
             self.session_status_var.set(TimetableMetaData.preferences_list_[1])
             self.tutor_status_var.set(TimetableMetaData.preferences_list_[2])
 
-        mylist=self.refresh_list_Home_timetable_metadata(self.td.Days)
+        mylist = self.refresh_list_Home_timetable_metadata(self.td.Days)
         # print("myyy-",mylist)
         self.mon_status_var.set(mylist[0])
         self.tue_status_var.set(mylist[1])
@@ -242,27 +235,41 @@ class Home(tk.Frame):
         self.sat_status_var.set(mylist[5])
         self.sun_status_var.set(mylist[6])
 
-
     def save_information(self):
 
-        if self.mon_status_var.get()[-1]=="_" and self.tue_status_var.get()[-1]=="_" and self.wed_status_var.get()[-1]=="_" and self.thur_status_var.get()[-1]=="_" and self.fri_status_var.get()[-1]=="_" and self.sat_status_var.get()[-1]=="_"  and self.sun_status_var.get()[-1]=="_":
-              messagebox.showerror(title="Timetable Metadata Error",message="Days are not selected!,Please select a day.")
-              return
-        elif self.project_creator_var.get()=="":
+        if self.sat_status_var.get()[-1] == "_" and self.sun_status_var.get()[-1] == "_":
+            Listener.isWeekendInclusive = True
+        else:
+            Listener.isWeekendInclusive = False
+
+
+        if self.mon_status_var.get()[-1] == "_" and self.tue_status_var.get()[-1] == "_" and self.wed_status_var.get()[
+            -1] == "_" and self.thur_status_var.get()[-1] == "_" and self.fri_status_var.get()[-1] == "_" and \
+                self.sat_status_var.get()[-1] == "_" and self.sun_status_var.get()[-1] == "_":
             messagebox.showerror(title="Timetable Metadata Error",
-                                 message="Fields can't be left blank.")
+                                 message="Days are not selected!,Please select a day.")
+            Listener.isWeekendInclusive = False
             return
-        elif  self.project_institute_var.get()=="":
+        elif self.project_creator_var.get() == "":
             messagebox.showerror(title="Timetable Metadata Error",
                                  message="Fields can't be left blank.")
+            Listener.isWeekendInclusive = False
             return
-        elif self.project_name_var.get()=="" :
+        elif self.project_institute_var.get() == "":
             messagebox.showerror(title="Timetable Metadata Error",
                                  message="Fields can't be left blank.")
+            Listener.isWeekendInclusive = False
             return
-        elif self.space_status_var.get()[-1]=="_" or self.session_status_var.get()[-1]=="_" or self.tutor_status_var.get()[-1]=="_":
+        elif self.project_name_var.get() == "":
             messagebox.showerror(title="Timetable Metadata Error",
                                  message="Fields can't be left blank.")
+            Listener.isWeekendInclusive = False
+            return
+        elif self.space_status_var.get()[-1] == "_" or self.session_status_var.get()[-1] == "_" or \
+                self.tutor_status_var.get()[-1] == "_":
+            messagebox.showerror(title="Timetable Metadata Error",
+                                 message="Fields can't be left blank.")
+            Listener.isWeekendInclusive = False
             return
 
         else:
@@ -285,12 +292,11 @@ class Home(tk.Frame):
             self.preference_lst__.append(self.session_status_var.get())
             self.preference_lst__.append(self.tutor_status_var.get())
 
-
-            Listener.preferenceList[2]=self.space_status_var.get()
+            Listener.preferenceList[2] = self.space_status_var.get()
             Listener.preferenceList[3] = self.session_status_var.get()
             Listener.preferenceList[4] = self.tutor_status_var.get()
-            Listener.isOptionsUpdated =True
-            Listener.timeTableNameListener=self.project_name__
+            Listener.isOptionsUpdated = True
+            Listener.timeTableNameListener = self.project_name__
             print("Updated", Listener.preferenceList)
 
             self.timeTableMetaData__.set_timetable_information(
@@ -303,44 +309,36 @@ class Home(tk.Frame):
                 self.preference_lst__
             )
 
-
-
-
-
-
-
     def save_thread(self):
         Listener.set_state_home(False)
         print("Threading started")
         new_thread = Thread(target=self.save_information, daemon=True,
                             )  # I can pass args = "any" for the target
         new_thread.start()
+
     def update_thread(self):
         print("Threading started")
         new_thread = Thread(target=self.updateUI, daemon=True,
                             )  # I can pass args = "any" for the target
         new_thread.start()
 
-
-
-    def refresh_list_Home_timetable_metadata(self,dict_:dict)->list:
-        myList=["MON","TUE", "WED","THUR","FRI","SAT","SUN"]
-        list_two=list()
+    def refresh_list_Home_timetable_metadata(self, dict_: dict) -> list:
+        myList = ["MON", "TUE", "WED", "THUR", "FRI", "SAT", "SUN"]
+        list_two = list()
         for _day in myList:
-            isdayIn=False
+            isdayIn = False
             for index, day in enumerate(dict_["headers"]):
-                if _day==day:
-                    isdayIn=True
+                if _day == day:
+                    isdayIn = True
                     break
             if isdayIn == True:
-                str_=_day
+                str_ = _day
                 list_two.append(str_)
             else:
                 str_ = _day + "_"
                 list_two.append(str_)
 
-        return  list_two
-
+        return list_two
 
     def Check_Queue(self, e):
         """
@@ -355,8 +353,6 @@ class Home(tk.Frame):
             self.treeview.heading(msg.ticket_value[0], text=msg.ticket_value[0])
 
 
-
-
 # Ticketing system call
 class TicketPurpose(Enum):
     UPDATE_PROGRESS_TEXT = auto()
@@ -368,5 +364,3 @@ class Ticket:
                  ticket_value: list):
         self.ticket_type = ticket_type
         self.ticket_value = ticket_value
-
-

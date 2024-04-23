@@ -7,6 +7,7 @@ class Listener:
     stateHome = False
     timeTableNameListener = "Timetbale Name"
     isTimeTableCreated = False
+    isWeekendInclusive=False
     isOptionsUpdated=False
     preferenceList = ["TimeSlots", "Groups", "Classroom/Room/Space", "Course/Class/Session",
                       "Instructor/Lecturer/Tutor"]
