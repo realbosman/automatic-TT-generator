@@ -385,7 +385,7 @@ def main(
                             # print(y,"<<<<y")
                             Rect_cords = (x + 2, y -10, 400, y - 20)
                             c.drawString(x + 2, y - padding + 3, toc_item)
-                            c.rect(*Rect_cords)
+                            # c.rect(*Rect_cords)
                             c.linkAbsolute(toc_item, dest_name, Rect=Rect_cords)
 
                         elif str(cell) == "":
