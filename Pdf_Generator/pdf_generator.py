@@ -343,12 +343,12 @@ def main(
 
     w, h = A4
     h = h - 100
-    max_rows_per_page = 45
+    max_rows_per_page = 35
     # Margin.
     x_offset = 50
     y_offset = 50
     # Space between rows.
-    padding = 15
+    padding = 20
 
     xlist = [x + x_offset for x in [0, 100, 100]]
     ylist = [h - y_offset - i * padding for i in range(max_rows_per_page + 1)]
@@ -357,13 +357,14 @@ def main(
     c.setFontSize(12)
     c.drawCentredString(300, 745, title)
     c.setFontSize(10)
-    print(infile)
+    # print(infile)
     faculty_=" "
     for rows in grouper(data, max_rows_per_page):
         rows = tuple(filter(bool, rows))
         # print("Rows=====", rows)
         # c.grid(xlist, ylist[:len(rows) + 1])
         count = 0
+        # print("ylist >>",ylist)
         for y, row in zip(ylist[:-1], rows):
             count += 1
             # print("Row", row)
@@ -381,9 +382,10 @@ def main(
                             # print("XCELL___", x, cell)
                             dest_name = str(cell)
                             # print("dest", dest_name)
-                            Rect_cords = (100, y - 15, 400, y + 20)
+                            # print(y,"<<<<y")
+                            Rect_cords = (x + 2, y -10, 400, y - 20)
                             c.drawString(x + 2, y - padding + 3, toc_item)
-                            # c.rect(*Rect_cords)
+                            c.rect(*Rect_cords)
                             c.linkAbsolute(toc_item, dest_name, Rect=Rect_cords)
 
                         elif str(cell) == "":
