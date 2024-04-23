@@ -380,11 +380,11 @@ def main(
                             toc_item = f"{count}.{str(cell)}"
                             # print("XCELL___", x, cell)
                             dest_name = str(cell)
-                            # print("dest", dest_name)
-                            # Rect_cords = (100, y - 10, 400, y + 5)
+                            print("dest", dest_name)
+                            Rect_cords = (100, y - 15, 400, y + 20)
                             c.drawString(x + 2, y - padding + 3, toc_item)
-                            # c.rect(*Rect_cords)
-                            c.linkAbsolute(toc_item, dest_name, Rect=(100, y - 10, 400, y + 5))
+                            c.rect(*Rect_cords)
+                            c.linkAbsolute(toc_item, dest_name, Rect=Rect_cords)
 
                         elif str(cell) == "":
                             # print("XCELL", x, cell)

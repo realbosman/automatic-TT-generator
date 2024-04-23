@@ -58,7 +58,7 @@ class Home(tk.Frame):
         #############################################################################
         self.width__ = 87
         self.frame_ = ttk.Frame(self)
-        self.frame_.pack(expand=True)
+        self.frame_.pack(expand=True,padx=(0,20))
         # Saving User Info
         self.user_info_frame = ttk.LabelFrame(self.frame_, text="Timetable Metadata")
         self.user_info_frame.grid(row=0, column=0, padx=5, pady=10)

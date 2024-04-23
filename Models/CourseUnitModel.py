@@ -102,15 +102,24 @@ class SessionManager:
             d = lst[3].split(',')
             if len(d) > 1:
                 for i, sub_group in enumerate(d):
-                    self.Groups_set.add(f'<{lst[2]}><{d[i]}>')
+                    if d[i] == "--------":
+                        pass
+                    else:
+                        self.Groups_set.add(f'<{lst[2]}><{d[i]}>')
             else:
-                self.Groups_set.add(f'<{lst[2]}><{lst[3]}>')
+                if lst[3] == "--------":
+                    pass
+                else:
+                    self.Groups_set.add(f'<{lst[2]}><{lst[3]}>')
         # print(self.Groups_set)
         # print(self.get_faculty_cu())
 
     def get_faculty_cu(self):
         for index, lst in enumerate(self.Session_List):
-            self.faculty_set.add(lst[2])
+            if lst[2] == "--------":
+                pass
+            else:
+                self.faculty_set.add(lst[2])
         return self.faculty_set
 
     def get_sub_groups(self):
@@ -222,5 +231,3 @@ class SessionManager:
             tutors_set.add(lst[1])
             # print(tutors_set)
         return list(tutors_set)
-
-
