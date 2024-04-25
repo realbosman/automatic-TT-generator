@@ -39,7 +39,7 @@ class SessionManager:
         self.faculty_set = set()
 
         self.Headers = {
-            "headers": ["Name", "Tutor", "Faculty", "Group"]
+            "headers": ["Name", "Tutor", "Faculty", "Group", "Capacity"]
         }
 
         self.Session_List = [
@@ -186,6 +186,28 @@ class SessionManager:
                 if item == '--------':
                     return True
 
+    def get_the_number_of_Tutor_sessions(self) -> int:
+        Tutor_dict = dict()
+        Tutor_list = list()
+        tutor_track_no_session = 0
+        for Tutor in self.Session_List:
+            Tutor_dict[Tutor[1]] = list()
+            Tutor_list.append(Tutor[1])
+
+        for key in Tutor_dict.keys():
+            count = 0
+            for item in Tutor_list:
+                if key == item:
+                    count = count + 1
+            Tutor_dict[key].append(count)
+            if count >= tutor_track_no_session:
+                tutor_track_no_session = count
+        # print(Tutor_dict)
+        # print(tutor_track_no_session)
+        Tutor_dict.clear()
+        Tutor_list.clear()
+
+        return tutor_track_no_session
 
     # make sure to run this in the background
     def get_largest_session_number_in_a_subgroup(self) -> int:
@@ -231,14 +253,13 @@ class SessionManager:
         for lst in self.Session_List:
             # print(lst[1])
             tutors_set.add(lst[1])
-            # print(tutors_set)
+            print("TUTR=====", tutors_set)
         return list(tutors_set)
 
-    def  save_instance_(self):
-        Listener.saveInstanceDict["SessionManager"]={
-            "Session_List":self.Session_List
+    def save_instance_(self):
+        Listener.saveInstanceDict["SessionManager"] = {
+            "Session_List": self.Session_List
         }
-
 
     # Reset every variable to pepare new file
     def new_file_(self):
@@ -246,11 +267,11 @@ class SessionManager:
         self.faculty_set = set()
 
         self.Headers = {
-            "headers": ["Name", "Tutor", "Faculty", "Group"]
+            "headers": ["Name", "Tutor", "Faculty", "Group", "Capacity"]
         }
 
         self.Session_List = [
-            ["Session Name", "Tutor Name", "Faculty Name", "Group Name"],
+            ["Session Name", "Tutor Name", "Faculty Name", "Group Name", "AUTO"],
 
         ]
         self.session_number_tracker = list()
@@ -261,8 +282,6 @@ class SessionManager:
 
     def save_instance_reload(self):
 
-
-        self.Session_List= Listener.saveInstanceDict["SessionManager"]["Session_List"]
-
+        self.Session_List = Listener.saveInstanceDict["SessionManager"]["Session_List"]
 
 

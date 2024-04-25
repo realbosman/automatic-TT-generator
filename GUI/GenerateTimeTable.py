@@ -177,64 +177,68 @@ class GenerateTimeTable(tk.Frame):
         self.update_thread()
 
     def visualize_Time_table(self, parent, name):
-        time.sleep(.5)
-        for widget in parent.winfo_children():
-            # print("running widget 1")
-            widget.destroy()
-        # Create a vertical scrollbar
-        self.scrollbar = tk.Scrollbar(parent)
-        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        # Create a canvas
-        self.canvas = tk.Canvas(parent, width=800, height=600, yscrollcommand=self.scrollbar.set)
-        self.canvas.place(relx=.5, rely=.5, anchor=tk.CENTER)
-        # self.canvas.tkraise()
+        while True:
+            time.sleep(.3)
+            if Listener.ispdf_generated:
+                for widget in parent.winfo_children():
+                    # print("running widget 1")
+                    widget.destroy()
+                # Create a vertical scrollbar
+                self.scrollbar = tk.Scrollbar(parent)
+                self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
 
-        # Link scrollbar to canvas
-        self.scrollbar.config(command=self.canvas.yview)
+                # Create a canvas
+                self.canvas = tk.Canvas(parent, width=800, height=600, yscrollcommand=self.scrollbar.set)
+                self.canvas.place(relx=.5, rely=.5, anchor=tk.CENTER)
+                # self.canvas.tkraise()
 
-        # Enable mousewheel scrolling
-        self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
+                # Link scrollbar to canvas
+                self.scrollbar.config(command=self.canvas.yview)
 
-        # Create a frame inside the canvas to hold the images
-        self.frame_images = tk.Frame(self.canvas)
-        self.canvas.create_window((0, 0), window=self.frame_images, anchor=tk.CENTER)
+                # Enable mousewheel scrolling
+                self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
 
-        # Open the PDF file
-        # self.listener__ = Listener()
-        Listener.isTimeTableCreated = False
+                # Create a frame inside the canvas to hold the images
+                self.frame_images = tk.Frame(self.canvas)
+                self.canvas.create_window((0, 0), window=self.frame_images, anchor=tk.CENTER)
 
-        try:
-            print("Listener.timeTableNameListener}======",Listener.timeTableNameListener)
-            pdf_document = fitz.open(rf'{Listener.get_app_path_docs()}\{Listener.timeTableNameListener}.pdf')
-            # print()
-        except:
-            messagebox.showerror(title="Error", message="Timetable generation error invalid file name")
-            return
+                # Open the PDF file
+                # self.listener__ = Listener()
+                Listener.isTimeTableCreated = False
 
-        # Load and display each page of the PDF as a resized image
-        self.images = []
-        for page_number in range(pdf_document.page_count):
-            page = pdf_document.load_page(page_number)
-            pixmap = page.get_pixmap(matrix=fitz.Matrix(2, 2))
-            # Resize the image
-            img = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples).resize((800, 800))
-            img = ImageTk.PhotoImage(image=img)
-            self.images.append(img)
-            self.canvas.create_image(10, 10 + page_number * (img.height() + 10), anchor=NW, image=img)
-        # Update the scroll region to include all the images
-        self.frame_images.update_idletasks()
-        self.canvas.config(scrollregion=self.canvas.bbox("all"))
-        Listener.isTimeTableCreated = True
-        Listener.timeTableNameListener = name
-        # To set the timetable name from any frame
-        # TimeTableManager.set_time_table_name(name)
+                try:
+                    print("Listener.timeTableNameListener}======", Listener.timeTableNameListener)
+                    pdf_document = fitz.open(rf'{Listener.get_app_path_docs()}\{Listener.timeTableNameListener}.pdf')
+                    # print()
+                except:
+                    messagebox.showerror(title="Error", message="Timetable generation error invalid file name")
+                    return
 
-        # To get the timetable name from any frame
+                # Load and display each page of the PDF as a resized image
+                self.images = []
+                for page_number in range(pdf_document.page_count):
+                    page = pdf_document.load_page(page_number)
+                    pixmap = page.get_pixmap(matrix=fitz.Matrix(2, 2))
+                    # Resize the image
+                    img = Image.frombytes("RGB", [pixmap.width, pixmap.height], pixmap.samples).resize((800, 800))
+                    img = ImageTk.PhotoImage(image=img)
+                    self.images.append(img)
+                    self.canvas.create_image(10, 10 + page_number * (img.height() + 10), anchor=NW, image=img)
+                # Update the scroll region to include all the images
+                self.frame_images.update_idletasks()
+                self.canvas.config(scrollregion=self.canvas.bbox("all"))
+                Listener.isTimeTableCreated = True
+                Listener.timeTableNameListener = name
+                # To set the timetable name from any frame
+                # TimeTableManager.set_time_table_name(name)
 
-        # print("Name:", name)
-        # print("LISTENER NAME", Listener.timeTableNameListener)
-        # print("STATIC", TimeTableManager.get_time_table_name())
+                # To get the timetable name from any frame
+
+                # print("Name:", name)
+                # print("LISTENER NAME", Listener.timeTableNameListener)
+                # print("STATIC", TimeTableManager.get_time_table_name())
+                break
 
     def on_mousewheel(self, event):
         try:

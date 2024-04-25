@@ -37,6 +37,7 @@ class TtGenerator:
 
         self.list_ = list()
         self.list_Merged_Time_dict = dict()
+        self.Tutor_group_list=list()
         self.tutor_lst = list()
         self.class_rooms_lst = list()
         self.created_lectures_details_lst = list()
@@ -56,6 +57,7 @@ class TtGenerator:
         # First clear / refresh these variables
         self.list_.clear()
         self.list_Merged_Time_dict = dict()
+        self.Tutor_group_list.clear()
         self.tutor_lst.clear()
         self.class_rooms_lst.clear()
         self.created_lectures_details_lst.clear()
@@ -141,8 +143,8 @@ class TtGenerator:
         self.check_tutor_overlap()
 
         try:
-            ispdf=generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,no_weekends= Listener.isWeekendInclusive)
-            print("ISPDF generated====",ispdf)
+            Listener.ispdf_generated=generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,no_weekends= Listener.isWeekendInclusive)
+            print("ISPDF generated====",Listener.ispdf_generated)
         except:
             print("Exception occurred in the algorithm")
         time.sleep(3)
@@ -374,3 +376,12 @@ class TtGenerator:
 
                         # Have to break to prevent repetition
                         break
+
+    def create_tutor_session_group(self,tutor_lst_):
+        """
+        This get the list of Tuotrs random then make groups out of them
+        :param tutor_lst_:
+        :return None:
+        """
+
+

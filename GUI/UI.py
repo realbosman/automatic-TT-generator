@@ -473,9 +473,15 @@ class TkinterApp(tk.Tk):
 
     def start_time_table_generation(self):
         num_tracker = self.lectures_.get_largest_session_number_in_a_subgroup() + 1  # Add 1 to prevent overlapping
-        if len(self.timeDimension.get_algo_reources()) < num_tracker:
+        num_tutor_tracker = self.lectures_.get_the_number_of_Tutor_sessions()+1
+        length_time_slot=len(self.timeDimension.get_algo_reources())
+        if length_time_slot < num_tracker :
             messagebox.showwarning(title="Automatic Timetable Generator",
-                                   message=f"Please Timeslot resources are not enough, add aleast {num_tracker - len(self.timeDimension.get_algo_reources())} more")
+                                   message=f"Please Timeslot resources are not enough, add aleast {num_tracker -length_time_slot} more")
+            return
+        if length_time_slot < num_tutor_tracker:
+            messagebox.showwarning(title="Automatic Timetable Generator",
+                                   message=f"Please Timeslot resources are not enough, add aleast {num_tutor_tracker - length_time_slot} more")
             return
 
         isTrue = ShowMsg().pop_msg()

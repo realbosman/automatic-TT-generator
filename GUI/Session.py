@@ -5,6 +5,7 @@ from tkinter import ttk, messagebox
 # import openpyxl
 
 # -------------------------- DEFINING GLOBAL VARIABLES -------------------------
+from Models.Listener import Listener
 
 selectionbar_color = '#3C3F3F'
 sidebar_color = '#3C3F3F'
@@ -28,8 +29,9 @@ class Session(tk.Frame):
         self.combo2 = tk.StringVar()
         self.combo3 = tk.StringVar()
         # these are default values
-        self.storeWidth=[100,100,100,100]
+        self.storeWidth = [100, 100, 100, 100]
         v = tk.Scrollbar(self)
+        self.iswarningOn=False
 
         # attach Scrollbar to root window on
         # the side
@@ -59,11 +61,16 @@ class Session(tk.Frame):
         self.label3.pack(expand=0, fill='y', side=tk.RIGHT, padx=10)
         self.label3.bind("<Button-1>", self.delete_row_)
 
+        self.warnings_frame=tk.Frame(self)
+        self.warnings_frame.pack(expand=1, fill='x')
+
+
+
         self.separator = ttk.Separator(self)
         self.separator.pack()
 
         self.treeFrame = ttk.Frame(self)
-        self.treeFrame.pack(expand=1, anchor=tk.CENTER, fill=tk.BOTH,pady=(0,15),padx=(10,10))
+        self.treeFrame.pack(expand=1, anchor=tk.CENTER, fill=tk.BOTH, pady=(0, 15), padx=(10, 10))
         # self.treeFrame.place(relx=.3, rely=.05, relwidth=.7, relheight=.85)
         self.treeScroll = ttk.Scrollbar(self.treeFrame)
         self.treeScroll.pack(side="right", fill="y")
@@ -100,7 +107,7 @@ class Session(tk.Frame):
 
         print("heads", headings)
         for col_ in headings:
-            self.treeview.column(col_, width=100, anchor='w' ,stretch=tk.YES)
+            self.treeview.column(col_, width=100, anchor='w', stretch=tk.YES)
             self.treeview.heading(col_, text=col_)
 
         for i in range(int(self.session__.get_sessions_length())):
@@ -110,7 +117,12 @@ class Session(tk.Frame):
                 current_width = self.treeview.column(headings[col_index], option="width")
                 if col_width > current_width:
                     self.treeview.column(headings[col_index], width=col_width)
-                    self.storeWidth[col_index]=col_width
+                    self.storeWidth[col_index] = col_width
+                if len(values) == 4:
+                    values.append("AUTO")
+                else:
+                    pass
+
             self.treeview.insert('', tk.END, values=values)
 
     def add_new_session(self, event):
@@ -122,6 +134,8 @@ class Session(tk.Frame):
         self.session__.add_new_session(values_lst)
 
     def on_double_clicked(self, event):
+
+
         region_clicked = self.treeview.identify_region(event.x, event.y)
 
         '''
@@ -138,14 +152,13 @@ class Session(tk.Frame):
         selected_text = selected_values.get("values")
         print(self.treeview.selection(), "///", selected_values)
         column_box = self.treeview.bbox(selected_iid, column)
-        print(self.treeview.selection(), "///", column_box,"///",self.storeWidth)
+        print(self.treeview.selection(), "///", column_box, "///", self.storeWidth)
 
         # TODO Test this with bigger row tex to ensure that this below stands out
 
-
-        if column_box[2]==self.storeWidth[-2]:
-            print("ON ME",column_box[0])
-            entry_edit = ttk.Combobox(self.treeview, width=column_box[2],values=list(self.session__.get_faculty_cu()))
+        if column_box[2] == self.storeWidth[-2]:
+            print("ON ME", column_box[0])
+            entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=list(self.session__.get_faculty_cu()))
             # record the column index and id
             entry_edit.editing_column_index = columnIndex
             entry_edit.editing_item_iid = selected_iid
@@ -163,9 +176,9 @@ class Session(tk.Frame):
 
             entry_edit.bind("<FocusOut>", self.onFocusOut)
             entry_edit.bind("<Return>", self.on_enter_press)
-        elif column_box[2]==self.storeWidth[-1]:
-            print("ON ME",column_box[0])
-            entry_edit = ttk.Combobox(self.treeview, width=column_box[2],values=self.session__.get_sub_groups_commbo())
+        elif column_box[2] == self.storeWidth[-1]:
+            print("ON ME", column_box[0])
+            entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=self.session__.get_sub_groups_commbo())
             # record the column index and id
             entry_edit.editing_column_index = columnIndex
             entry_edit.editing_item_iid = selected_iid
@@ -244,7 +257,7 @@ class Session(tk.Frame):
 
     def on_enter_press(self, e):
         new_text = e.widget.get()
-        new_text= new_text.upper()
+        new_text = new_text.upper()
 
 
         if new_text == '':
@@ -252,7 +265,7 @@ class Session(tk.Frame):
             print('Object is None ')
             new_text = '--------'
             e.widget.destroy()
-            messagebox.showerror("Empty Field",message="This field should not be empty!")
+            messagebox.showerror("Empty Field", message="This field should not be empty!")
             return
         else:
             selected_iid = e.widget.editing_item_iid
@@ -268,17 +281,17 @@ class Session(tk.Frame):
 
             self.session__.edit_session(index_to_add, current_values)
             e.widget.destroy()
-
-
-
-
-
-
+            if Listener.iswarningOnSession==False:
+                        messagebox.showwarning(title="Warning", message="Please all fields must be in caps and names of Tutors,Groups and Faculties  "
+                                         "reoccurring should be consistent with the spellings and spaces to ensure ensure "
+                                         "timetable consistency.")
+                        Listener.iswarningOnSession = True
 
     def onFocusOut(self, e):
         print("running")
         e.widget.destroy()
+        self.label4.destroy()
+
 
     def on_save(self, event):
         print("Save clicked")
-

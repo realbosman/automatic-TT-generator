@@ -10,6 +10,8 @@ class Listener:
     timeZone=str(time.tzname[0])
     isTimeTableCreated = False
     isWeekendInclusive = False
+    iswarningOnSession = False
+    ispdf_generated=False
     isOptionsUpdated = False
     preferenceList = ["TimeSlots", "Groups", "Classroom/Room/Space", "Course/Class/Session",
                       "Instructor/Lecturer/Tutor"]
