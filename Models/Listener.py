@@ -12,6 +12,8 @@ class Listener:
     isWeekendInclusive = False
     iswarningOnSession = False
     ispdf_generated=False
+    tutor_with_highest_session_=0
+    get_time_slot_count=0
     isOptionsUpdated = False
     preferenceList = ["TimeSlots", "Groups", "Classroom/Room/Space", "Course/Class/Session",
                       "Instructor/Lecturer/Tutor"]

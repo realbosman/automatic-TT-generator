@@ -34,14 +34,16 @@ class TtGenerator:
         self.Full_Time_table_dict = dict()
         self.Full_Time_table_list = list()
         self.Tutor_tracking = list()
+        self.cu_division_box = list()
 
         self.list_ = list()
         self.list_Merged_Time_dict = dict()
-        self.Tutor_group_list=list()
+        self.Tutor_group_list = list()
         self.tutor_lst = list()
         self.class_rooms_lst = list()
+        self.created_lectures_details_lst_progress_var=list()
         self.created_lectures_details_lst = list()
-
+        self.list_of_groups_by_Tutor = list()
 
     def random_generator(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst, title, creator, tutor_lst):
         """
@@ -65,6 +67,9 @@ class TtGenerator:
         self.Full_Time_table_dict = dict()
         self.Full_Time_table_list = list()
         self.Tutor_tracking = list()
+        self.cu_division_box.clear()
+        self.list_of_groups_by_Tutor.clear()
+        self.created_lectures_details_lst_progress_var.clear()
 
         # Assign the values to the  class variables
         self.class_rooms_lst = class_rooms_lst
@@ -85,66 +90,72 @@ class TtGenerator:
             for value in timeslots_lst:
                 self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", item)[1]}')].append(value)
 
+        # get a copy of cu lists for progress_var purposes
+        for i in self.created_lectures_details_lst:
+            self.created_lectures_details_lst_progress_var.append(i)
 
+        # TODO getting the Grouping started
+        self.more_optimal_geneerator(tutor_lst, timeslots_lst)
 
-        for i in range(count_created_lectures):
-            time_picked = ""
-            lecture_picked = ""
-            space_picked = ""
-
-            # Randomly pick a session
-            lecture_picked = random.choice(self.created_lectures_details_lst)
-
-            # Randomly Picking time  from the corresponding timeslot
-            # TODO MANAGE TIME
-            sep_ = str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}').split(',', -1)
-
-            if len(sep_) <= 1:
-
-                try:
-                    time_picked = random.choice(
-                        self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
-                except:
-                    return
-
-            else:
-                self.is_merge_timeslots = True
-                inter_set = self.intersection_of_n_sets(self.set_list_of_sets(sep_))
-
-                # Handle the empty set in case there is no intersection.
-                if len(inter_set) == 0:
-                    # TODO what if no intersection
-                    pass
-                else:
-                    time_picked = random.choice(list(inter_set))
-
-            # TODO if the rooms are over go get a brand new class rooms
-            space_picked = random.choice(self.class_rooms_lst)
-
-            # Packing the values into a list to hold all the occurrences
-            self.Full_Time_table_list.append(
-                f'<{re.findall(r"<(.*?)>", lecture_picked)[2]}><{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[0]}><{re.findall(r"<(.*?)>", time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'
-            )
-
-
-            if self.is_merge_timeslots == True:
-                self.remove_time_slot(sep_, time_picked)
-                self.is_merge_timeslots = False
-
-            else:
-                self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')].remove(time_picked)
-
-            self.created_lectures_details_lst.remove(lecture_picked)
-            self.class_rooms_lst.remove(space_picked)
-
-            self.progress_var = int((((count_created_lectures - len(
-                self.created_lectures_details_lst)) / count_created_lectures)) * 100)
-
-        self.check_tutor_overlap()
+        # for i in range(count_created_lectures):
+        #     time_picked = ""
+        #     lecture_picked = ""
+        #     space_picked = ""
+        #
+        #     # Randomly pick a session
+        #     lecture_picked = random.choice(self.created_lectures_details_lst)
+        #
+        #     # Randomly Picking time  from the corresponding timeslot
+        #     # TODO MANAGE TIME
+        #     sep_ = str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}').split(',', -1)
+        #
+        #     if len(sep_) <= 1:
+        #
+        #         try:
+        #             time_picked = random.choice(
+        #                 self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
+        #         except:
+        #             return
+        #
+        #     else:
+        #         self.is_merge_timeslots = True
+        #         inter_set = self.intersection_of_n_sets(self.set_list_of_sets(sep_))
+        #
+        #         # Handle the empty set in case there is no intersection.
+        #         if len(inter_set) == 0:
+        #             # TODO what if no intersection
+        #             pass
+        #         else:
+        #             time_picked = random.choice(list(inter_set))
+        #
+        #     # TODO if the rooms are over go get a brand new class rooms
+        #     space_picked = random.choice(self.class_rooms_lst)
+        #
+        #     # Packing the values into a list to hold all the occurrences
+        #     self.Full_Time_table_list.append(
+        #         f'<{re.findall(r"<(.*?)>", lecture_picked)[2]}><{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[0]}><{re.findall(r"<(.*?)>", time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'
+        #     )
+        #
+        #     if self.is_merge_timeslots == True:
+        #         self.remove_time_slot(sep_, time_picked)
+        #         self.is_merge_timeslots = False
+        #
+        #     else:
+        #         self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')].remove(time_picked)
+        #
+        #     self.created_lectures_details_lst.remove(lecture_picked)
+        #     self.class_rooms_lst.remove(space_picked)
+        #
+        #     self.progress_var = int((((count_created_lectures - len(
+        #         self.created_lectures_details_lst)) / count_created_lectures)) * 100)
+        #
+        # self.check_tutor_overlap()
 
         try:
-            Listener.ispdf_generated=generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,no_weekends= Listener.isWeekendInclusive)
-            print("ISPDF generated====",Listener.ispdf_generated)
+            print("self.Full_Time_table_list ===",self.Full_Time_table_list)
+            Listener.ispdf_generated = generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,
+                                                             no_weekends=Listener.isWeekendInclusive)
+            # print("ISPDF generated====", Listener.ispdf_generated)
         except:
             print("Exception occurred in the algorithm")
         time.sleep(3)
@@ -245,7 +256,7 @@ class TtGenerator:
 
                             self.Full_Time_table_dict[faculty][txt_item].append(dict_)
 
-        print(self.Full_Time_table_dict)
+        # print(self.Full_Time_table_dict)
         return self.Full_Time_table_dict
 
     def intersection_of_n_sets(self, list_of_sets):
@@ -293,7 +304,6 @@ class TtGenerator:
             for index, time_slot_ in enumerate(self.list_Merged_Time_dict[group]):
                 if time_slot_ == time_slot:
                     self.list_Merged_Time_dict[group].remove(time_slot_)
-
 
     def check_tutor_overlap(self):
         """
@@ -377,11 +387,168 @@ class TtGenerator:
                         # Have to break to prevent repetition
                         break
 
-    def create_tutor_session_group(self,tutor_lst_):
+    def divide_and_remainder(self, num_timeslots, num_tutors_high):
+        # Perform the division
+        quotient = num_timeslots // num_tutors_high
+        # Calculate the remainder
+        remainder = num_timeslots % num_tutors_high
+        return quotient, remainder
+
+    # Test the function with a number
+
+    def more_optimal_geneerator(self, tutor_lst_, timeslots):
         """
         This get the list of Tuotrs random then make groups out of them
         :param tutor_lst_:
         :return None:
         """
+
+
+        random.shuffle(self.created_lectures_details_lst)
+        random.shuffle(tutor_lst_)
+        for index, tutor in enumerate(tutor_lst_):
+            self.Tutor_tracking.append(list())
+            for item in self.created_lectures_details_lst:
+                if str(f'{re.findall(r"<(.*?)>", item)[3]}') == tutor:
+                    self.Tutor_tracking[index].append(item)
+        # print("self.Tutor_tracking===", self.Tutor_tracking)
+        # print("tutor===", tutor_lst_)
+
+        #  based on the available timeslot make a list that includes them
+        num_of_div, rem = self.divide_and_remainder(len(timeslots), Listener.tutor_with_highest_session_)
+
+        # check if  rem is 0 if not the add 1 to the divisions
+        if rem == 0:
+            pass
+        else:
+            num_of_div = num_of_div + 1
+
+        # make the necessary divisions based on the num_of_div
+        for big_div in range(num_of_div):
+            self.cu_division_box.append(list())
+        # if its 0 just add the small lists in them
+        if rem == 0:
+            for big_div_ in self.cu_division_box:
+                for i in range(Listener.tutor_with_highest_session_):
+                    big_div_.append(list())
+        # if not the make room for the last session
+        else:
+            for i, big_div_ in enumerate(self.cu_division_box):
+                if i != num_of_div - 1:
+                    for i in range(Listener.tutor_with_highest_session_):
+                        big_div_.append(list())
+                else:
+                    for i in range(rem):
+                        big_div_.append(list())
+        # print(f"self.cu_division_box ==== {num_of_div} {rem},{len(timeslots)}", self.cu_division_box)
+        # print(len(timeslots),Listener.tutor_with_highest_session_)
+
+        # start to randomly generate [pick one tutor list ]
+        for tutors_sessions in self.Tutor_tracking:
+
+            # Now we are in the tutors_sessions list
+            for lecture in tutors_sessions:
+                # pick a random index for timslot
+                rand_list = list()
+                for i in range(num_of_div):
+                    rand_list.append(i)
+
+                index_tm_slot = random.choice(rand_list)
+                rand_list.remove(index_tm_slot)
+                is_lec_fit_for_insert = True
+
+                # use a while loop for backtracking purposes
+                is_still_in_while_loop=True
+                while is_still_in_while_loop:
+                    for index_timeslot__ ,timeslot__ in enumerate(self.cu_division_box[index_tm_slot]):
+                        # check if the lecture is already in that zone
+                        if is_still_in_while_loop == False:
+                            break
+
+                        # check if the zone is empty at 1st
+                        if len(timeslot__) == 0:
+                            self.cu_division_box[index_tm_slot][index_timeslot__].append(lecture)
+                            is_still_in_while_loop = False
+                            self.created_lectures_details_lst_progress_var.remove(lecture)
+
+                            self.progress_var = int(((( len(self.created_lectures_details_lst) - len(
+                                    self.created_lectures_details_lst_progress_var)) /  len(self.created_lectures_details_lst))) * 100)
+                            break
+                        else:
+                            for in_zone_lec in timeslot__:
+                                if is_still_in_while_loop == False:
+                                    break
+
+                                # check if the lecture is already
+                                if str(f'{re.findall(r"<(.*?)>", lecture)[3]}') == str(
+                                        f'{re.findall(r"<(.*?)>", in_zone_lec)[3]}'):
+                                    is_lec_fit_for_insert = False
+
+                                # checking also for the groups
+                                sep_ = str(f'{re.findall(r"<(.*?)>", in_zone_lec)[1]}').split(',', -1)
+                                sep__ = str(f'{re.findall(r"<(.*?)>", lecture)[1]}').split(',', -1)
+
+                                for sepp in sep_:
+                                    if sepp in sep__:
+                                        is_lec_fit_for_insert = False
+
+                            # check if the lecture is fit then append it to the timeslot
+                            if is_lec_fit_for_insert:
+                                self.cu_division_box[index_tm_slot][index_timeslot__].append(lecture)
+                                is_still_in_while_loop = False
+                                self.created_lectures_details_lst_progress_var.remove(lecture)
+
+                                self.progress_var = int((((len(self.created_lectures_details_lst) - len(
+                                    self.created_lectures_details_lst_progress_var)) / len(
+                                    self.created_lectures_details_lst))) * 100)
+                                break
+                            else:
+                                try:
+                                    index_tm_slot = random.choice(rand_list)
+                                    rand_list.remove(index_tm_slot)
+
+                                except:
+                                    print("HOOOOOOO rand_list is out of range")
+                                    print("new TIME TABLE  =====", self.cu_division_box)
+                                    return
+
+
+        print("new TIME TABLE  =====",self.cu_division_box)
+        for divi in self.cu_division_box:
+            for i in divi:
+                print("i==",i)
+
+        # Adding the Rooms and actual timeslot to the timeslot__
+        random.shuffle(timeslots)
+        timeslots_count=0
+        for divi in self.cu_division_box:
+            for i in divi:
+                new_class_list=list()
+                for class_ in self.class_rooms_lst:
+                    new_class_list.append(class_)
+
+                for lecture in i :
+                    # TODO if the rooms are over go get a brand new class rooms
+                    space_picked = random.choice(new_class_list)
+
+                    if len(new_class_list) !=0:
+                          new_class_list.remove(space_picked)
+                    else:
+                        space_picked = "Virtual Room"
+
+
+                    self.Full_Time_table_list.append(
+                    # Packing the values into a list to hold all the occurrences
+                    f'<{re.findall(r"<(.*?)>", lecture)[2]}><{re.findall(r"<(.*?)>", lecture)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture)[1]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[0]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[1]}><{re.findall(r"<(.*?)>", lecture)[3]}>'
+                    )
+            timeslots_count=timeslots_count+1
+
+
+
+
+
+
+
+
 
 

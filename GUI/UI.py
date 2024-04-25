@@ -395,6 +395,7 @@ class TkinterApp(tk.Tk):
         TutorsManager.save_instance_reload()
         Listener.save_instance_reload()
         self.timeDimension.save_instance_reload()
+        self.isHomeSaved = True
         self.show_frame(Home, "Time table Metadata", self.timetableMetadata,
                         self.timeDimension, self.listener_)
 
@@ -411,6 +412,7 @@ class TkinterApp(tk.Tk):
         self.timeDimension.new_file_()
         print("executed")
 
+        self.isHomeSaved = True
         self.show_frame(Home, "Time table Metadata", self.timetableMetadata,
                         self.timeDimension, self.listener_)
 
@@ -474,6 +476,8 @@ class TkinterApp(tk.Tk):
     def start_time_table_generation(self):
         num_tracker = self.lectures_.get_largest_session_number_in_a_subgroup() + 1  # Add 1 to prevent overlapping
         num_tutor_tracker = self.lectures_.get_the_number_of_Tutor_sessions()+1
+        Listener.tutor_with_highest_session_=num_tutor_tracker-1
+        # Listener.get_time_slot_count=num_tracker-1
         length_time_slot=len(self.timeDimension.get_algo_reources())
         if length_time_slot < num_tracker :
             messagebox.showwarning(title="Automatic Timetable Generator",
