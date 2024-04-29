@@ -30,12 +30,8 @@ class Session(tk.Frame):
         self.combo3 = tk.StringVar()
         # these are default values
         self.storeWidth = [100, 100, 100, 100]
-        v = tk.Scrollbar(self)
-        self.iswarningOn=False
+        # v = tk.Scrollbar(self)
 
-        # attach Scrollbar to root window on
-        # the side
-        v.pack(side=tk.RIGHT, fill=tk.Y)
 
         # TODO: call all the timeslots methods here to show up when th ui is created
 
@@ -75,15 +71,20 @@ class Session(tk.Frame):
         self.treeScroll = ttk.Scrollbar(self.treeFrame)
         self.treeScroll.pack(side="right", fill="y")
 
+        # # Define a custom style for the treeview
+        # self.treeScroll_x_style = ttk.Style()
+        # self.treeScroll_x_style.configure("Custom.Scrollbar", height=30)
+
         self.treeScroll_x = ttk.Scrollbar(self.treeFrame, orient="horizontal")
         self.treeScroll_x.pack(side="bottom", fill="x")
+        # self.treeScroll_x.configure(style="Custom.Scrollbar")
 
         # Define a custom style for the treeview
         self.style = ttk.Style()
         self.style.configure("Custom.Treeview", rowheight=30)  # Set your desired row height here
 
         cols = self.session__.get_column_headers()
-        print(cols)
+        # print(cols)
         self.treeview = ttk.Treeview(self.treeFrame, show="headings", columns=cols,
                                      xscrollcommand=self.treeScroll_x.set,
                                      yscrollcommand=self.treeScroll.set, height=20)
@@ -105,7 +106,7 @@ class Session(tk.Frame):
 
         headings = self.session__.get_column_headers()
 
-        print("heads", headings)
+        # print("heads", headings)
         for col_ in headings:
             self.treeview.column(col_, width=100, anchor='w', stretch=tk.YES)
             self.treeview.heading(col_, text=col_)

@@ -41,7 +41,7 @@ class TtGenerator:
         self.Tutor_group_list = list()
         self.tutor_lst = list()
         self.class_rooms_lst = list()
-        self.created_lectures_details_lst_progress_var=list()
+        self.created_lectures_details_lst_progress_var = list()
         self.created_lectures_details_lst = list()
         self.list_of_groups_by_Tutor = list()
 
@@ -95,7 +95,7 @@ class TtGenerator:
             self.created_lectures_details_lst_progress_var.append(i)
 
         # TODO getting the Grouping started
-        self.more_optimal_geneerator(tutor_lst, timeslots_lst)
+        self.advanced_optimal_generator(tutor_lst, timeslots_lst)
 
         # for i in range(count_created_lectures):
         #     time_picked = ""
@@ -152,7 +152,7 @@ class TtGenerator:
         # self.check_tutor_overlap()
 
         try:
-            print("self.Full_Time_table_list ===",self.Full_Time_table_list)
+            print("self.Full_Time_table_list ===", self.Full_Time_table_list)
             Listener.ispdf_generated = generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,
                                                              no_weekends=Listener.isWeekendInclusive)
             # print("ISPDF generated====", Listener.ispdf_generated)
@@ -396,16 +396,16 @@ class TtGenerator:
 
     # Test the function with a number
 
-    def more_optimal_geneerator(self, tutor_lst_, timeslots):
+    def advanced_optimal_generator(self, tutor_lst_, timeslots):
         """
         This get the list of Tuotrs random then make groups out of them
         :param tutor_lst_:
         :return None:
         """
 
-
         random.shuffle(self.created_lectures_details_lst)
         random.shuffle(tutor_lst_)
+
         for index, tutor in enumerate(tutor_lst_):
             self.Tutor_tracking.append(list())
             for item in self.created_lectures_details_lst:
@@ -458,9 +458,11 @@ class TtGenerator:
                 is_lec_fit_for_insert = True
 
                 # use a while loop for backtracking purposes
-                is_still_in_while_loop=True
+                is_still_in_while_loop = True
+
                 while is_still_in_while_loop:
-                    for index_timeslot__ ,timeslot__ in enumerate(self.cu_division_box[index_tm_slot]):
+
+                    for index_timeslot__, timeslot__ in enumerate(self.cu_division_box[index_tm_slot]):
                         # check if the lecture is already in that zone
                         if is_still_in_while_loop == False:
                             break
@@ -471,8 +473,9 @@ class TtGenerator:
                             is_still_in_while_loop = False
                             self.created_lectures_details_lst_progress_var.remove(lecture)
 
-                            self.progress_var = int(((( len(self.created_lectures_details_lst) - len(
-                                    self.created_lectures_details_lst_progress_var)) /  len(self.created_lectures_details_lst))) * 100)
+                            self.progress_var = int((((len(self.created_lectures_details_lst) - len(
+                                self.created_lectures_details_lst_progress_var)) / len(
+                                self.created_lectures_details_lst))) * 100)
                             break
                         else:
                             for in_zone_lec in timeslot__:
@@ -512,43 +515,31 @@ class TtGenerator:
                                     print("new TIME TABLE  =====", self.cu_division_box)
                                     return
 
-
-        print("new TIME TABLE  =====",self.cu_division_box)
+        print("new TIME TABLE  =====", self.cu_division_box)
         for divi in self.cu_division_box:
             for i in divi:
-                print("i==",i)
+                print("i==", i)
 
         # Adding the Rooms and actual timeslot to the timeslot__
         random.shuffle(timeslots)
-        timeslots_count=0
+        timeslots_count = 0
         for divi in self.cu_division_box:
             for i in divi:
-                new_class_list=list()
+                new_class_list = list()
                 for class_ in self.class_rooms_lst:
                     new_class_list.append(class_)
 
-                for lecture in i :
+                for lecture in i:
                     # TODO if the rooms are over go get a brand new class rooms
                     space_picked = random.choice(new_class_list)
 
-                    if len(new_class_list) !=0:
-                          new_class_list.remove(space_picked)
+                    if len(new_class_list) != 0:
+                        new_class_list.remove(space_picked)
                     else:
-                        space_picked = "Virtual Room"
-
+                        space_picked = "VIRTUAL ROOM"
 
                     self.Full_Time_table_list.append(
-                    # Packing the values into a list to hold all the occurrences
-                    f'<{re.findall(r"<(.*?)>", lecture)[2]}><{re.findall(r"<(.*?)>", lecture)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture)[1]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[0]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[1]}><{re.findall(r"<(.*?)>", lecture)[3]}>'
+                        # Packing the values into a list to hold all the occurrences
+                        f'<{re.findall(r"<(.*?)>", lecture)[2]}><{re.findall(r"<(.*?)>", lecture)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture)[1]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[0]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[1]}><{re.findall(r"<(.*?)>", lecture)[3]}>'
                     )
-            timeslots_count=timeslots_count+1
-
-
-
-
-
-
-
-
-
-
+            timeslots_count = timeslots_count + 1

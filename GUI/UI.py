@@ -39,7 +39,7 @@ header_color = '#3C3F3F'
 visualisation_frame_color = "#2B2B2B"
 TEXT_COLOR = '#eeeeee'
 
-PATH = Path(__file__).parent / 'images'
+PATH = Path(__file__).parent / 'assets'
 PATH_ = Path(__file__).parent / 'forest-light.tcl'
 PATH__ = Path(__file__).parent / 'forest-dark.tcl'
 
@@ -86,13 +86,15 @@ class TkinterApp(tk.Tk):
         self.bind("<<CheckQueue_Main>>", self.Check_Queue)
         self.run_after_period_thread()
 
+
+
         # ------------- BASIC APP LAYOUT -----------------
 
         self.geometry("1100x700")
         # self.geometry()
         self.resizable(True, True)
         self.config(background=selectionbar_color)
-        icon = tk.PhotoImage(file=PATH / 'LU_logo.png')
+        icon = tk.PhotoImage(file=PATH / 'logo.png')
         self.iconphoto(True, icon)
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
 
@@ -145,12 +147,18 @@ class TkinterApp(tk.Tk):
         )
         self.sidebar.place(relx=0, rely=0.053, relwidth=0.2, relheight=1)
 
+        # UNIVERSITY LOGO AND NAME
+        # self.brand_frame = tk.Frame(self.sidebar, bg=sidebar_color)
+        # self.brand_frame.place(relx=0, rely=0, relwidth=1, relheight=0.15)
+        self.uni_logo = icon.subsample(1)
+        logo = tk.Label(self.sidebar, image=self.uni_logo, bg=sidebar_color)
+        logo.place(relx=0, rely=0, relwidth=1, relheight=0.15)
         # SUBMENUS IN SIDE BAR(Add , view
         # , List MANAGEMENT)
 
         # # Add to Resources Submenu
         self.submenu_frame = tk.Frame(self.sidebar, bg=sidebar_color, relief='raised', bd=None)
-        self.submenu_frame.place(relx=0, rely=0, relwidth=1, relheight=1)
+        self.submenu_frame.place(relx=0, rely=0.2, relwidth=1, relheight=1)
 
         # TODO : Rectife this so that it can be handle the list items
         resource_submenu = SidebarSubMenu(self.submenu_frame,
@@ -219,6 +227,7 @@ class TkinterApp(tk.Tk):
         self.container.place(relx=0.2, rely=0.105, relwidth=0.8, relheight=0.9)
 
         self.frames = {}
+
         self.show_frame(Splash, " ", self.timetableMetadata, self.timeDimension, self.listener_)
 
     ''''
