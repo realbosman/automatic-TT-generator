@@ -253,7 +253,7 @@ class SessionManager:
         for lst in self.Session_List:
             # print(lst[1])
             tutors_set.add(lst[1])
-            print("TUTR=====", tutors_set)
+            # print("TUTR=====", tutors_set)
         return list(tutors_set)
 
     def save_instance_(self):

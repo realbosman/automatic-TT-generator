@@ -83,7 +83,7 @@ class Tutor(tk.Frame):
         self.style.configure("Custom.Treeview", rowheight=30)  # Set your desired row height here
 
         cols = TutorsManager.get_column_headers()
-        print(cols)
+        # print(cols)
         self.treeview = ttk.Treeview(self.treeFrame, show="headings", columns=cols,
                                      xscrollcommand=self.treeScroll_x.set,
                                      yscrollcommand=self.treeScroll.set, height=20)
@@ -92,7 +92,6 @@ class Tutor(tk.Frame):
         # TODO to check and update the size of the column
 
         self.treeview['columns'] = TutorsManager.get_column_headers()
-
         self.treeview.pack(expand=tk.TRUE, fill=tk.BOTH, side=tk.LEFT)
         self.treeScroll.config(command=self.treeview.yview)
         self.treeScroll_x.config(command=self.treeview.xview)
@@ -105,7 +104,7 @@ class Tutor(tk.Frame):
 
         headings = TutorsManager.get_column_headers()
 
-        print("heads", headings)
+        # print("heads", headings)
         for col_ in headings:
             self.treeview.column(col_,width=50,anchor='w',stretch=tk.YES)
             self.treeview.heading(col_,text=col_)
@@ -118,7 +117,12 @@ class Tutor(tk.Frame):
                 current_width = self.treeview.column(headings[col_index], option="width")
                 if col_width > current_width:
                     self.treeview.column(headings[col_index], width=col_width)
-            self.treeview.insert('', tk.END, values=values)
+            # print([values[1],values[2]])
+            # self.tutorName=self.treeview.insert(parent="", index=tk.END, text="Name")
+            # print(values[0])
+            # print(self.tutorName)
+
+            self.treeview.insert(parent="", index=tk.END, values=(values[0],values[1],values[2]))
 
     def add_new_session(self, event):
         values_lst = list()
@@ -152,7 +156,7 @@ class Tutor(tk.Frame):
         entry_edit.editing_column_index = columnIndex
         entry_edit.editing_item_iid = selected_iid
         entry_edit.insert(0, selected_text[columnIndex])
-        print(selected_text[columnIndex])
+        # print(selected_text[columnIndex])
         entry_edit.select_range(0, tk.END)
 
         entry_edit.focus()
@@ -187,8 +191,8 @@ class Tutor(tk.Frame):
 
                 self.treeview.delete(self.treeview.focus())
                 # self.updateUI()
-                print(self.treeview.get_children())
-                print(TutorsManager.get_sessions())
+                # print(self.treeview.get_children())
+                # print(TutorsManager.get_sessions())
 
 
             else:
@@ -196,14 +200,15 @@ class Tutor(tk.Frame):
                 TutorsManager.delete_tutor(index_to_delete)
                 self.treeview.delete(self.treeview.focus())
 
-                print(self.treeview.get_children())
+                # print(self.treeview.get_children())
                 # print(self.treeview.item(*self.treeview.get_children()))
-                print(TutorsManager.get_tutors())
+                # print(TutorsManager.get_tutors())
 
 
 
         else:
-            print("Else:", self.treeview.focus())
+            pass
+            # print("Else:", self.treeview.focus())
 
     def on_enter_press(self, e):
         new_text = e.widget.get()
@@ -211,7 +216,7 @@ class Tutor(tk.Frame):
 
         if new_text == '':
             # TODO add a popup to alert tyhe user that this field in blank either fill it or leave it
-            print('Object is None ')
+            # print('Object is None ')
             new_text = '--------'
 
         selected_iid = e.widget.editing_item_iid

@@ -195,15 +195,15 @@ class TkinterApp(tk.Tk):
         resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
 
         generator_time_table = SidebarSubMenu(self.submenu_frame,
-                                              sub_menu_heading='Time Table',
-                                              sub_menu_options=["Generate Time Table",
+                                              sub_menu_heading='TimeTable Operations',
+                                              sub_menu_options=["Generate TimeTable",
                                                                 "View TimeTable",
                                                                 "Generate PDF",
                                                                 ]
 
                                               )
 
-        generator_time_table.options["Generate Time Table"].config(
+        generator_time_table.options["Generate TimeTable"].config(
             command=lambda: self.start_time_table_generation_thread()  # self.start_time_table_generation()
         )
         generator_time_table.options["View TimeTable"].config(
@@ -213,7 +213,7 @@ class TkinterApp(tk.Tk):
             command=lambda: print("Generate PDF")
         )
 
-        self.changeOnHover(generator_time_table.options["Generate Time Table"], visualisation_frame_color,
+        self.changeOnHover(generator_time_table.options["Generate TimeTable"], visualisation_frame_color,
                            sidebar_color)
         self.changeOnHover(generator_time_table.options["View TimeTable"], visualisation_frame_color, sidebar_color)
         self.changeOnHover(generator_time_table.options["Generate PDF"], visualisation_frame_color, sidebar_color)
@@ -338,13 +338,13 @@ class TkinterApp(tk.Tk):
             if msg.ticket_value == 1:
                 self.update_Options()
                 Listener.isOptionsUpdated = False
-            print("OPTIONS UPDATE", Listener.preferenceList)
+            # print("OPTIONS UPDATE", Listener.preferenceList)
 
     def view_time_table(self):
         self.listener__ = Listener()
         if self.isTimetabecreatedMainThread:
-            print("VIEWNAME __", Listener.timeTableNameListener)
-            print("VIEWNAME _", Listener.timeTableNameListener)
+            # print("VIEWNAME __", Listener.timeTableNameListener)
+            # print("VIEWNAME _", Listener.timeTableNameListener)
             # print("STATIC", TimeTableManager.get_time_table_name())
             if Listener.timeTableNameListener != "":
                 self.show_frame(View, "Time table Metadata", self.timetableMetadata,
@@ -388,8 +388,8 @@ class TkinterApp(tk.Tk):
 
     def open_recent_files(self):
         path = askdirectory(title="Please select Project", initialdir=Listener.get_app_path_files())
-        print(rf'{path}')
-        print(f'{path}')
+        # print(rf'{path}')
+        # print(f'{path}')
 
         file_path = os.path.join(path, "DumpFile.pickle")
 
@@ -419,7 +419,7 @@ class TkinterApp(tk.Tk):
         TutorsManager.new_file_()
         Listener.new_file_()
         self.timeDimension.new_file_()
-        print("executed")
+        # print("executed")
 
         self.isHomeSaved = True
         self.show_frame(Home, "Time table Metadata", self.timetableMetadata,
@@ -486,6 +486,7 @@ class TkinterApp(tk.Tk):
         num_tracker = self.lectures_.get_largest_session_number_in_a_subgroup() + 1  # Add 1 to prevent overlapping
         num_tutor_tracker = self.lectures_.get_the_number_of_Tutor_sessions()+1
         Listener.tutor_with_highest_session_=num_tutor_tracker-1
+        Listener.group_with_highest_session_ = num_tracker - 1
         # Listener.get_time_slot_count=num_tracker-1
         length_time_slot=len(self.timeDimension.get_algo_reources())
         if length_time_slot < num_tracker :
@@ -593,9 +594,9 @@ class TkinterApp(tk.Tk):
                          fg=TEXT_COLOR)
 
         self.on_call_create(cont, *cls)
-        print("Current FRAME ==", cont)
-        print(str(cont).split(".", -1)[-1])
-        print("Splash'>")
+        # print("Current FRAME ==", cont)
+        # print(str(cont).split(".", -1)[-1])
+        # print("Splash'>")
         label.pack(side=tk.LEFT, padx=0, fill='both')
         self.current_frame = str(cont).split(".", -1)[-1]
         # frame.tkraise()
@@ -636,15 +637,15 @@ class TkinterApp(tk.Tk):
         resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
 
         generator_time_table = SidebarSubMenu(self.submenu_frame,
-                                              sub_menu_heading='Time Table',
-                                              sub_menu_options=["Generate Time Table",
+                                              sub_menu_heading='TimeTable Operations',
+                                              sub_menu_options=["Generate TimeTable",
                                                                 "View TimeTable",
                                                                 "Generate PDF",
                                                                 ]
 
                                               )
 
-        generator_time_table.options["Generate Time Table"].config(
+        generator_time_table.options["Generate TimeTable"].config(
             command=lambda: self.start_time_table_generation_thread()  # self.start_time_table_generation()
         )
         generator_time_table.options["View TimeTable"].config(
@@ -654,7 +655,7 @@ class TkinterApp(tk.Tk):
             command=lambda: print("Generate PDF")
         )
 
-        self.changeOnHover(generator_time_table.options["Generate Time Table"], visualisation_frame_color,
+        self.changeOnHover(generator_time_table.options["Generate TimeTable"], visualisation_frame_color,
                            sidebar_color)
         self.changeOnHover(generator_time_table.options["View TimeTable"], visualisation_frame_color, sidebar_color)
         self.changeOnHover(generator_time_table.options["Generate PDF"], visualisation_frame_color, sidebar_color)
@@ -873,7 +874,7 @@ class ShowMsg:
 
 
         else:
-            print("xxxxxxxxxx")
+            print("Generating failed")
 
         # messagebox.showinfo(title=None, message="Generated")
         return respo

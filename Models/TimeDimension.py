@@ -31,9 +31,9 @@ class TimeDimension:
         if not isinstance(cls.instance, cls):
             cls.instance = object.__new__(cls)
             cls.countInstance += 1
-            print(cls.countInstance)
+            # print(cls.countInstance)
         else:
-
+            pass
             print(cls.countInstance)
 
         return cls.instance
@@ -149,7 +149,7 @@ class TimeDimension:
                             # print(new_temp_lst_)
                             self.Sessions_List[index_to_add] = new_temp_lst_
         self.Days["headers"]=self.Days["headers"]
-        print("DDDDDAAAYAYAYYA",self.Days["headers"])
+        # print("DDDDDAAAYAYAYYA",self.Days["headers"])
 
 
 

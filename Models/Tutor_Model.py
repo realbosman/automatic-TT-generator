@@ -32,10 +32,10 @@ class TutorsManager:
 
     Space_List = [
 
-        ["Mr.Kasozi", "OOP", "Science"],
-        ["Mr.TONY", "PYTHON", "Science"],
-        ["Mr.REAGAN", "POP", "Science"],
-        ["Madam MIREMBE", "WEB", "Science"]
+        # ["Mr.Kasozi", "OOP", "Science"],
+        # ["Mr.TONY", "PYTHON", "Science"],
+        # ["Mr.REAGAN", "POP", "Science"],
+        # ["Madam MIREMBE", "WEB", "Science"]
 
     ]
 

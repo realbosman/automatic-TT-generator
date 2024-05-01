@@ -101,7 +101,7 @@ class Space(tk.Frame):
 
         headings = self.space__.get_column_headers()
 
-        print("heads", headings)
+        # print("heads", headings)
         for col_ in headings:
             self.treeview.column(col_,width=50,anchor='c')
             self.treeview.heading(col_,text=col_)
@@ -191,6 +191,7 @@ class Space(tk.Frame):
 
 
         else:
+            pass
             print("Else:", self.treeview.focus())
 
     def on_enter_press(self, e):
@@ -199,7 +200,7 @@ class Space(tk.Frame):
 
         if new_text == '':
             # TODO add a popup to alert tyhe user that this field in blank either fill it or leave it
-            print('Object is None ')
+            # print('Object is None ')
             new_text = '--------'
 
         selected_iid = e.widget.editing_item_iid
@@ -218,7 +219,7 @@ class Space(tk.Frame):
         # print(current_values)
 
     def onFocusOut(self, e):
-        print("running")
+        # print("running")
         e.widget.destroy()
 
     def on_save(self, event):

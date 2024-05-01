@@ -22,7 +22,7 @@ class TimeSlots(tk.Frame):
 
     def __init__(self, parent, *cls):
         ttk.Frame.__init__(self, parent)
-        print("TIME CLS",cls)
+        # print("TIME CLS",cls)
         v = tk.Scrollbar(self)
 
         # attach Scrollbar to root window on
@@ -80,7 +80,7 @@ class TimeSlots(tk.Frame):
         self.style = ttk.Style()
         self.style.configure("Custom.Treeview", rowheight=30)  # Set your desired row height here
         cols = self.timeDimension__.get_column_headers()
-        print("headers ",cols)
+        # print("headers ",cols)
         self.treeview = ttk.Treeview(self.treeFrame, show="headings",
                                      xscrollcommand=self.treeScroll_x.set,
                                      yscrollcommand=self.treeScroll.set, columns=cols, height=20)
@@ -104,7 +104,7 @@ class TimeSlots(tk.Frame):
 
     def head_tree_view(self):
         headings = self.timeDimension__.get_column_headers()
-        print("heads","ONE", headings)
+        # print("heads","ONE", headings)
         for col_ in headings:
             ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_HEADING,
                             ticket_value=[col_])
@@ -133,7 +133,7 @@ class TimeSlots(tk.Frame):
         if msg.ticket_type == TicketPurpose.UPDATE_PROGRESS_HEADING:
             self.treeview.column(msg.ticket_value[0], width=50, anchor='c')
             self.treeview.heading(msg.ticket_value[0], text=msg.ticket_value[0])
-            print("msg.ticket_value[0] ==",msg.ticket_value[0])
+            # print("msg.ticket_value[0] ==",msg.ticket_value[0])
 
     def add_new_session(self, event):
         values_lst = list()
@@ -166,7 +166,7 @@ class TimeSlots(tk.Frame):
         entry_edit.editing_column_index = columnIndex
         entry_edit.editing_item_iid = selected_iid
         entry_edit.insert(0, selected_text[columnIndex])
-        print(selected_text[columnIndex])
+        # print(selected_text[columnIndex])
         entry_edit.select_range(0, tk.END)
 
         entry_edit.focus()
@@ -201,8 +201,8 @@ class TimeSlots(tk.Frame):
 
                 self.treeview.delete(self.treeview.focus())
                 # self.updateUI()
-                print(self.treeview.get_children())
-                print(self.timeDimension__.get_sessions())
+                # print(self.treeview.get_children())
+                # print(self.timeDimension__.get_sessions())
 
 
             else:
@@ -210,13 +210,14 @@ class TimeSlots(tk.Frame):
                 self.timeDimension__.delete_session(index_to_delete)
                 self.treeview.delete(self.treeview.focus())
 
-                print(self.treeview.get_children())
+                # print(self.treeview.get_children())
                 # print(self.treeview.item(*self.treeview.get_children()))
-                print(self.timeDimension__.get_sessions())
+                # print(self.timeDimension__.get_sessions())
 
 
 
         else:
+            pass
             print("Else:", self.treeview.focus())
 
     def on_enter_press(self, e):
@@ -225,7 +226,7 @@ class TimeSlots(tk.Frame):
 
         if new_text == '':
             # TODO add a popup to alert tyhe user that this field in blank either fill it or leave it
-            print('Object is None ')
+            # print('Object is None ')
             new_text = '--------'
 
         selected_iid = e.widget.editing_item_iid
@@ -244,7 +245,7 @@ class TimeSlots(tk.Frame):
         # print(current_values)
 
     def onFocusOut(self, e):
-        print("running")
+        # print("running")
         e.widget.destroy()
 
     def on_save(self, event):

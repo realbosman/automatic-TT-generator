@@ -152,7 +152,7 @@ class TtGenerator:
         # self.check_tutor_overlap()
 
         try:
-            print("self.Full_Time_table_list ===", self.Full_Time_table_list)
+            # print("self.Full_Time_table_list ===", self.Full_Time_table_list)
             Listener.ispdf_generated = generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,
                                                              no_weekends=Listener.isWeekendInclusive)
             # print("ISPDF generated====", Listener.ispdf_generated)
@@ -363,11 +363,11 @@ class TtGenerator:
                                 # Construct the modified string with the new time
                                 modified_string = original_string[:start_index] + new_time + original_string[end_index:]
 
-                                print("ORI ==", original_string, " MOD ==", modified_string)
+                                # print("ORI ==", original_string, " MOD ==", modified_string)
 
                                 # put it back to the list at that position
                                 self.Full_Time_table_list.insert(int(re.findall(r"<(.*?)>", j)[-1]), modified_string)
-                                print("FF NOW", self.Full_Time_table_list[int(re.findall(r"<(.*?)>", j)[-1])])
+                                # print("FF NOW", self.Full_Time_table_list[int(re.findall(r"<(.*?)>", j)[-1])])
 
                                 # remove the newly picked time from the subgroup
                                 self.list_Merged_Time_dict[str(sep_[0])].remove(time_picked)
@@ -382,7 +382,8 @@ class TtGenerator:
                         else:
                             # TODO : TO BE CONTINUED
                             # What if the groups are many
-                            print('More== ', item)
+                            pass
+                            # print('More== ', item)
 
                         # Have to break to prevent repetition
                         break
@@ -414,8 +415,18 @@ class TtGenerator:
         # print("self.Tutor_tracking===", self.Tutor_tracking)
         # print("tutor===", tutor_lst_)
 
+        div_decider = 0
+        if Listener.tutor_with_highest_session_ > Listener.group_with_highest_session_:
+            div_decider = Listener.tutor_with_highest_session_
+
+        elif Listener.tutor_with_highest_session_ < Listener.group_with_highest_session_:
+            div_decider = Listener.group_with_highest_session_
+
+        else:
+            div_decider = Listener.group_with_highest_session_
+
         #  based on the available timeslot make a list that includes them
-        num_of_div, rem = self.divide_and_remainder(len(timeslots), Listener.tutor_with_highest_session_)
+        num_of_div, rem = self.divide_and_remainder(len(timeslots), div_decider)
 
         # check if  rem is 0 if not the add 1 to the divisions
         if rem == 0:
@@ -426,22 +437,24 @@ class TtGenerator:
         # make the necessary divisions based on the num_of_div
         for big_div in range(num_of_div):
             self.cu_division_box.append(list())
+
         # if its 0 just add the small lists in them
         if rem == 0:
             for big_div_ in self.cu_division_box:
-                for i in range(Listener.tutor_with_highest_session_):
+                for i in range(div_decider):
                     big_div_.append(list())
         # if not the make room for the last session
+
         else:
             for i, big_div_ in enumerate(self.cu_division_box):
                 if i != num_of_div - 1:
-                    for i in range(Listener.tutor_with_highest_session_):
+                    for i in range(div_decider):
                         big_div_.append(list())
                 else:
                     for i in range(rem):
                         big_div_.append(list())
         # print(f"self.cu_division_box ==== {num_of_div} {rem},{len(timeslots)}", self.cu_division_box)
-        # print(len(timeslots),Listener.tutor_with_highest_session_)
+        # print(len(timeslots), div_decider)
 
         # start to randomly generate [pick one tutor list ]
         for tutors_sessions in self.Tutor_tracking:
@@ -450,11 +463,13 @@ class TtGenerator:
             for lecture in tutors_sessions:
                 # pick a random index for timslot
                 rand_list = list()
+                rand_list.clear()
                 for i in range(num_of_div):
                     rand_list.append(i)
+                # print("rand_list==", rand_list)
 
-                index_tm_slot = random.choice(rand_list)
-                rand_list.remove(index_tm_slot)
+                random.shuffle(rand_list)
+                # rand_list.remove(index_tm_slot)
                 is_lec_fit_for_insert = True
 
                 # use a while loop for backtracking purposes
@@ -462,41 +477,21 @@ class TtGenerator:
 
                 while is_still_in_while_loop:
 
-                    for index_timeslot__, timeslot__ in enumerate(self.cu_division_box[index_tm_slot]):
-                        # check if the lecture is already in that zone
-                        if is_still_in_while_loop == False:
+                    if not is_still_in_while_loop:
+                        break
+
+                    # print("inloop",lecture)
+                    for index_tm_slot in rand_list:
+                        if not is_still_in_while_loop:
                             break
+                        for index_timeslot__, timeslot__ in enumerate(self.cu_division_box[index_tm_slot]):
+                            # check if the lecture is already in that zone
+                            if not is_still_in_while_loop:
+                                break
 
-                        # check if the zone is empty at 1st
-                        if len(timeslot__) == 0:
-                            self.cu_division_box[index_tm_slot][index_timeslot__].append(lecture)
-                            is_still_in_while_loop = False
-                            self.created_lectures_details_lst_progress_var.remove(lecture)
-
-                            self.progress_var = int((((len(self.created_lectures_details_lst) - len(
-                                self.created_lectures_details_lst_progress_var)) / len(
-                                self.created_lectures_details_lst))) * 100)
-                            break
-                        else:
-                            for in_zone_lec in timeslot__:
-                                if is_still_in_while_loop == False:
-                                    break
-
-                                # check if the lecture is already
-                                if str(f'{re.findall(r"<(.*?)>", lecture)[3]}') == str(
-                                        f'{re.findall(r"<(.*?)>", in_zone_lec)[3]}'):
-                                    is_lec_fit_for_insert = False
-
-                                # checking also for the groups
-                                sep_ = str(f'{re.findall(r"<(.*?)>", in_zone_lec)[1]}').split(',', -1)
-                                sep__ = str(f'{re.findall(r"<(.*?)>", lecture)[1]}').split(',', -1)
-
-                                for sepp in sep_:
-                                    if sepp in sep__:
-                                        is_lec_fit_for_insert = False
-
-                            # check if the lecture is fit then append it to the timeslot
-                            if is_lec_fit_for_insert:
+                            # check if the zone is empty at 1st
+                            if len(timeslot__) == 0:
+                                print("len =>", len(timeslot__), index_tm_slot, "<=====>", index_timeslot__, timeslot__)
                                 self.cu_division_box[index_tm_slot][index_timeslot__].append(lecture)
                                 is_still_in_while_loop = False
                                 self.created_lectures_details_lst_progress_var.remove(lecture)
@@ -504,27 +499,74 @@ class TtGenerator:
                                 self.progress_var = int((((len(self.created_lectures_details_lst) - len(
                                     self.created_lectures_details_lst_progress_var)) / len(
                                     self.created_lectures_details_lst))) * 100)
+                                # print(f"Broke out ", index_timeslot__)
                                 break
-                            else:
-                                try:
-                                    index_tm_slot = random.choice(rand_list)
-                                    rand_list.remove(index_tm_slot)
 
-                                except:
-                                    print("HOOOOOOO rand_list is out of range")
-                                    print("new TIME TABLE  =====", self.cu_division_box)
-                                    return
+                            if len(timeslot__) != 0:
+                                # print("len =>", len(timeslot__), index_tm_slot, "<===not==>", index_timeslot__, timeslot__)
+                                for in_zone_lec in timeslot__:
+                                    if is_still_in_while_loop == False:
+                                        break
 
-        print("new TIME TABLE  =====", self.cu_division_box)
-        for divi in self.cu_division_box:
-            for i in divi:
-                print("i==", i)
+                                    # check if the lecture is already
+                                    if str(f'{re.findall(r"<(.*?)>", lecture)[3]}') == str(
+                                            f'{re.findall(r"<(.*?)>", in_zone_lec)[3]}'):
+                                        is_lec_fit_for_insert = False
+
+                                    # checking also for the groups
+                                    sep_ = str(f'{re.findall(r"<(.*?)>", in_zone_lec)[1]}').split(',', -1)
+                                    sep__ = str(f'{re.findall(r"<(.*?)>", lecture)[1]}').split(',', -1)
+                                    # print("SEP", sep__)
+
+                                    for sepp in sep__:
+                                        if sepp in sep_:
+                                            # print("TRUE sep in ")
+                                            is_lec_fit_for_insert = False
+
+                                # check if the lecture is fit then append it to the timeslot
+                                if is_lec_fit_for_insert:
+                                    self.cu_division_box[index_tm_slot][index_timeslot__].append(lecture)
+
+                                    self.created_lectures_details_lst_progress_var.remove(lecture)
+
+                                    self.progress_var = int((((len(self.created_lectures_details_lst) - len(
+                                        self.created_lectures_details_lst_progress_var)) / len(
+                                        self.created_lectures_details_lst))) * 100)
+                                    is_still_in_while_loop = False
+                                    break
+                                if is_still_in_while_loop == False:
+                                    # print(f"Broke out 2 ", index_timeslot__)
+                                    break
+
+                                # TODO else statement to see who is not added in
+                                else:
+                                    print('Still in loop')
+                                    # try:
+                                    #
+                                    #     if is_still_in_while_loop == False:
+                                    #         # print(f"Broke out 2 ", index_timeslot__)
+                                    #         break
+                                    #     rand_list.remove(index_tm_slot)
+                                    #     index_tm_slot = random.choice(rand_list)
+                                    # except:
+                                    #     # TODO problem with rand_list
+                                    #     print("HOOOOOOO rand_list is out of range")
+                                    #     print("Lecture  =====", lecture)
+                                    #     # is_still_in_while_loop = False
+                                    #
+                                    #     # return
+
+        # # print("new TIME TABLE  =====", self.cu_division_box)
+        # for divi in self.cu_division_box:
+        #     for i in divi:
+        #         print("i==", i)
 
         # Adding the Rooms and actual timeslot to the timeslot__
         random.shuffle(timeslots)
         timeslots_count = 0
-        for divi in self.cu_division_box:
-            for i in divi:
+        # print("Timeslots",timeslots)
+        for divi__ in self.cu_division_box:
+            for i in divi__:
                 new_class_list = list()
                 for class_ in self.class_rooms_lst:
                     new_class_list.append(class_)
@@ -542,4 +584,7 @@ class TtGenerator:
                         # Packing the values into a list to hold all the occurrences
                         f'<{re.findall(r"<(.*?)>", lecture)[2]}><{re.findall(r"<(.*?)>", lecture)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture)[1]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[0]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[1]}><{re.findall(r"<(.*?)>", lecture)[3]}>'
                     )
-            timeslots_count = timeslots_count + 1
+                # print("Timeslots", timeslots_count)
+                # print(
+                #     f'<{re.findall(r"<(.*?)>", lecture)[2]}><{re.findall(r"<(.*?)>", lecture)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture)[1]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[0]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[1]}><{re.findall(r"<(.*?)>", lecture)[3]}>')
+                timeslots_count = timeslots_count + 1

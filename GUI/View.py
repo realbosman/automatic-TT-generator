@@ -128,12 +128,12 @@ class View(tk.Frame):
         # Open the PDF file
         # self.listener__ = Listener()
         if name == "":
-            print("Name:", name)
+            # print("Name:", name)
             messagebox.showerror(title="Error", message=f'<{name}>')
             return
-        print('Before')
+        # print('Before')
         pdf_document = fitz.open(rf'{Listener.get_app_path_docs()}\{name}.pdf')
-        print('After')
+        # print('After')
 
         # Load and display each page of the PDF as a resized image
         self.images = []
@@ -145,7 +145,7 @@ class View(tk.Frame):
             img: Image = ImageTk.PhotoImage(image=img)
             self.images.append(img)
             self.canvas.create_image(10, 10 + page_number * (img.height() + 10), anchor=NW, image=img)
-            print('Loop==',page_number)
+            # print('Loop==',page_number)
 
         # Update the scroll region to include all the images
         self.frame_images.update_idletasks()

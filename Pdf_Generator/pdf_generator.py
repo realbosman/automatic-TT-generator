@@ -99,7 +99,7 @@ class Schedule:
             creator=None,
             title=None
     ):
-        print(f'X:{x} Y:{y}')
+        # print(f'X:{x} Y:{y}')
         if min_time is None:
             min_time = max(
                 min(time2hours(ev.start_time) for ev in self.all_events()) - 0.5, 0

@@ -80,10 +80,11 @@ class SpaceManager:
         if not isinstance(cls.instance, cls):
             cls.instance = object.__new__(cls)
             cls.countInstance += 1
-            print(cls.countInstance)
+            # print(cls.countInstance)
         else:
+            pass
 
-            print(cls.countInstance)
+            # print(cls.countInstance)
 
         return cls.instance
 

@@ -35,7 +35,7 @@ class Groups_(tk.Frame):
             self.session_manager = arg
         self.cf = CollapsingFrame(self)
         self.cf.pack(fill=tk.BOTH)
-        print(IMG_PATH)
+        # print(IMG_PATH)
         v = tk.Scrollbar(self)
 
         # attach Scrollbar to root window on
@@ -51,7 +51,7 @@ class Groups_(tk.Frame):
         self.frame_list.clear()
         self.session_manager.set_groups_cu()
 
-        print("LLLLL==",self.session_manager.get_faculty_cu())
+        # print("LLLLL==",self.session_manager.get_faculty_cu())
         for i, faculty in enumerate(self.session_manager.get_faculty_cu()):
 
                 self.frame_list.append(ttk.Frame(self.cf, padding=10))

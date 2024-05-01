@@ -13,6 +13,7 @@ class Listener:
     iswarningOnSession = False
     ispdf_generated=False
     tutor_with_highest_session_=0
+    group_with_highest_session_=0
     get_time_slot_count=0
     isOptionsUpdated = False
     preferenceList = ["TimeSlots", "Groups", "Classroom/Rooms/Space", "Course/Class/Session",
@@ -78,7 +79,7 @@ class Listener:
         Listener.isTimeTableCreated = False
         Listener.isWeekendInclusive = False
         Listener.isOptionsUpdated = False
-        Listener.preferenceList = ["TimeSlots", "Groups", "Classroom/Room/Space", "Course/Class/Session",
+        Listener.preferenceList = ["TimeSlots", "Groups", "Classroom/Rooms/Space", "Course/Class/Session",
                                    "Instructor/Lecturer/Tutor"]
         Listener.saveInstanceDict = {
 

@@ -55,7 +55,7 @@ class GenerateTimeTable(tk.Frame):
         self.progress_number = 0;
 
         for index, arg in enumerate(cls):
-            print("Running args")
+            # print("Running args")
             if index == 0:
                 self.gen_time_dimension = arg
             if index == 1:
@@ -208,7 +208,7 @@ class GenerateTimeTable(tk.Frame):
                 Listener.isTimeTableCreated = False
 
                 try:
-                    print("Listener.timeTableNameListener}======", Listener.timeTableNameListener)
+                    # print("Listener.timeTableNameListener}======", Listener.timeTableNameListener)
                     pdf_document = fitz.open(rf'{Listener.get_app_path_docs()}\{Listener.timeTableNameListener}.pdf')
                     # print()
                 except:

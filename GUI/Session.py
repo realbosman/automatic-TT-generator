@@ -151,20 +151,20 @@ class Session(tk.Frame):
         selected_iid = self.treeview.focus()
         selected_values = self.treeview.item(selected_iid)
         selected_text = selected_values.get("values")
-        print(self.treeview.selection(), "///", selected_values)
+        # print(self.treeview.selection(), "///", selected_values)
         column_box = self.treeview.bbox(selected_iid, column)
-        print(self.treeview.selection(), "///", column_box, "///", self.storeWidth)
+        # print(self.treeview.selection(), "///", column_box, "///", self.storeWidth)
 
         # TODO Test this with bigger row tex to ensure that this below stands out
 
         if column_box[2] == self.storeWidth[-2]:
-            print("ON ME", column_box[0])
+            # print("ON ME", column_box[0])
             entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=list(self.session__.get_faculty_cu()))
             # record the column index and id
             entry_edit.editing_column_index = columnIndex
             entry_edit.editing_item_iid = selected_iid
             entry_edit.insert(0, selected_text[columnIndex])
-            print(selected_text[columnIndex])
+            # print(selected_text[columnIndex])
             entry_edit.select_range(0, tk.END)
 
             entry_edit.focus()
@@ -178,13 +178,13 @@ class Session(tk.Frame):
             entry_edit.bind("<FocusOut>", self.onFocusOut)
             entry_edit.bind("<Return>", self.on_enter_press)
         elif column_box[2] == self.storeWidth[-1]:
-            print("ON ME", column_box[0])
+            # print("ON ME", column_box[0])
             entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=self.session__.get_sub_groups_commbo())
             # record the column index and id
             entry_edit.editing_column_index = columnIndex
             entry_edit.editing_item_iid = selected_iid
             entry_edit.insert(0, selected_text[columnIndex])
-            print(selected_text[columnIndex])
+            # print(selected_text[columnIndex])
             entry_edit.select_range(0, tk.END)
 
             entry_edit.focus()
@@ -203,7 +203,7 @@ class Session(tk.Frame):
             entry_edit.editing_column_index = columnIndex
             entry_edit.editing_item_iid = selected_iid
             entry_edit.insert(0, selected_text[columnIndex])
-            print(selected_text[columnIndex])
+            # print(selected_text[columnIndex])
             entry_edit.select_range(0, tk.END)
 
             entry_edit.focus()
@@ -238,8 +238,8 @@ class Session(tk.Frame):
 
                 self.treeview.delete(self.treeview.focus())
                 # self.updateUI()
-                print(self.treeview.get_children())
-                print(self.session__.get_sessions())
+                # print(self.treeview.get_children())
+                # print(self.session__.get_sessions())
 
 
             else:
@@ -247,14 +247,15 @@ class Session(tk.Frame):
                 self.session__.delete_session(index_to_delete)
                 self.treeview.delete(self.treeview.focus())
 
-                print(self.treeview.get_children())
+                # print(self.treeview.get_children())
                 # print(self.treeview.item(*self.treeview.get_children()))
-                print(self.session__.get_sessions())
+                # print(self.session__.get_sessions())
 
 
 
         else:
-            print("Else:", self.treeview.focus())
+            pass
+            # print("Else:", self.treeview.focus())
 
     def on_enter_press(self, e):
         new_text = e.widget.get()
@@ -263,7 +264,7 @@ class Session(tk.Frame):
 
         if new_text == '':
             # TODO add a popup to alert tyhe user that this field in blank either fill it or leave it
-            print('Object is None ')
+            # print('Object is None ')
             new_text = '--------'
             e.widget.destroy()
             messagebox.showerror("Empty Field", message="This field should not be empty!")
@@ -289,7 +290,7 @@ class Session(tk.Frame):
                         Listener.iswarningOnSession = True
 
     def onFocusOut(self, e):
-        print("running")
+        # print("running")
         e.widget.destroy()
         self.label4.destroy()
 

@@ -45,7 +45,7 @@ class TimetableMetaData:
         TimetableMetaData.preferences_list_ = preferences_list
         self.timeDimension__.set_from_metadata_thread(days_list)
         Listener.timeTableNameListener = time_table_name_
-        print("From the class", TimetableMetaData.isInfoSet)
+        # print("From the class", TimetableMetaData.isInfoSet)
         # self.days_list=self.timeDimension__.refresh_list_Home_timetable_metadata()
 
     @staticmethod

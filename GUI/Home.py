@@ -30,7 +30,7 @@ class Home(tk.Frame):
         # style.theme_use("clam")  # Choose a theme (e.g., "clam")
         # style.configure("My.Vertical.TScrollbar", width=20)  # Set the width of the vertical scrollbar
 
-        print("TimetableMetaData.isInfoSet==", TimetableMetaData.isInfoSet)
+        # print("TimetableMetaData.isInfoSet==", TimetableMetaData.isInfoSet)
         self.timeTableMetaData__, self.td, self.listenerr = cls
         # print(self.listenerr.getStateHome())
         Listener.set_state_home(True)
@@ -58,28 +58,25 @@ class Home(tk.Frame):
         self.space_status_var = tk.StringVar(value="Classroom")
         self.update_thread()
 
-
-        self.canvas = tk.Canvas(self,background=visualisation_frame_color)
-        self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview,width=20)
+        self.canvas = tk.Canvas(self, background=visualisation_frame_color)
+        self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview, width=20)
         self.scrollable_frame = ttk.Frame(self.canvas)
 
-        self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="center")
-        self.canvas.configure(yscrollcommand=self.scrollbar.set)
+        self.canvas.create_window((self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2), window=self.scrollable_frame, anchor="center")
+        self.canvas.configure(yscrollcommand=self.scrollbar.set )
 
         self.scrollable_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
         # Bind mouse wheel event to the canvas
         self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
 
-        self.canvas.pack(side="left", fill="both",padx=(20,0), expand=True)
+        self.canvas.pack(side="left", fill="both",  expand=True)
         self.scrollbar.pack(side="right", fill="y")
+
 
         #############################################################################
         self.width__ = 87
         self.frame_ = self.scrollable_frame
         # self.frame_.pack(expand=True, padx=(0, 20))
-
-
-
 
         # Saving User Info
         self.user_info_frame = ttk.LabelFrame(self.frame_, text="Timetable Metadata")
@@ -194,8 +191,6 @@ class Home(tk.Frame):
         self.subject_check = ttk.Checkbutton(self.courses_frame, text="Subject",
                                              variable=self.session_status_var, onvalue="Subject", offvalue="Subject_")
 
-
-
         self.session_label.grid(row=4, column=0, sticky='w')
         self.course_unit_check.grid(row=5, column=0)
         self.class_check.grid(row=5, column=1)
@@ -214,13 +209,10 @@ class Home(tk.Frame):
         tutor_check = ttk.Checkbutton(self.courses_frame, text="Tutor",
                                       variable=self.tutor_status_var, onvalue="Tutor", offvalue="Tutor_")
 
-
         self.tutor_label.grid(row=6, column=0, sticky='w')
         self.instructor_unit_check.grid(row=7, column=0)
         lecturer_check.grid(row=7, column=1)
         tutor_check.grid(row=7, column=2)
-
-
 
         for widget in self.courses_frame.winfo_children():
             widget.grid_configure(padx=10, pady=5)
@@ -230,12 +222,11 @@ class Home(tk.Frame):
         self.breaks_frame.grid(row=2, column=0, columnspan=2, sticky="news", padx=20, pady=10)  # Adjust columnspan
 
         self.breaks_entry = ttk.Entry(self.breaks_frame, textvariable="13:00-14:00")
-        self.breaks_entry.pack(fill=tk.X,expand=1, side='right' ,padx=10, pady=10
+        self.breaks_entry.pack(fill=tk.X, expand=1, side='right', padx=10, pady=10
                                )  # Use sticky option to expand horizontally
 
         for widget in self.breaks_frame.winfo_children():
             widget.grid_configure(padx=10, pady=5)
-
 
         # Accept terms
         self.terms_frame = ttk.LabelFrame(self.frame_, text="Terms & Conditions")
@@ -279,7 +270,10 @@ class Home(tk.Frame):
 
     def on_mousewheel(self, event):
         # On mouse wheel event, scroll the canvas
-        self.canvas.yview_scroll(-1 * (event.delta // 120), "units")
+        try:
+            self.canvas.yview_scroll(-1 * (event.delta // 120), "units")
+        except:
+            pass
 
     def save_information(self):
 
@@ -287,7 +281,6 @@ class Home(tk.Frame):
             Listener.isWeekendInclusive = True
         else:
             Listener.isWeekendInclusive = False
-
 
         if self.mon_status_var.get()[-1] == "_" and self.tue_status_var.get()[-1] == "_" and self.wed_status_var.get()[
             -1] == "_" and self.thur_status_var.get()[-1] == "_" and self.fri_status_var.get()[-1] == "_" and \
@@ -343,7 +336,7 @@ class Home(tk.Frame):
             Listener.preferenceList[4] = self.tutor_status_var.get()
             Listener.isOptionsUpdated = True
             Listener.timeTableNameListener = self.project_name__
-            print("Updated", Listener.preferenceList)
+            # print("Updated", Listener.preferenceList)
 
             self.timeTableMetaData__.set_timetable_information(
                 True,
@@ -356,9 +349,9 @@ class Home(tk.Frame):
             )
 
     def auto_save(self):
-        count__=0
+        count__ = 0
         while True:
-            count__=count__+1
+            count__ = count__ + 1
             time.sleep(.5)
             if self.sat_status_var.get()[-1] == "_" and self.sun_status_var.get()[-1] == "_":
                 Listener.isWeekendInclusive = True
@@ -421,7 +414,7 @@ class Home(tk.Frame):
                 Listener.preferenceList[4] = self.tutor_status_var.get()
                 Listener.isOptionsUpdated = True
                 Listener.timeTableNameListener = self.project_name__
-                print("Updated", Listener.preferenceList)
+                # print("Updated", Listener.preferenceList)
 
                 self.timeTableMetaData__.set_timetable_information(
                     True,
@@ -433,8 +426,7 @@ class Home(tk.Frame):
                     self.preference_lst__
                 )
                 Listener.set_state_home(False)
-            print(f"Home while {count__}")
-
+            # print(f"Home while {count__}")
 
     def save_thread(self):
         Listener.set_state_home(False)
@@ -442,14 +434,14 @@ class Home(tk.Frame):
         new_thread = Thread(target=self.save_information, daemon=True,
                             )  # I can pass args = "any" for the target
         new_thread.start()
+
     def aut_save_thread(self):
         new_thread_ = Thread(target=self.auto_save, daemon=True,
-                            )  # I can pass args = "any" for the target
+                             )  # I can pass args = "any" for the target
         new_thread_.start()
 
-
     def update_thread(self):
-        print("Threading started")
+        # print("Threading started")
         new_thread = Thread(target=self.updateUI, daemon=True,
                             )  # I can pass args = "any" for the target
         new_thread.start()
