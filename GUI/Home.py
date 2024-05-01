@@ -59,7 +59,7 @@ class Home(tk.Frame):
         self.update_thread()
 
 
-        self.canvas = tk.Canvas(self)
+        self.canvas = tk.Canvas(self,background=visualisation_frame_color)
         self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview,width=20)
         self.scrollable_frame = ttk.Frame(self.canvas)
 
@@ -169,8 +169,8 @@ class Home(tk.Frame):
                                                variable=self.space_status_var, onvalue="Classroom",
                                                offvalue="Classroom_")
 
-        self.room_check = ttk.Checkbutton(self.courses_frame, text="Room",
-                                          variable=self.space_status_var, onvalue="Room", offvalue="Room_")
+        self.room_check = ttk.Checkbutton(self.courses_frame, text="Rooms",
+                                          variable=self.space_status_var, onvalue="Rooms", offvalue="Rooms_")
 
         self.space_check = ttk.Checkbutton(self.courses_frame, text="Space",
                                            variable=self.space_status_var, onvalue="Space", offvalue="Space_")
