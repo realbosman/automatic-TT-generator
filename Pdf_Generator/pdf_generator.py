@@ -218,6 +218,10 @@ class Schedule:
                 if tmp_size is not None:
                     canvas.setFontSize(font_size)
                     line_height = font_size * 1.2
+
+        if True:
+            # Background color is too dark; print text in white
+            canvas.setFillColorRGB(0,0,0)
         canvas.setFontSize(header_size)
         canvas.drawCentredString(300, 745, title)
         canvas.drawCentredString(300, 730, subgroup)
@@ -290,9 +294,10 @@ def main(
         no_weekends=True,
         start_monday=True,
         font="Helvetica",
-        font_size=10,
+        font_size=9,
         title="Title",
-        creator="creator"
+        creator="creator",
+        breaks_list=None
 
 ) -> bool:
 
@@ -405,6 +410,23 @@ def main(
             sched = Schedule(week)
             if len(infile[faculty][sub_group]) != 0:
                 for ev in read_events(infile[faculty][sub_group], colors=colors):
+                    sched.add_event(ev)
+                sched.render(
+                    c,
+                    x=inch,
+                    y=page_height - inch,
+                    width=page_width - 2 * inch,
+                    height=page_height - 2 * inch,
+                    font_size=font_size,
+                    show_times=not no_times,
+                    min_time=time2hours(start_time) if start_time is not None else None,
+                    max_time=time2hours(end_time) if end_time is not None else None,
+                    subgroup=sub_group,
+                    creator=creator,
+                    title=title
+                )
+
+                for ev in read_events(breaks_list,colors=colors):
                     sched.add_event(ev)
                 sched.render(
                     c,

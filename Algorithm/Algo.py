@@ -152,13 +152,16 @@ class TtGenerator:
         #
         # self.check_tutor_overlap()
 
+        llt= self.break_resources()
+        print("lll",llt)
+
         try:
             # print("self.Full_Time_table_list ===", self.Full_Time_table_list)
             Listener.ispdf_generated = generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,
-                                                             no_weekends=Listener.isWeekendInclusive)
+                                                             no_weekends=Listener.isWeekendInclusive,breaks_list=llt)
             # print("ISPDF generated====", Listener.ispdf_generated)
         except:
-            print("Exception occurred in the algorithm")
+            print("Exception occurred in the algorithm",)
         time.sleep(3)
 
     def get__pdf_resources(self) -> dict[Any, Any]:
@@ -220,7 +223,7 @@ class TtGenerator:
                                 dict_['name'] = name
                                 dict_['days'] = day
                                 dict_['time'] = f
-                                dict_['color'] = "FF94EF"
+                                dict_['color'] = "000a2d"
 
                                 self.Full_Time_table_dict[faculty][text].append(dict_)
 
@@ -253,12 +256,25 @@ class TtGenerator:
                             dict_['name'] = name
                             dict_['days'] = day
                             dict_['time'] = f
-                            dict_['color'] = "FF94EF"
+                            dict_['color'] = "000a2d"
 
                             self.Full_Time_table_dict[faculty][txt_item].append(dict_)
 
         # print(self.Full_Time_table_dict)
         return self.Full_Time_table_dict
+
+    def break_resources(self)->list():
+        self.list_breaks_ = list()
+        day_list = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        for b in Listener.breaks_entry_list:
+            for day in day_list:
+                dict_ = dict()
+                dict_['name'] = "BREAK"
+                dict_['days'] = day
+                dict_['time'] = b
+                dict_['color'] = "000e3f"
+                self.list_breaks_.append(dict_)
+        return self.list_breaks_
 
     def intersection_of_n_sets(self, list_of_sets):
         """
@@ -414,7 +430,6 @@ class TtGenerator:
                 if str(f'{re.findall(r"<(.*?)>", item)[3]}') == tutor:
                     self.Tutor_tracking[index].append(item)
 
-
         div_decider = 0
         if Listener.tutor_with_highest_session_ > Listener.group_with_highest_session_:
             div_decider = Listener.tutor_with_highest_session_
@@ -452,7 +467,6 @@ class TtGenerator:
                 else:
                     for i in range(rem):
                         big_div_.append(list())
-
 
         # start to randomly generate [pick one tutor list ]
         for tutors_sessions in self.Tutor_tracking:
@@ -511,7 +525,7 @@ class TtGenerator:
                                 break
                             else:
                                 # Reset the  lecture to true
-                                is_lec_fit_for_insert=True
+                                is_lec_fit_for_insert = True
                             # TODO else statement to see who is not added in
 
                 self.created_lectures_details_lst_progress_var.remove(lecture)
@@ -519,8 +533,6 @@ class TtGenerator:
                 self.progress_var = int((((len(self.created_lectures_details_lst) - len(
                     self.created_lectures_details_lst_progress_var)) / len(
                     self.created_lectures_details_lst))) * 100)
-
-
 
         # Adding the Rooms and actual timeslot to the timeslot__
         random.shuffle(timeslots)

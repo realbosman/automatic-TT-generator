@@ -221,7 +221,8 @@ class Home(tk.Frame):
         self.breaks_frame = ttk.LabelFrame(self.frame_, text=f'Timetable Breaks (separate with "," )')
         self.breaks_frame.grid(row=2, column=0, columnspan=2, sticky="news", padx=20, pady=10)  # Adjust columnspan
 
-        self.breaks_entry = ttk.Entry(self.breaks_frame, textvariable="13:00-14:00")
+        self.breaks_entry_variable =tk.StringVar(value="13:00-14:00")
+        self.breaks_entry = ttk.Entry(self.breaks_frame, textvariable= self.breaks_entry_variable,width=100)
         self.breaks_entry.pack(fill=tk.X, expand=1, side='right', padx=10, pady=10
                                )  # Use sticky option to expand horizontally
 
@@ -312,6 +313,10 @@ class Home(tk.Frame):
             return
 
         else:
+            break_list=self.breaks_entry_variable.get().split(',', -1)
+            for break_ in break_list:
+                Listener.breaks_entry_list.append(break_)
+            print("BREAKKK",Listener.breaks_entry_list)
             self.days__.clear()
             self.preference_lst__.clear()
             self.project_name__ = self.project_name_var.get()

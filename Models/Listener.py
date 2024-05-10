@@ -21,6 +21,7 @@ class Listener:
     saveInstanceDict = {
 
     }
+    breaks_entry_list = []
 
     @staticmethod
     def get_app_path_docs():
@@ -68,7 +69,8 @@ class Listener:
             "isTimeTableCreated": Listener.isTimeTableCreated,
             "isWeekendInclusive": Listener.isWeekendInclusive,
             "isOptionsUpdated": Listener.isOptionsUpdated,
-            "preferenceList": Listener.preferenceList
+            "preferenceList": Listener.preferenceList,
+            "breaks_entry_list":Listener.breaks_entry_list
         }
 
     # Reset every variable to pepare new file
@@ -79,7 +81,7 @@ class Listener:
         Listener.isTimeTableCreated = False
         Listener.isWeekendInclusive = False
         Listener.isOptionsUpdated = False
-        Listener.preferenceList = ["TimeSlots", "Groups", "Classroom/Rooms/Space", "Course/Class/Session",
+        Listener.preferenceList = ["TimeSlots", "Groups", "Classrooms/Rooms/Space", "Course/Class/Session",
                                    "Instructor/Lecturer/Tutor"]
         Listener.saveInstanceDict = {
 
@@ -94,3 +96,8 @@ class Listener:
         Listener.isWeekendInclusive = Listener.saveInstanceDict["Listener"]["isWeekendInclusive"]
         Listener.isOptionsUpdated = Listener.saveInstanceDict["Listener"]["isOptionsUpdated"]
         Listener.preferenceList = Listener.saveInstanceDict["Listener"]["preferenceList"]
+        try:
+          Listener.breaks_entry_list = Listener.saveInstanceDict["Listener"]["breaks_entry_list"]
+        except:
+            print("Gonna save that listener break list")
+
