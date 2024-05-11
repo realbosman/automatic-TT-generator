@@ -1,5 +1,8 @@
 import os
 import threading
+from ctypes import windll, byref, create_unicode_buffer, create_string_buffer
+import pyglet
+
 import time
 import tkinter as tk
 from pathlib import Path
@@ -9,6 +12,7 @@ from queue import Queue
 from enum import Enum, auto
 import pickle
 from tkinter.filedialog import askdirectory
+from tkinter import font as tkfont
 
 from Algorithm.Algo import TtGenerator
 from Algorithm.TimetableMetaData import TimetableMetaData
@@ -38,10 +42,12 @@ sidebar_color = '#3C3F3F'
 header_color = '#3C3F3F'
 visualisation_frame_color = "#2B2B2B"
 TEXT_COLOR = '#eeeeee'
+my_white="#f5f5f5"
 
 PATH = Path(__file__).parent / 'assets'
 PATH_ = Path(__file__).parent / 'forest-light.tcl'
 PATH__ = Path(__file__).parent / 'forest-dark.tcl'
+image_path = Path(__file__).parent / 'assets'/'brand2.png'
 
 
 # ------------------------------- ROOT WINDOW ----------------------------------
@@ -73,7 +79,8 @@ class TkinterApp(tk.Tk):
         self.timetableMetadata = TimetableMetaData(self.timeDimension)
         self.algorithm_ = TtGenerator(self.lectures_)
         self.isHomeSaved = True
-
+        self.uname_var = tk.StringVar(master=self,value="")
+        self.pass_var = tk.StringVar(master=self,value="")
 
         self.style = ttk.Style(self)
         self.call("source", PATH_)
@@ -82,9 +89,7 @@ class TkinterApp(tk.Tk):
         self.title("Automatic Timetable Generator")
         # # self.overrideredirect(True)
 
-        self.queue_message = Queue()
-        self.bind("<<CheckQueue_Main>>", self.Check_Queue)
-        self.run_after_period_thread()
+        self.welcome()
 
 
 
@@ -94,9 +99,125 @@ class TkinterApp(tk.Tk):
         # self.geometry()
         self.resizable(True, True)
         self.config(background=selectionbar_color)
-        icon = tk.PhotoImage(file=PATH / 'logo.png')
-        self.iconphoto(True, icon)
+        self.icon = tk.PhotoImage(file=PATH / 'logo.png')
+        self.iconphoto(True, self.icon)
+
+        # self.render_GUI()
+
+    def welcome(self):
+        # Welcome
+        frame_P = tk.Frame(self, background=my_white)
+        frame_P.pack(fill=tk.BOTH, expand=tk.YES)
+
+        frame_top = tk.Frame(frame_P, height=150, bg="#d2cccc")
+        frame_top.pack(fill=tk.X, pady=(0, 0))
+
+        # Load the image
+
+        self.image = tk.PhotoImage(file=image_path, )
+
+        # Create a label to display the image
+        label = tk.Label(frame_top, image=self.image, background="#d2cccc", )
+        label.pack()
+
+        label_text = "UGANDA MARTYRS UNIVERSITY"
+
+        # Create a Canvas widget
+        canvas = tk.Canvas(frame_top, width=500, height=50, background="#d2cccc", bg="#d2cccc", highlightthickness=0,
+                           bd=0)
+        canvas.pack()
+        # Create a style
+        style = ttk.Style()
+
+        # Configure the style to have a white background
+        style.configure("White.TButton", background="#f7b2b2")
+
+        # Specify the font
+        # Specify the path to the Stonehenge.ttf file
+        # font_path = PATH / "stonehen.ttf"
+        # pyglet.font.add_file(font_path)
+
+        # Load the font from the file
+        # Create a font object using the specified font path
+
+        font = ("Helvetica", 21, "bold")
+
+        # Call the function to color the first letter red
+        self.color_first_letter(canvas, font=font)
+
+        # ttk.Label(frame_top, text="UGANDA MARTYRS UNIVERSITY",font=("Helvetica", 21, "bold")).pack()
+        ttk.Label(frame_top, text="WELCOME TO THE AUTOMATIC TIMETABLE GENERATOR", font=("Helvetica", 20, "bold"),
+                  foreground='red', background="#d2cccc").pack(pady=10)
+
+        frame = tk.Frame(frame_P, background=my_white, relief="raised", border=2, padx=10, pady=10)
+        frame.pack(expand=tk.YES)
+
+        self.auth_list = list()
+        self.auth_list.append("Admin")
+        self.auth_list.append("admin")
+        self.auth_list.append("uname")
+        self.auth_list.append("pass")
+        # validate numeric entry
+        ttk.Label(frame, text="Admin Username:", width=22, foreground='black', background=my_white).pack()
+
+
+        # Create a style
+        self.style = ttk.Style()
+
+        # Configure the style to have a white background for the entry field
+        self.style.configure("White.TEntry", insertbackground="white")
+
+        num_entry = ttk.Entry(frame, validate="focus", style="White.TEntry", textvariable=self.uname_var)
+        num_entry.pack(pady=10, expand=True)
+
+        # validate alpha entry
+        ttk.Label(frame, text="password:", width=22, foreground='black', background=my_white).pack()
+        let_entry = ttk.Entry(frame, validate="focus", textvariable=self.pass_var)
+        let_entry.pack(pady=10, expand=True)
+
+        # validate alpha entry
+
+        lbtn = tk.Button(frame, text="Login", bg="#f7b2b2", fg="white", width="20", command=self.loginn)
+        lbtn.pack(pady=10, expand=True)
+
+    def color_first_letter(self,canvas, text="UGANDA,MARTYRS,UNIVERSITY", font=None):
+        x = 10  # Initial x position
+        sep_=text.split(',', -1)
+        # Create the white background rectangle
+        canvas.create_rectangle(0, 0, 600, 80, fill="#d2cccc", outline="#d2cccc")
+        canvas.create_text(x, 10, text=sep_[0][0], font=font, fill='red', anchor='nw')
+        canvas.create_text(x + 20, 10, text=sep_[0][1:], font=font ,fill="black", anchor='nw')
+        # Increase x position for the next word
+        x +=130
+        canvas.create_text(x, 10, text=sep_[1][0], font=font, fill='red', anchor='nw')
+        canvas.create_text(x + 24, 10, text=sep_[1][1:], font=font,fill="black", anchor='nw')
+        # Increase x position for the next word
+        x += 145
+        canvas.create_text(x, 10, text=sep_[2][0], font=font, fill='red', anchor='nw')
+        canvas.create_text(x + 20, 10, text=sep_[2][1:], font=font, fill="black", anchor='nw')
+        # Increase x position for the next word
+        x += 120
+
+
+    def loginn(self):
+        print(self.uname_var.get())
+        if self.uname_var.get()=="Admin" and self.pass_var.get()=="admin":
+            for widget in self.winfo_children():
+                widget.destroy()
+            self.render_GUI()
+        else:
+            # for widget in self.winfo_children():
+            #     widget.destroy()
+            # self.render_GUI()
+            messagebox.showwarning(title="Automatic Timetable Generator",message="Login failed ,please try again.")
+
+
+
+    def render_GUI(self):
         self.protocol("WM_DELETE_WINDOW", self.on_closing)
+        self.queue_message = Queue()
+        self.bind("<<CheckQueue_Main>>", self.Check_Queue)
+        self.run_after_period_thread()
 
         # Creating Menubar
         menubar = tk.Menu(self)
@@ -150,49 +271,51 @@ class TkinterApp(tk.Tk):
         # UNIVERSITY LOGO AND NAME
         # self.brand_frame = tk.Frame(self.sidebar, bg=sidebar_color)
         # self.brand_frame.place(relx=0, rely=0, relwidth=1, relheight=0.15)
-        self.uni_logo = icon.subsample(1)
-        logo = tk.Label(self.sidebar, image=self.uni_logo, bg=sidebar_color)
-        logo.place(relx=0, rely=0, relwidth=1, relheight=0.15)
+        self.image_side = tk.PhotoImage(file=image_path, )
+
+        # Create a label to display the image
+        label_side = tk.Label(self.sidebar, image=self.image_side, background=sidebar_color, )
+        label_side.place(relx=0, rely=0, relwidth=1, relheight=0.15)
         # SUBMENUS IN SIDE BAR(Add , view
         # , List MANAGEMENT)
 
         # # Add to Resources Submenu
         self.submenu_frame = tk.Frame(self.sidebar, bg=sidebar_color, relief='raised', bd=None)
-        self.submenu_frame.place(relx=0, rely=0.2, relwidth=1, relheight=1)
+        self.submenu_frame.place(relx=0, rely=0.15, relwidth=1, relheight=1)
 
         # TODO : Rectife this so that it can be handle the list items
-        resource_submenu = SidebarSubMenu(self.submenu_frame,
+        self.resource_submenu = SidebarSubMenu(self.submenu_frame,
                                           sub_menu_heading='Resources',
                                           sub_menu_options=Listener.preferenceList
 
                                           )
-        resource_submenu.options["TimeSlots"].config(
+        self.resource_submenu.options["TimeSlots"].config(
             command=lambda: self.show_frame(TimeSlots, "Create TimeSlots", self.timeDimension, )
 
         )
-        resource_submenu.options[Listener.preferenceList[2]].config(
+        self.resource_submenu.options[Listener.preferenceList[2]].config(
             command=lambda: self.show_frame(Space, f"Create {Listener.preferenceList[2]}", self.space_, )
         )
-        resource_submenu.options[Listener.preferenceList[4]].config(
+        self.resource_submenu.options[Listener.preferenceList[4]].config(
             command=lambda: self.show_frame(Tutor, f"{Listener.preferenceList[4]}", self.lectures_, )
         )
-        resource_submenu.options[Listener.preferenceList[3]].config(
+        self.resource_submenu.options[Listener.preferenceList[3]].config(
             command=lambda: self.show_frame(Session, f"{Listener.preferenceList[3]}", self.lectures_, )
         )
-        resource_submenu.options["Groups"].config(
+        self.resource_submenu.options["Groups"].config(
             command=lambda: self.show_frame(Groups_, "Groups", self.lectures_, )
         )
 
-        self.changeOnHover(resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
-        self.changeOnHover(resource_submenu.options[Listener.preferenceList[2]], visualisation_frame_color,
+        self.changeOnHover(self.resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[2]], visualisation_frame_color,
                            sidebar_color)
-        self.changeOnHover(resource_submenu.options[Listener.preferenceList[3]], visualisation_frame_color,
+        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[3]], visualisation_frame_color,
                            sidebar_color)
-        self.changeOnHover(resource_submenu.options[Listener.preferenceList[4]], visualisation_frame_color,
+        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[4]], visualisation_frame_color,
                            sidebar_color)
-        self.changeOnHover(resource_submenu.options["Groups"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(self.resource_submenu.options["Groups"], visualisation_frame_color, sidebar_color)
 
-        resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
+        self.resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
 
         generator_time_table = SidebarSubMenu(self.submenu_frame,
                                               sub_menu_heading='TimeTable Operations',
@@ -281,12 +404,13 @@ class TkinterApp(tk.Tk):
                 self.event_generate("<<CheckQueue_Main>>", when="tail")
 
             if count == 5:
-
                 ticket = Ticket(ticket_type=TicketPurpose.REMOVE_SPLASH,
                                 ticket_value="splash")
 
                 self.queue_message.put(ticket)
                 self.event_generate("<<CheckQueue_Main>>", when="tail")
+
+
 
             if Listener.get_state_home() == False:
                 ticket = Ticket(ticket_type=TicketPurpose.UPDATE_PROGRESS_HOME,
@@ -369,7 +493,6 @@ class TkinterApp(tk.Tk):
 
     def demo(self):
 
-
         with open(rf'./DumpFile.pickle',
                   "rb") as file:
             loaded_obj = pickle.load(file)
@@ -397,7 +520,7 @@ class TkinterApp(tk.Tk):
                   "rb") as file:
             loaded_obj = pickle.load(file)
 
-        Listener.saveInstanceDict=loaded_obj
+        Listener.saveInstanceDict = loaded_obj
         self.space_.save_instance_reload()
         self.lectures_.save_instance_reload()
         self.timetableMetadata.save_instance_reload()
@@ -407,7 +530,6 @@ class TkinterApp(tk.Tk):
         self.isHomeSaved = True
         self.show_frame(Home, "Time table Metadata", self.timetableMetadata,
                         self.timeDimension, self.listener_)
-
 
         # iterate through the files to restore the last state
 
@@ -424,7 +546,6 @@ class TkinterApp(tk.Tk):
         self.isHomeSaved = True
         self.show_frame(Home, "Time table Metadata", self.timetableMetadata,
                         self.timeDimension, self.listener_)
-
 
     def on_save(self):
 
@@ -462,7 +583,6 @@ class TkinterApp(tk.Tk):
 
             file_path = os.path.join(file_path, "DumpFile.pickle")
 
-
             # save the instances in the LIstener dictionary
             self.space_.save_instance_()
             self.lectures_.save_instance_()
@@ -484,14 +604,14 @@ class TkinterApp(tk.Tk):
 
     def start_time_table_generation(self):
         num_tracker = self.lectures_.get_largest_session_number_in_a_subgroup() + 1  # Add 1 to prevent overlapping
-        num_tutor_tracker = self.lectures_.get_the_number_of_Tutor_sessions()+1
-        Listener.tutor_with_highest_session_=num_tutor_tracker-1
+        num_tutor_tracker = self.lectures_.get_the_number_of_Tutor_sessions() + 1
+        Listener.tutor_with_highest_session_ = num_tutor_tracker - 1
         Listener.group_with_highest_session_ = num_tracker - 1
         # Listener.get_time_slot_count=num_tracker-1
-        length_time_slot=len(self.timeDimension.get_algo_reources())
-        if length_time_slot < num_tracker :
+        length_time_slot = len(self.timeDimension.get_algo_reources())
+        if length_time_slot < num_tracker:
             messagebox.showwarning(title="Automatic Timetable Generator",
-                                   message=f"Please Timeslot resources are not enough, add aleast {num_tracker -length_time_slot} more")
+                                   message=f"Please Timeslot resources are not enough, add aleast {num_tracker - length_time_slot} more")
             return
         if length_time_slot < num_tutor_tracker:
             messagebox.showwarning(title="Automatic Timetable Generator",
@@ -559,6 +679,11 @@ class TkinterApp(tk.Tk):
         None
         """
 
+
+
+
+
+
         if self.isHomeSaved == True:
             self.isHomeSaved == False
             pass
@@ -568,10 +693,13 @@ class TkinterApp(tk.Tk):
             if isTrue == True:
                 self.isHomeSaved = True
                 Listener.set_state_home(False)
-                messagebox.showwarning(title="Automatic Timetable Generator", message="This might lead to Timetable generation problems!")
+                messagebox.showwarning(title="Automatic Timetable Generator",
+                                       message="This might lead to Timetable generation problems!")
                 pass
             else:
                 return
+
+
 
         if self.current_frame == "Session'>":
             if self.lectures_.check_for_empty_slots():
@@ -601,40 +729,70 @@ class TkinterApp(tk.Tk):
         self.current_frame = str(cont).split(".", -1)[-1]
         # frame.tkraise()
 
+        if str(cont).split(".", -1)[-1] == "Tutor'>":
+            self.resource_submenu.options[Listener.preferenceList[4]].config(background=visualisation_frame_color)
+        else:
+            self.resource_submenu.options[Listener.preferenceList[4]].config(background=sidebar_color)
+
+
+        try:
+            if str(cont).split(".", -1)[-1] == "Session'>":
+
+                self.resource_submenu.options[Listener.preferenceList[3]].config(background=visualisation_frame_color)
+            else:
+                self.resource_submenu.options[Listener.preferenceList[3]].config(background=sidebar_color)
+
+            if str(cont).split(".", -1)[-1] == "Space'>":
+                self.resource_submenu.options[Listener.preferenceList[2]].config(background=visualisation_frame_color)
+            else:
+                self.resource_submenu.options[Listener.preferenceList[2]].config(background=sidebar_color)
+
+            if str(cont).split(".", -1)[-1] == "Groups_'>":
+                self.resource_submenu.options[Listener.preferenceList[1]].config(background="white")
+            else:
+                self.resource_submenu.options[Listener.preferenceList[1]].config(background=sidebar_color)
+            if str(cont).split(".", -1)[-1] == "TimeSlots'>":
+                self.resource_submenu.options[Listener.preferenceList[0]].config(background=visualisation_frame_color)
+            else:
+                self.resource_submenu.options[Listener.preferenceList[0]].config(background=sidebar_color)
+        except:
+            print("Render error bg options")
+
+
     def update_Options(self):
         # TODO : Rectife this so that it can be handle the list items
-        resource_submenu = SidebarSubMenu(self.submenu_frame,
+        self.resource_submenu = SidebarSubMenu(self.submenu_frame,
                                           sub_menu_heading='Resources',
                                           sub_menu_options=Listener.preferenceList
 
                                           )
-        resource_submenu.options["TimeSlots"].config(
+        self.resource_submenu.options["TimeSlots"].config(
             command=lambda: self.show_frame(TimeSlots, "Create TimeSlots", self.timeDimension, )
 
         )
-        resource_submenu.options[Listener.preferenceList[2]].config(
+        self.resource_submenu.options[Listener.preferenceList[2]].config(
             command=lambda: self.show_frame(Space, f"Create {Listener.preferenceList[2]}", self.space_, )
         )
-        resource_submenu.options[Listener.preferenceList[4]].config(
+        self.resource_submenu.options[Listener.preferenceList[4]].config(
             command=lambda: self.show_frame(Tutor, f"{Listener.preferenceList[4]}", self.lectures_, )
         )
-        resource_submenu.options[Listener.preferenceList[3]].config(
+        self.resource_submenu.options[Listener.preferenceList[3]].config(
             command=lambda: self.show_frame(Session, f"{Listener.preferenceList[3]}", self.lectures_, )
         )
-        resource_submenu.options["Groups"].config(
+        self.resource_submenu.options["Groups"].config(
             command=lambda: self.show_frame(Groups_, "Groups", self.lectures_, )
         )
 
-        self.changeOnHover(resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
-        self.changeOnHover(resource_submenu.options[Listener.preferenceList[2]], visualisation_frame_color,
+        self.changeOnHover(self.resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[2]], visualisation_frame_color,
                            sidebar_color)
-        self.changeOnHover(resource_submenu.options[Listener.preferenceList[3]], visualisation_frame_color,
+        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[3]], visualisation_frame_color,
                            sidebar_color)
-        self.changeOnHover(resource_submenu.options[Listener.preferenceList[4]], visualisation_frame_color,
+        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[4]], visualisation_frame_color,
                            sidebar_color)
-        self.changeOnHover(resource_submenu.options["Groups"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(self.resource_submenu.options["Groups"], visualisation_frame_color, sidebar_color)
 
-        resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
+        self.resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
 
         generator_time_table = SidebarSubMenu(self.submenu_frame,
                                               sub_menu_heading='TimeTable Operations',
@@ -831,30 +989,47 @@ class SidebarSubMenu(tk.Frame):
         """
         tk.Frame.__init__(self, parent)
         self.config(bg=sidebar_color)
-        self.sub_menu_heading_label = tk.Label(self,
+        self.sub_menu_heading_label = ttk.Label(self,
                                                text=sub_menu_heading,
-                                               bg=sidebar_color,
-                                               fg=TEXT_COLOR
+                                                padding=5
+                                                ,background=sidebar_color
                                                ,
-                                               font=("Arial", 10)
+                                               font=("Arial", 14,"bold")
+                                               ,justify="left"
                                                )
-        self.sub_menu_heading_label.place(x=30, y=10, anchor="w")
+        self.sub_menu_heading_label.place(x=0, y=10, relwidth=1,anchor="w")
 
         sub_menu_sep = ttk.Separator(self, orient='horizontal')
-        sub_menu_sep.place(x=30, y=30, relwidth=0.8, anchor="w")
+        sub_menu_sep.place(x=0, y=30, relwidth=1, anchor="w")
 
         self.options = {}
         for n, x in enumerate(sub_menu_options):
             self.options[x] = tk.Button(self,
                                         text=x,
                                         bg=sidebar_color,
-                                        font=("Arial", 9, "bold"),
+                                        font=("Arial", 10),
                                         bd=0,
+                                        anchor="w",  # Align text to the left horizontally
+                                        height="1"
+                                        ,justify="left",
                                         cursor='hand2',
-                                        activebackground='#ffffff',
+
                                         fg=TEXT_COLOR
                                         )
-            self.options[x].place(x=30, y=45 * (n + 1), anchor="w")
+            self.options[x].place(x=0, y=46 * (n + 1), relwidth=1,anchor="w" ) # Align text to the left horizontally
+
+    def on_button_click(self, btn_clicked):
+        print(self.options)
+        for  button in self.options.keys():
+
+            if button == btn_clicked:
+                self.options[button].config(bg=visualisation_frame_color)
+                print(button, btn_clicked)
+                print("OBJ", self.options[button])
+            else:
+                self.options[button].config(bg=sidebar_color)
+
+
 
 
 class ShowMsg:

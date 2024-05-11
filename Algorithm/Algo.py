@@ -223,7 +223,7 @@ class TtGenerator:
                                 dict_['name'] = name
                                 dict_['days'] = day
                                 dict_['time'] = f
-                                dict_['color'] = "000a2d"
+                                dict_['color'] = "eb8f8f"
 
                                 self.Full_Time_table_dict[faculty][text].append(dict_)
 
@@ -256,7 +256,7 @@ class TtGenerator:
                             dict_['name'] = name
                             dict_['days'] = day
                             dict_['time'] = f
-                            dict_['color'] = "000a2d"
+                            dict_['color'] = "eb8f8f"
 
                             self.Full_Time_table_dict[faculty][txt_item].append(dict_)
 
@@ -272,7 +272,7 @@ class TtGenerator:
                 dict_['name'] = "BREAK"
                 dict_['days'] = day
                 dict_['time'] = b
-                dict_['color'] = "000e3f"
+                dict_['color'] = "eb8f8f"
                 self.list_breaks_.append(dict_)
         return self.list_breaks_
 
