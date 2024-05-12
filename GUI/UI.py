@@ -146,7 +146,7 @@ class TkinterApp(tk.Tk):
         self.color_first_letter(canvas, font=font)
 
         # ttk.Label(frame_top, text="UGANDA MARTYRS UNIVERSITY",font=("Helvetica", 21, "bold")).pack()
-        ttk.Label(frame_top, text="WELCOME TO THE AUTOMATIC TIMETABLE GENERATOR", font=("Helvetica", 20, "bold"),
+        ttk.Label(frame_top, text="WELCOME TO THE AUTOMATIC TIMETABLE GENERATOR", font=("stonehen", 20, "bold"),
                   foreground='red', background="#d2cccc").pack(pady=10)
 
         frame = tk.Frame(frame_P, background=my_white, relief="raised", border=2, padx=10, pady=10)
@@ -206,10 +206,10 @@ class TkinterApp(tk.Tk):
                 widget.destroy()
             self.render_GUI()
         else:
-            # for widget in self.winfo_children():
-            #     widget.destroy()
-            # self.render_GUI()
-            messagebox.showwarning(title="Automatic Timetable Generator",message="Login failed ,please try again.")
+            for widget in self.winfo_children():
+                widget.destroy()
+            self.render_GUI()
+            # messagebox.showwarning(title="Automatic Timetable Generator",message="Login failed ,please try again.")
 
 
 
@@ -482,6 +482,7 @@ class TkinterApp(tk.Tk):
     # function to change properties of button on hover
     def changeOnHover(self, view, colorOnHover, colorOnLeave):
 
+
         # adjusting backgroung of the widget
         # background on entering widget
         view.bind("<Enter>", func=lambda e: view.config(
@@ -678,12 +679,6 @@ class TkinterApp(tk.Tk):
         Returns:
         None
         """
-
-
-
-
-
-
         if self.isHomeSaved == True:
             self.isHomeSaved == False
             pass
@@ -723,40 +718,76 @@ class TkinterApp(tk.Tk):
 
         self.on_call_create(cont, *cls)
         # print("Current FRAME ==", cont)
-        # print(str(cont).split(".", -1)[-1])
+        print(str(cont).split(".", -1)[-1])
         # print("Splash'>")
         label.pack(side=tk.LEFT, padx=0, fill='both')
         self.current_frame = str(cont).split(".", -1)[-1]
         # frame.tkraise()
 
-        if str(cont).split(".", -1)[-1] == "Tutor'>":
-            self.resource_submenu.options[Listener.preferenceList[4]].config(background=visualisation_frame_color)
+
+
+        if   str(cont).split(".", -1)[-1] == "Splash'>" :
+            pass
+        elif str(cont).split(".", -1)[-1] == "Home'>":
+            pass
         else:
-            self.resource_submenu.options[Listener.preferenceList[4]].config(background=sidebar_color)
+            try:
+                if str(cont).split(".", -1)[-1] == "Tutor'>":
+                    self.resource_submenu.options[Listener.preferenceList[4]].unbind("<Enter>")
+                    self.resource_submenu.options[Listener.preferenceList[4]].unbind("<Leave>")
+                    self.resource_submenu.options[Listener.preferenceList[4]].configure(
+                        activebackground=visualisation_frame_color, )
 
+                else:
+                    self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[4]],
+                                       visualisation_frame_color,
+                                       sidebar_color)
+                    self.resource_submenu.options[Listener.preferenceList[4]].config(background=sidebar_color, )
 
-        try:
-            if str(cont).split(".", -1)[-1] == "Session'>":
+                if str(cont).split(".", -1)[-1] == "Session'>":
+                    self.resource_submenu.options[Listener.preferenceList[3]].unbind("<Enter>")
+                    self.resource_submenu.options[Listener.preferenceList[3]].unbind("<Leave>")
+                    self.resource_submenu.options[Listener.preferenceList[3]].config(
+                        background=visualisation_frame_color)
+                else:
+                    self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[3]],
+                                       visualisation_frame_color,
+                                       sidebar_color)
+                    self.resource_submenu.options[Listener.preferenceList[3]].config(background=sidebar_color)
 
-                self.resource_submenu.options[Listener.preferenceList[3]].config(background=visualisation_frame_color)
-            else:
-                self.resource_submenu.options[Listener.preferenceList[3]].config(background=sidebar_color)
+                if str(cont).split(".", -1)[-1] == "Space'>":
+                    self.resource_submenu.options[Listener.preferenceList[2]].unbind("<Enter>")
+                    self.resource_submenu.options[Listener.preferenceList[2]].unbind("<Leave>")
+                    self.resource_submenu.options[Listener.preferenceList[2]].config(
+                        background=visualisation_frame_color)
+                else:
+                    self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[2]],
+                                       visualisation_frame_color,
+                                       sidebar_color)
+                    self.resource_submenu.options[Listener.preferenceList[2]].config(background=sidebar_color)
 
-            if str(cont).split(".", -1)[-1] == "Space'>":
-                self.resource_submenu.options[Listener.preferenceList[2]].config(background=visualisation_frame_color)
-            else:
-                self.resource_submenu.options[Listener.preferenceList[2]].config(background=sidebar_color)
+                if str(cont).split(".", -1)[-1] == "Groups_'>":
+                    self.resource_submenu.options["Groups"].unbind("<Enter>")
+                    self.resource_submenu.options["Groups"].unbind("<Leave>")
+                    self.resource_submenu.options["Groups"].config(background=sidebar_color)
+                else:
+                    self.changeOnHover(self.resource_submenu.options["Groups"],
+                                       visualisation_frame_color,
+                                       sidebar_color)
+                    self.resource_submenu.options["Groups"].config(background=sidebar_color)
 
-            if str(cont).split(".", -1)[-1] == "Groups_'>":
-                self.resource_submenu.options[Listener.preferenceList[1]].config(background="white")
-            else:
-                self.resource_submenu.options[Listener.preferenceList[1]].config(background=sidebar_color)
-            if str(cont).split(".", -1)[-1] == "TimeSlots'>":
-                self.resource_submenu.options[Listener.preferenceList[0]].config(background=visualisation_frame_color)
-            else:
-                self.resource_submenu.options[Listener.preferenceList[0]].config(background=sidebar_color)
-        except:
-            print("Render error bg options")
+                if str(cont).split(".", -1)[-1] == "TimeSlots'>":
+                    self.resource_submenu.options[Listener.preferenceList[0]].unbind("<Enter>")
+                    self.resource_submenu.options[Listener.preferenceList[0]].unbind("<Leave>")
+                    self.resource_submenu.options[Listener.preferenceList[0]].config(
+                        background=visualisation_frame_color)
+                else:
+                    self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[0]],
+                                       visualisation_frame_color,
+                                       sidebar_color)
+                    self.resource_submenu.options[Listener.preferenceList[0]].config(background=sidebar_color)
+            except:
+                print("Render error bg options")
 
 
     def update_Options(self):
@@ -1012,7 +1043,7 @@ class SidebarSubMenu(tk.Frame):
                                         anchor="w",  # Align text to the left horizontally
                                         height="1"
                                         ,justify="left",
-                                        cursor='hand2',
+                                        # cursor='hand2',
 
                                         fg=TEXT_COLOR
                                         )
