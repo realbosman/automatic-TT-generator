@@ -7,6 +7,7 @@ class Listener:
     # Static variables to store state and timetable name
     stateHome = False
     timeTableNameListener = "Timetbale Name"
+    cEmail="email@gmail.com"
     timeZone=str(time.tzname[0])
     isTimeTableCreated = False
     isWeekendInclusive = False

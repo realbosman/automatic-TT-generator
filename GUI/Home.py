@@ -57,20 +57,27 @@ class Home(tk.Frame):
         self.session_status_var = tk.StringVar(value="CourseUnit")
         self.space_status_var = tk.StringVar(value="Classroom")
         self.update_thread()
+        #
+        # self.cava_frame=tk.Frame(self)
+        # self.cava_frame.pack(side="left", fill="both" ,expand=1)
 
-        self.canvas = tk.Canvas(self, background=visualisation_frame_color)
+
+        self.canvas = tk.Canvas(self)
         self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview, width=20)
-        self.scrollable_frame = ttk.Frame(self.canvas)
+        self.scrollable_frame = tk.Frame(self.canvas,)
 
-        self.canvas.create_window((self.canvas.winfo_width() / 2, self.canvas.winfo_height() / 2), window=self.scrollable_frame, anchor="center")
+        self.canvas.pack(side="left", fill="both", expand=1)
+        print("self.canvas.winfo_width()",self.canvas.winfo_width())
+        self.canvas.create_window((self.canvas.winfo_width()/2, self.canvas.winfo_height()/2), window=self.scrollable_frame,anchor="center" )
         self.canvas.configure(yscrollcommand=self.scrollbar.set )
 
         self.scrollable_frame.bind("<Configure>", lambda e: self.canvas.configure(scrollregion=self.canvas.bbox("all")))
         # Bind mouse wheel event to the canvas
         self.canvas.bind_all("<MouseWheel>", self.on_mousewheel)
 
-        self.canvas.pack(side="left", fill="both",  expand=True)
-        self.scrollbar.pack(side="right", fill="y")
+
+        self.scrollbar.pack(side="right", fill="y",ipady=(6))
+
 
 
         #############################################################################
@@ -340,6 +347,7 @@ class Home(tk.Frame):
             Listener.preferenceList[3] = self.session_status_var.get()
             Listener.preferenceList[4] = self.tutor_status_var.get()
             Listener.isOptionsUpdated = True
+            Listener.cEmail=self.email__
             Listener.timeTableNameListener = self.project_name__
             # print("Updated", Listener.preferenceList)
 

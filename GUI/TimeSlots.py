@@ -13,6 +13,9 @@ sidebar_color = '#3C3F3F'
 header_color = '#3C3F3F'
 visualisation_frame_color = "#2B2B2B"
 TEXT_COLOR = '#AFB1B3'
+my_pink="#f7b2b2"
+sidebar_color_ = visualisation_frame_color
+visualisation_frame_color_ = my_pink
 
 
 class TimeSlots(tk.Frame):
@@ -63,6 +66,12 @@ class TimeSlots(tk.Frame):
         self.label3 = ttk.Label(self.widgets_frame, text="Delete selected Row")
         self.label3.pack(expand=0, fill='y', side=tk.RIGHT, padx=10)
         self.label3.bind("<Button-1>", self.delete_row_)
+        self.changeOnHover(self.label3 , visualisation_frame_color_,
+                           sidebar_color_)
+        self.changeOnHover(self.label2, visualisation_frame_color_,
+                           sidebar_color_)
+        self.changeOnHover(self.label1, visualisation_frame_color_,
+                           sidebar_color_)
 
         self.separator = ttk.Separator(self)
         self.separator.pack()
@@ -142,6 +151,18 @@ class TimeSlots(tk.Frame):
 
         self.treeview.insert('', tk.END, values=values_lst)
         self.timeDimension__.add_new_session(values_lst)
+        # function to change properties of button on hover
+
+    def changeOnHover(self, view, colorOnHover, colorOnLeave):
+
+        # adjusting backgroung of the widget
+        # background on entering widget
+        view.bind("<Enter>", func=lambda e: view.config(
+            background=colorOnHover))
+
+        # background color on leving widget
+        view.bind("<Leave>", func=lambda e: view.config(
+            background=colorOnLeave))
 
     def on_double_clicked(self, event):
         region_clicked = self.treeview.identify_region(event.x, event.y)

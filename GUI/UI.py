@@ -41,8 +41,13 @@ selectionbar_color = '#3C3F3F'
 sidebar_color = '#3C3F3F'
 header_color = '#3C3F3F'
 visualisation_frame_color = "#2B2B2B"
+my_pink="#f7b2b2"
+sidebar_color_ = "#d2cccc"
+visualisation_frame_color_ = my_pink
 TEXT_COLOR = '#eeeeee'
+TEXT_COLOR_="black"
 my_white="#f5f5f5"
+
 
 PATH = Path(__file__).parent / 'assets'
 PATH_ = Path(__file__).parent / 'forest-light.tcl'
@@ -85,7 +90,7 @@ class TkinterApp(tk.Tk):
         self.style = ttk.Style(self)
         self.call("source", PATH_)
         self.call("source", PATH__)
-        self.style.theme_use("forest-dark")
+        self.style.theme_use("forest-light")
         self.title("Automatic Timetable Generator")
         # # self.overrideredirect(True)
 
@@ -106,10 +111,10 @@ class TkinterApp(tk.Tk):
 
     def welcome(self):
         # Welcome
-        frame_P = tk.Frame(self, background=my_white)
+        frame_P = tk.Frame(self, background="#d2cccc")
         frame_P.pack(fill=tk.BOTH, expand=tk.YES)
 
-        frame_top = tk.Frame(frame_P, height=150, bg="#d2cccc")
+        frame_top = tk.Frame(frame_P, height=150, bg="#d2cccc",background="#d2cccc")
         frame_top.pack(fill=tk.X, pady=(0, 0))
 
         # Load the image
@@ -149,8 +154,11 @@ class TkinterApp(tk.Tk):
         ttk.Label(frame_top, text="WELCOME TO THE AUTOMATIC TIMETABLE GENERATOR", font=("stonehen", 20, "bold"),
                   foreground='red', background="#d2cccc").pack(pady=10)
 
-        frame = tk.Frame(frame_P, background=my_white, relief="raised", border=2, padx=10, pady=10)
+        frame = tk.Frame(frame_P, background=my_white, relief="raised", border=2, padx=10, pady=10,width=300)
         frame.pack(expand=tk.YES)
+
+
+
 
         self.auth_list = list()
         self.auth_list.append("Admin")
@@ -158,7 +166,7 @@ class TkinterApp(tk.Tk):
         self.auth_list.append("uname")
         self.auth_list.append("pass")
         # validate numeric entry
-        ttk.Label(frame, text="Admin Username:", width=22, foreground='black', background=my_white).pack()
+        ttk.Label(frame, text="Admin Username:", width=100, foreground='black', background=my_white).pack()
 
 
         # Create a style
@@ -167,13 +175,17 @@ class TkinterApp(tk.Tk):
         # Configure the style to have a white background for the entry field
         self.style.configure("White.TEntry", insertbackground="white")
 
-        num_entry = ttk.Entry(frame, validate="focus", style="White.TEntry", textvariable=self.uname_var)
-        num_entry.pack(pady=10, expand=True)
+        username_entry = ttk.Entry(frame, validate="focus", style="White.TEntry", textvariable=self.uname_var,width=100)
+        username_entry.pack(pady=10, expand=True)
 
         # validate alpha entry
-        ttk.Label(frame, text="password:", width=22, foreground='black', background=my_white).pack()
-        let_entry = ttk.Entry(frame, validate="focus", textvariable=self.pass_var)
-        let_entry.pack(pady=10, expand=True)
+        ttk.Label(frame, text="password:", width=100, foreground='black', background=my_white).pack()
+        password_entry = ttk.Entry(frame, validate="focus", textvariable=self.pass_var,width=100)
+
+        password_entry.pack(pady=10, expand=True)
+        password_entry.configure(background="white")
+
+
 
         # validate alpha entry
 
@@ -208,6 +220,7 @@ class TkinterApp(tk.Tk):
         else:
             for widget in self.winfo_children():
                 widget.destroy()
+                self.style.theme_use("forest-dark")
             self.render_GUI()
             # messagebox.showwarning(title="Automatic Timetable Generator",message="Login failed ,please try again.")
 
@@ -242,12 +255,12 @@ class TkinterApp(tk.Tk):
         self.config(menu=menubar)
 
         # fake title bar
-        self.title_bar = tk.Frame(self, bg=header_color, relief='sunken', padx=7)
+        self.title_bar = tk.Frame(self, bg=my_pink, relief='sunken', padx=7)
         self.title_bar.place(relx=0, rely=0, relwidth=1, relheight=0.05)
         # bind title bar
         self.project_name_var = tk.StringVar(value="Project Name")
-        self.project_name = tk.Label(self.title_bar, anchor="center", text="Project Name", background=header_color,
-                                     textvariable=self.project_name_var)
+        self.project_name = tk.Label(self.title_bar, anchor="center", text="Project Name", background=my_pink,foreground="black",
+                                     textvariable=self.project_name_var,font=("Arial", 14,"bold"))
         self.project_name.pack(fill=tk.Y, expand=1)
 
         # ---------------- HEADER ------------------------
@@ -274,13 +287,13 @@ class TkinterApp(tk.Tk):
         self.image_side = tk.PhotoImage(file=image_path, )
 
         # Create a label to display the image
-        label_side = tk.Label(self.sidebar, image=self.image_side, background=sidebar_color, )
+        label_side = tk.Label(self.sidebar, image=self.image_side, background="#d2cccc", )
         label_side.place(relx=0, rely=0, relwidth=1, relheight=0.15)
         # SUBMENUS IN SIDE BAR(Add , view
         # , List MANAGEMENT)
 
         # # Add to Resources Submenu
-        self.submenu_frame = tk.Frame(self.sidebar, bg=sidebar_color, relief='raised', bd=None)
+        self.submenu_frame = tk.Frame(self.sidebar, bg="#d2cccc", relief='raised', bd=None)
         self.submenu_frame.place(relx=0, rely=0.15, relwidth=1, relheight=1)
 
         # TODO : Rectife this so that it can be handle the list items
@@ -306,14 +319,11 @@ class TkinterApp(tk.Tk):
             command=lambda: self.show_frame(Groups_, "Groups", self.lectures_, )
         )
 
-        self.changeOnHover(self.resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
-        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[2]], visualisation_frame_color,
-                           sidebar_color)
-        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[3]], visualisation_frame_color,
-                           sidebar_color)
-        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[4]], visualisation_frame_color,
-                           sidebar_color)
-        self.changeOnHover(self.resource_submenu.options["Groups"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(self.resource_submenu.options["TimeSlots"], visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[2]], visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[3]],  visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[4]], visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(self.resource_submenu.options["Groups"],  visualisation_frame_color_, sidebar_color_)
 
         self.resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
 
@@ -336,10 +346,9 @@ class TkinterApp(tk.Tk):
             command=lambda: print("Generate PDF")
         )
 
-        self.changeOnHover(generator_time_table.options["Generate TimeTable"], visualisation_frame_color,
-                           sidebar_color)
-        self.changeOnHover(generator_time_table.options["View TimeTable"], visualisation_frame_color, sidebar_color)
-        self.changeOnHover(generator_time_table.options["Generate PDF"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(generator_time_table.options["Generate TimeTable"], visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(generator_time_table.options["View TimeTable"],  visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(generator_time_table.options["Generate PDF"],  visualisation_frame_color_, sidebar_color_)
 
         generator_time_table.place(relx=0, rely=0.4, relwidth=1, relheight=0.3)
 
@@ -729,7 +738,18 @@ class TkinterApp(tk.Tk):
         if   str(cont).split(".", -1)[-1] == "Splash'>" :
             pass
         elif str(cont).split(".", -1)[-1] == "Home'>":
-            pass
+
+
+            try:
+                print("Yeeees")
+                self.resource_submenu.options[Listener.preferenceList[0]].config(background=sidebar_color_)
+                self.resource_submenu.options[Listener.preferenceList[2]].config(background=sidebar_color_)
+                self.resource_submenu.options[Listener.preferenceList[3]].config(background=sidebar_color_)
+                self.resource_submenu.options[Listener.preferenceList[4]].config(background=sidebar_color_)
+                self.resource_submenu.options["Groups"].config(background=sidebar_color_)
+            except:
+                pass
+
         else:
             try:
                 if str(cont).split(".", -1)[-1] == "Tutor'>":
@@ -740,52 +760,49 @@ class TkinterApp(tk.Tk):
 
                 else:
                     self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[4]],
-                                       visualisation_frame_color,
-                                       sidebar_color)
-                    self.resource_submenu.options[Listener.preferenceList[4]].config(background=sidebar_color, )
+                                       visualisation_frame_color_, sidebar_color_)
+                    self.resource_submenu.options[Listener.preferenceList[4]].config(background=sidebar_color_, )
 
                 if str(cont).split(".", -1)[-1] == "Session'>":
                     self.resource_submenu.options[Listener.preferenceList[3]].unbind("<Enter>")
                     self.resource_submenu.options[Listener.preferenceList[3]].unbind("<Leave>")
                     self.resource_submenu.options[Listener.preferenceList[3]].config(
-                        background=visualisation_frame_color)
+                        activebackground=visualisation_frame_color)
                 else:
                     self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[3]],
-                                       visualisation_frame_color,
-                                       sidebar_color)
-                    self.resource_submenu.options[Listener.preferenceList[3]].config(background=sidebar_color)
+                                       visualisation_frame_color_, sidebar_color_)
+                    self.resource_submenu.options[Listener.preferenceList[3]].config(background=sidebar_color_)
 
                 if str(cont).split(".", -1)[-1] == "Space'>":
                     self.resource_submenu.options[Listener.preferenceList[2]].unbind("<Enter>")
                     self.resource_submenu.options[Listener.preferenceList[2]].unbind("<Leave>")
                     self.resource_submenu.options[Listener.preferenceList[2]].config(
-                        background=visualisation_frame_color)
+                        activebackground=visualisation_frame_color)
                 else:
                     self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[2]],
-                                       visualisation_frame_color,
-                                       sidebar_color)
-                    self.resource_submenu.options[Listener.preferenceList[2]].config(background=sidebar_color)
+                                       visualisation_frame_color_, sidebar_color_)
+                    self.resource_submenu.options[Listener.preferenceList[2]].config(background=sidebar_color_)
 
                 if str(cont).split(".", -1)[-1] == "Groups_'>":
                     self.resource_submenu.options["Groups"].unbind("<Enter>")
                     self.resource_submenu.options["Groups"].unbind("<Leave>")
-                    self.resource_submenu.options["Groups"].config(background=sidebar_color)
+                    self.resource_submenu.options["Groups"].config(activebackground=visualisation_frame_color)
                 else:
                     self.changeOnHover(self.resource_submenu.options["Groups"],
-                                       visualisation_frame_color,
-                                       sidebar_color)
-                    self.resource_submenu.options["Groups"].config(background=sidebar_color)
+                                       visualisation_frame_color_, sidebar_color_)
+                    self.resource_submenu.options["Groups"].config(background=sidebar_color_)
 
                 if str(cont).split(".", -1)[-1] == "TimeSlots'>":
                     self.resource_submenu.options[Listener.preferenceList[0]].unbind("<Enter>")
                     self.resource_submenu.options[Listener.preferenceList[0]].unbind("<Leave>")
                     self.resource_submenu.options[Listener.preferenceList[0]].config(
-                        background=visualisation_frame_color)
+                        activebackground=visualisation_frame_color)
                 else:
                     self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[0]],
-                                       visualisation_frame_color,
-                                       sidebar_color)
-                    self.resource_submenu.options[Listener.preferenceList[0]].config(background=sidebar_color)
+                                       visualisation_frame_color_, sidebar_color_)
+                    self.resource_submenu.options[Listener.preferenceList[0]].config(background=sidebar_color_)
+
+
             except:
                 print("Render error bg options")
 
@@ -814,14 +831,11 @@ class TkinterApp(tk.Tk):
             command=lambda: self.show_frame(Groups_, "Groups", self.lectures_, )
         )
 
-        self.changeOnHover(self.resource_submenu.options["TimeSlots"], visualisation_frame_color, sidebar_color)
-        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[2]], visualisation_frame_color,
-                           sidebar_color)
-        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[3]], visualisation_frame_color,
-                           sidebar_color)
-        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[4]], visualisation_frame_color,
-                           sidebar_color)
-        self.changeOnHover(self.resource_submenu.options["Groups"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(self.resource_submenu.options["TimeSlots"],  visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[2]],  visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[3]], visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[4]], visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(self.resource_submenu.options["Groups"],  visualisation_frame_color_, sidebar_color_)
 
         self.resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
 
@@ -844,10 +858,10 @@ class TkinterApp(tk.Tk):
             command=lambda: print("Generate PDF")
         )
 
-        self.changeOnHover(generator_time_table.options["Generate TimeTable"], visualisation_frame_color,
-                           sidebar_color)
-        self.changeOnHover(generator_time_table.options["View TimeTable"], visualisation_frame_color, sidebar_color)
-        self.changeOnHover(generator_time_table.options["Generate PDF"], visualisation_frame_color, sidebar_color)
+        self.changeOnHover(generator_time_table.options["Generate TimeTable"], visualisation_frame_color_,
+                           sidebar_color_)
+        self.changeOnHover(generator_time_table.options["View TimeTable"], visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(generator_time_table.options["Generate PDF"], visualisation_frame_color_, sidebar_color_)
 
         generator_time_table.place(relx=0, rely=0.4, relwidth=1, relheight=0.3)
 
@@ -1019,11 +1033,12 @@ class SidebarSubMenu(tk.Frame):
         sub_menu_operations: Options to be included in sub_menu
         """
         tk.Frame.__init__(self, parent)
-        self.config(bg=sidebar_color)
+        self.config(bg="#d2cccc")
         self.sub_menu_heading_label = ttk.Label(self,
                                                text=sub_menu_heading,
                                                 padding=5
-                                                ,background=sidebar_color
+                                                ,background="#d2cccc",
+                                                foreground="black"
                                                ,
                                                font=("Arial", 14,"bold")
                                                ,justify="left"
@@ -1037,15 +1052,15 @@ class SidebarSubMenu(tk.Frame):
         for n, x in enumerate(sub_menu_options):
             self.options[x] = tk.Button(self,
                                         text=x,
-                                        bg=sidebar_color,
-                                        font=("Arial", 10),
+                                        bg="#d2cccc",
+                                        font=("Arial", 11),
                                         bd=0,
                                         anchor="w",  # Align text to the left horizontally
                                         height="1"
                                         ,justify="left",
                                         # cursor='hand2',
 
-                                        fg=TEXT_COLOR
+                                        fg=TEXT_COLOR_
                                         )
             self.options[x].place(x=0, y=46 * (n + 1), relwidth=1,anchor="w" ) # Align text to the left horizontally
 
