@@ -53,6 +53,7 @@ PATH = Path(__file__).parent / 'assets'
 PATH_ = Path(__file__).parent / 'forest-light.tcl'
 PATH__ = Path(__file__).parent / 'forest-dark.tcl'
 image_path = Path(__file__).parent / 'assets'/'brand2.png'
+image_path_ = Path(__file__).parent / 'assets'/'mmk.png'
 
 
 # ------------------------------- ROOT WINDOW ----------------------------------
@@ -284,7 +285,7 @@ class TkinterApp(tk.Tk):
         # UNIVERSITY LOGO AND NAME
         # self.brand_frame = tk.Frame(self.sidebar, bg=sidebar_color)
         # self.brand_frame.place(relx=0, rely=0, relwidth=1, relheight=0.15)
-        self.image_side = tk.PhotoImage(file=image_path, )
+        self.image_side = tk.PhotoImage(file=image_path_, )
 
         # Create a label to display the image
         label_side = tk.Label(self.sidebar, image=self.image_side, background="#d2cccc", )
