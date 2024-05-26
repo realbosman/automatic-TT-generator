@@ -16,6 +16,10 @@ header_color = '#3C3F3F'
 visualisation_frame_color = "#2B2B2B"
 TEXT_COLOR = '#AFB1B3'
 
+my_pink="#f7b2b2"
+sidebar_color_ = visualisation_frame_color
+visualisation_frame_color_ = my_pink
+
 
 class Home(tk.Frame):
     """
@@ -58,15 +62,16 @@ class Home(tk.Frame):
         self.space_status_var = tk.StringVar(value="Classroom")
         self.update_thread()
         #
-        # self.cava_frame=tk.Frame(self)
-        # self.cava_frame.pack(side="left", fill="both" ,expand=1)
+        self.cava_frame=tk.Frame(self)
+        self.cava_frame.pack(side="left", fill="both" ,expand=1)
 
 
-        self.canvas = tk.Canvas(self)
+        self.canvas = tk.Canvas(self.cava_frame,width=800, height=600,)
         self.scrollbar = tk.Scrollbar(self, orient="vertical", command=self.canvas.yview, width=20)
         self.scrollable_frame = tk.Frame(self.canvas,)
 
-        self.canvas.pack(side="left", fill="both", expand=1)
+        # self.canvas.pack(side="left", fill="both", expand=1)
+        self.canvas.place(relx=.5, rely=.0, anchor="n")
         print("self.canvas.winfo_width()",self.canvas.winfo_width())
         self.canvas.create_window((self.canvas.winfo_width()/2, self.canvas.winfo_height()/2), window=self.scrollable_frame,anchor="center" )
         self.canvas.configure(yscrollcommand=self.scrollbar.set )
@@ -247,12 +252,25 @@ class Home(tk.Frame):
         button = ttk.Button(self.frame_, text="Save Information", command=self.save_thread)
         button.grid(row=4, column=0, sticky="news", padx=20, pady=10)
 
+
         #############################################################################
 
         # self.updateUI()
         # self.aut_save_thread()
 
         #############################################################################
+
+    def changeOnHover(self, view, colorOnHover, colorOnLeave):
+
+        # adjusting backgroung of the widget
+        # background on entering widget
+        view.bind("<Enter>", func=lambda e: view.config(
+            background=colorOnHover))
+
+        # background color on leving widget
+        view.bind("<Leave>", func=lambda e: view.config(
+            background=colorOnLeave))
+
 
     def updateUI(self):
         if TimetableMetaData.isInfoSet:

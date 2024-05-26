@@ -515,6 +515,7 @@ class TkinterApp(tk.Tk):
         Listener.save_instance_reload()
         self.timeDimension.save_instance_reload()
         self.isHomeSaved = True
+        # self.lectures_.set_new_list()
 
         self.show_frame(Home, "Time table Metadata", self.timetableMetadata,
                         self.timeDimension, self.listener_)

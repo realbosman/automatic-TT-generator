@@ -108,6 +108,9 @@ class Schedule:
             max_time = min(
                 max(time2hours(ev.end_time) for ev in self.all_events()) + 0.5, 24
             )
+
+        # print("MAX_TIME =",max_time,"MIN_TIME =",min_time,subgroup)
+
         # List of hours to label and draw a line across
         hours = range(floor(min_time) + 1, ceil(max_time))
         line_height = font_size * 1.2
@@ -407,7 +410,25 @@ def main(
 
         c.showPage()
 
+    # getting max and min time
+    sched_time = Schedule(week)
     for faculty in infile.keys():
+        for sub_group in infile[faculty].keys():
+            if len(infile[faculty][sub_group]) != 0:
+                for ev in read_events(infile[faculty][sub_group], colors=colors):
+                    sched_time.add_event(ev)
+
+    start_time = max(
+            min(time2hours(ev.start_time) for ev in sched_time.all_events()) - 0.5, 0
+        )
+    end_time = min(
+            max(time2hours(ev.end_time) for ev in sched_time.all_events()) + 0.5, 24
+        )
+
+    for faculty in infile.keys():
+
+
+
         for sub_group in infile[faculty].keys():
             sched = Schedule(week)
             if len(infile[faculty][sub_group]) != 0:
@@ -421,8 +442,8 @@ def main(
                     height=page_height - 2 * inch,
                     font_size=font_size,
                     show_times=not no_times,
-                    min_time=time2hours(start_time) if start_time is not None else None,
-                    max_time=time2hours(end_time) if end_time is not None else None,
+                    min_time=start_time,
+                    max_time=end_time,
                     subgroup=sub_group,
                     creator=creator,
                     title=title
@@ -438,8 +459,8 @@ def main(
                     height=page_height - 2 * inch,
                     font_size=font_size,
                     show_times=not no_times,
-                    min_time=time2hours(start_time) if start_time is not None else None,
-                    max_time=time2hours(end_time) if end_time is not None else None,
+                    min_time=start_time,
+                    max_time=end_time,
                     subgroup=sub_group,
                     creator=creator,
                     title=title

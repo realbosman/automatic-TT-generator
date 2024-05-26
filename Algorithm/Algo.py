@@ -84,7 +84,7 @@ class TtGenerator:
         for item in self.Groups.get_sub_groups():
             self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", item)[1]}')] = list()
 
-        # TODO: Give each subgroup its own timeslots so that they don't overlap or share the same Reference from  timeslots_lst(Also check others to see)
+
         for item in self.Groups.get_sub_groups():
             # print("item,", str(f'{re.findall(r"<(.*?)>", item)[1]}'))
             for value in timeslots_lst:
@@ -93,67 +93,13 @@ class TtGenerator:
         # get a copy of cu lists for progress_var purposes
         for i in self.created_lectures_details_lst:
             self.created_lectures_details_lst_progress_var.append(i)
-        print("list progress", self.created_lectures_details_lst_progress_var)
+
 
         # TODO getting the Grouping started
         self.advanced_optimal_generator(tutor_lst, timeslots_lst)
 
-        # for i in range(count_created_lectures):
-        #     time_picked = ""
-        #     lecture_picked = ""
-        #     space_picked = ""
-        #
-        #     # Randomly pick a session
-        #     lecture_picked = random.choice(self.created_lectures_details_lst)
-        #
-        #     # Randomly Picking time  from the corresponding timeslot
-        #     # TODO MANAGE TIME
-        #     sep_ = str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}').split(',', -1)
-        #
-        #     if len(sep_) <= 1:
-        #
-        #         try:
-        #             time_picked = random.choice(
-        #                 self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')])
-        #         except:
-        #             return
-        #
-        #     else:
-        #         self.is_merge_timeslots = True
-        #         inter_set = self.intersection_of_n_sets(self.set_list_of_sets(sep_))
-        #
-        #         # Handle the empty set in case there is no intersection.
-        #         if len(inter_set) == 0:
-        #             # TODO what if no intersection
-        #             pass
-        #         else:
-        #             time_picked = random.choice(list(inter_set))
-        #
-        #     # TODO if the rooms are over go get a brand new class rooms
-        #     space_picked = random.choice(self.class_rooms_lst)
-        #
-        #     # Packing the values into a list to hold all the occurrences
-        #     self.Full_Time_table_list.append(
-        #         f'<{re.findall(r"<(.*?)>", lecture_picked)[2]}><{re.findall(r"<(.*?)>", lecture_picked)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture_picked)[1]}><{re.findall(r"<(.*?)>", time_picked)[0]}><{re.findall(r"<(.*?)>", time_picked)[1]}><{re.findall(r"<(.*?)>", lecture_picked)[3]}>'
-        #     )
-        #
-        #     if self.is_merge_timeslots == True:
-        #         self.remove_time_slot(sep_, time_picked)
-        #         self.is_merge_timeslots = False
-        #
-        #     else:
-        #         self.list_Merged_Time_dict[str(f'{re.findall(r"<(.*?)>", lecture_picked)[1]}')].remove(time_picked)
-        #
-        #     self.created_lectures_details_lst.remove(lecture_picked)
-        #     self.class_rooms_lst.remove(space_picked)
-        #
-        #     self.progress_var = int((((count_created_lectures - len(
-        #         self.created_lectures_details_lst)) / count_created_lectures)) * 100)
-        #
-        # self.check_tutor_overlap()
 
         llt= self.break_resources()
-        print("lll",llt)
 
         try:
             # print("self.Full_Time_table_list ===", self.Full_Time_table_list)

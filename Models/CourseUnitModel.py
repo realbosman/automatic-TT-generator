@@ -43,22 +43,73 @@ class SessionManager:
         }
 
         self.Session_List = [
-            ["WEB", "Madam MIREMBE", "SCIENCE", "BSC IT 1,BSC CS 1"],
             ["DIPS1205 DATABASE PLANNING & MANAGEMENT", "KALEMA PETER", "SCIENCE", "DIP CS 1"],
             ["DIPS1202 INTERNET TECHNOLOGIES & WEB AUTHORING", "LUBOWA SAMUEL", "SCIENCE", "DIP CS 1"],
             ["DIPS1204 DISCOVER I NETWORKING BASICS", "NAIGENDE DUNCAN", "SCIENCE", "DIP CS 1"],
-            ["DIPS1203 COMPUTER MAINTANANCE & TROUBLE SHOOTING", "NAGAWA VIOLET", "SCIENCE", "DIP CS 1"],
+            ["DIPS1203 COMPUTER MAINTANANCE & TROUBLE SHOOTING", "Ms. Nagawa Viola", "SCIENCE", "DIP CS 1"],
             ["DIPS1201 INTRODUCTION TO COMPUTERSCIENCE & TECHNOLOGY II", "BABIRYE NANTEZA LUCY", "SCIENCE", "DIP CS 1"],
             ["CSC 1201 SYSTEMANALYSIS & DESIGN", "LUBOWA SAMUEL", "SCIENCE", "DIP CS 1"],
             ["CSC 1202 OBJECT ORIENTED PROGRAMMING", "KALEMA PETER", "SCIENCE", "DIP CS 1"],
-            ["PROGRAMMING", "KASOZI BRIAN", "SCIENCE", "DIP CS 1"],
+            ["PROGRAMMING", "Mr KASOZI BRIAN", "SCIENCE", "DIP CS 1"],
             ["CSC 1204 COMPUTATIONAL STATISTICS", "NAMAGEMBE OLIVIA", "SCIENCE", "BSC IT 1,BSC CS 1"],
             ["WEB DEVELOPMENT TECHNOLOGIES", "MIREMBE EVA", "SCIENCE", "BSC IT 1"],
             ["CSC 1202 OBJECTORIENTED PROGRAMMING", "Mr. KASAAZI George William", "SCIENCE", "BSC IT 1"],
             ["COMPUTER 1 CSC 1203 DATABASE MANAGEMENT SYSTEMS", "KALEMA PETER", "SCIENCE", "BSC IT 1,BSC CS 1"],
             ["CSC 1201 SYSTEM ANALYSIS & DESIGN", "LUBOWA SAMUEL", "SCIENCE", "BSC CS 1,BSC IT 1"],
-            ["CSC1104 PRINCIPLES OF PROGRAMMING", "KASOZI BRIAN", "SCIENCE", "BSC IT 1"],
-            ["My", "Tony", "BAM", "BAM 1"]
+            ["CSC1104 PRINCIPLES OF PROGRAMMING", "Mr KASOZI BRIAN", "SCIENCE", "BSC IT 1"],
+            ["CSC 3202 SOFTWARE ENGINEERING", "Ms. Nagawa Viola", "SCIENCE", "BSC IT 3"],
+            ["CSC 3201 COMPUTER GRAPHICS & ANNIMATIONS", "Mr. KIRUMIRA, Samuel", "SCIENCE",
+             "BSC GEN 3,BSC IT 3,BSC CS 3"],
+            ["August Academic literacy and reading skills", "Justine Lugolobi", "SCIENCE",
+             "LLB 1,B.ENVI.DES 1,BAFT I,BCMHP I"],
+            ["MATHEMATICS 2 MTH 2203 Numerical Analysis", "Dr. Fr. Kiwanuka Henry", "SCIENCE", "BSC GEN 2,BSC CS 2"],
+            ["MATHEMATICS 2 Partial Differential Equations", "Dr. Senyange Bob", "SCIENCE", "BSC GEN 2,BSC FM 2"],
+            ["STA 1201 TIME SERIES & INDEX NUMBERS", "MUJUNI PEREZ", "SCIENCE", "BSC GEN 2,BSC ECON & STAT 2"],
+            ["STA2102 DEMOGRAPHIC & SOCIAL STATISTICS ", "MUJUNI PEREZ", "SCIENCE", "BSC ECON & STAT 2,BSC GEN 3"],
+            ["MATHEMATICS 3 MTH 3201 Number Theory", "Dr. Fr. Kiwanuka Henry", "SCIENCE", "BSC GEN 3"],
+            ["STA 3203 NATIONAL INCOME ACCOUNTS", "Mr. Kato Bbosa John", "SCIENCE", "BSC GEN 3"],
+            ["MTC 3201 NUMERICAL ANALYSIS II", "Dr. Fr. Kiwanuka Henry", "SCIENCE", "BSC GEN 3,BSC FM 3"],
+            ["ECO 1202 PRINCIPLES OF DEVELOPMENT ECONOMICS", "FREDRICK KATO", "SCIENCE", "BSC ECON & STAT 1"],
+            ["ECO 1201 MACROECONOMICS I", "FREDRICK KATO", "SCIENCE", "BSC GEN 1,BSC ECON & STAT 1"],
+            ["MTC 1201 CALCULUS II", "DR. BOB SSENYANGE", "SCIENCE", "BSC GEN 1,BSC ECON & STAT 1"],
+            ["METHODOLOGY & DATA ANALYSIS", "DR. MBABAZI FULGENSIA", "SCIENCE", "BSC ECON & STAT 2"],
+            ["STA1102 STATISTICAL ORGANISATION", "NAMAGEMBE CHARLOTTEE", "SCIENCE", "BSC GEN 1,BSC ECON & STAT 1"]
+
+        ]
+
+        self.Session_List_ = [
+            ["DIPS1205 DATABASE PLANNING & MANAGEMENT", "KALEMA PETER", "SCIENCE", "DIP CS 1"],
+            ["DIPS1202 INTERNET TECHNOLOGIES & WEB AUTHORING", "LUBOWA SAMUEL", "SCIENCE", "DIP CS 1"],
+            ["DIPS1204 DISCOVER I NETWORKING BASICS", "NAIGENDE DUNCAN", "SCIENCE", "DIP CS 1"],
+            ["DIPS1203 COMPUTER MAINTANANCE & TROUBLE SHOOTING", "Ms. Nagawa Viola", "SCIENCE", "DIP CS 1"],
+            ["DIPS1201 INTRODUCTION TO COMPUTERSCIENCE & TECHNOLOGY II", "BABIRYE NANTEZA LUCY", "SCIENCE", "DIP CS 1"],
+            ["CSC 1201 SYSTEMANALYSIS & DESIGN", "LUBOWA SAMUEL", "SCIENCE", "DIP CS 1"],
+            ["CSC 1202 OBJECT ORIENTED PROGRAMMING", "KALEMA PETER", "SCIENCE", "DIP CS 1"],
+            ["PROGRAMMING", "Mr KASOZI BRIAN", "SCIENCE", "DIP CS 1"],
+            ["CSC 1204 COMPUTATIONAL STATISTICS", "NAMAGEMBE OLIVIA", "SCIENCE", "BSC IT 1,BSC CS 1"],
+            ["WEB DEVELOPMENT TECHNOLOGIES", "MIREMBE EVA", "SCIENCE", "BSC IT 1"],
+            ["CSC 1202 OBJECTORIENTED PROGRAMMING", "Mr. KASAAZI George William", "SCIENCE", "BSC IT 1"],
+            ["COMPUTER 1 CSC 1203 DATABASE MANAGEMENT SYSTEMS", "KALEMA PETER", "SCIENCE", "BSC IT 1,BSC CS 1"],
+            ["CSC 1201 SYSTEM ANALYSIS & DESIGN", "LUBOWA SAMUEL", "SCIENCE", "BSC CS 1,BSC IT 1"],
+            ["CSC1104 PRINCIPLES OF PROGRAMMING", "Mr KASOZI BRIAN", "SCIENCE", "BSC IT 1"],
+            ["CSC 3202 SOFTWARE ENGINEERING", "Ms. Nagawa Viola", "SCIENCE", "BSC IT 3"],
+            ["CSC 3201 COMPUTER GRAPHICS & ANNIMATIONS", "Mr. KIRUMIRA, Samuel", "SCIENCE",
+             "BSC GEN 3,BSC IT 3,BSC CS 3"],
+            ["August Academic literacy and reading skills", "Justine Lugolobi", "SCIENCE",
+             "LLB 1,B.ENVI.DES 1,BAFT I,BCMHP I"],
+            ["MATHEMATICS 2 MTH 2203 Numerical Analysis", "Dr. Fr. Kiwanuka Henry", "SCIENCE", "BSC GEN 2,BSC CS 2"],
+            ["MATHEMATICS 2 Partial Differential Equations", "Dr. Senyange Bob", "SCIENCE", "BSC GEN 2,BSC FM 2"],
+            ["STA 1201 TIME SERIES & INDEX NUMBERS", "MUJUNI PEREZ", "SCIENCE", "BSC GEN 2,BSC ECON & STAT 2"],
+            ["STA2102 DEMOGRAPHIC & SOCIAL STATISTICS ", "MUJUNI PEREZ", "SCIENCE", "BSC ECON & STAT 2,BSC GEN 3"],
+            ["MATHEMATICS 3 MTH 3201 Number Theory", "Dr. Fr. Kiwanuka Henry", "SCIENCE", "BSC GEN 3"],
+            ["STA 3203 NATIONAL INCOME ACCOUNTS", "Mr. Kato Bbosa John", "SCIENCE", "BSC GEN 3"],
+            ["MTC 3201 NUMERICAL ANALYSIS II", "Dr. Fr. Kiwanuka Henry", "SCIENCE", "BSC GEN 3,BSC FM 3"],
+            ["ECO 1202 PRINCIPLES OF DEVELOPMENT ECONOMICS", "FREDRICK KATO", "SCIENCE", "BSC ECON & STAT 1"],
+            ["ECO 1201 MACROECONOMICS I", "FREDRICK KATO", "SCIENCE", "BSC GEN 1,BSC ECON & STAT 1"],
+            ["MTC 1201 CALCULUS II", "DR. BOB SSENYANGE", "SCIENCE", "BSC GEN 1,BSC ECON & STAT 1"],
+            ["METHODOLOGY & DATA ANALYSIS", "DR. MBABAZI FULGENSIA", "SCIENCE", "BSC ECON & STAT 2"],
+            ["STA1102 STATISTICAL ORGANISATION", "NAMAGEMBE CHARLOTTEE", "SCIENCE", "BSC GEN 1,BSC ECON & STAT 1"]
+
         ]
         self.session_number_tracker = list()
         self.session_number_tracker.append(0)
@@ -80,6 +131,9 @@ class SessionManager:
 
     def get_column_headers(self):
         return self.Headers["headers"]
+
+    def set_new_list(self):
+        self.Session_List=self.Session_List_
 
     def get_sessions(self) -> list:
         return self.Session_List

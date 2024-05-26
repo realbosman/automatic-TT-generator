@@ -1,0 +1,244 @@
+********************DIP CS 1********************
+
+********************BSC IT 1********************
+[ "CSC 1204 COMPUTATIONAL STATISTICS", "NAMAGEMBE OLIVIA ","SCIENCE","BSC IT 1, BSC CS 1" ],
+["WEB DEVELOPMENT TECHNOLOGIES" ,"MIREMBE EVA","SCIENCE", "BSC IT 1"],
+["CSC 1202 OBJECTORIENTED PROGRAMMING" ,"Mr. KASAAZI George William","SCIENCE", "BSC IT 1"],
+["COMPUTER 1 CSC 1203 DATABASE MANAGEMENT SYSTEMS" ,"KALEMA PETER" ,"SCIENCE","BSC IT 1, BSC CS 1" ],
+["CSC 1201 SYSTEM ANALYSIS & DESIGN" ,"LUBOWA SAMUEL" ,"SCIENCE","BSC CS 1, BSC IT 1"],
+["CSC1104 PRINCIPLES OFPROGRAMMING", "KASOZI BRIAN" ,"SCIENCE", "BSC IT 1"],
+********************BSC IT 2********************
+["COMPUTER 2 CSC 2202 DATABASE PROGRAMMING","KALEMA PETER"],
+["CSC 2203 RESEARCH METHODS IN IT", "DR. SHEBA NYAKAISIKI"],
+["PEF 2201 ETHICS IN FOCUS", "Dr. Albert Luswata" ,"JOINT","STAT 2, BSC FM 2, B. SWSA II August & January, BAPAM II August, LLB 3 SEM 1"],
+[BSC GEN 2, BSC CS 2, BSC IT 2CSC 2204 MOBILE COMPUTING & NETWORKS LUBOWA SAMUEL],
+[BSC CS 2, BSC IT 2 CSC 2201 USER INTERFACE DESIGN & DEVELOPMENT MIREMBE EVAONLINECLASSROOM 1],
+[BSC IT 2, BSC GEN 2, BSC CS 2, COMPUTER 2 CSC 2202 WEB BASEDSYSTEMS PROGRAMMING Mr. KASAAZI, George William]
+
+********************BSC IT 3********************
+
+
+
+Statistical Modeling
+and Analysis
+Mr. MUWONGE,
+Martin
+
+
+Timetable generated with FET 6.3.4 on 1/21/24 2:13 PM
+
+
+********************BSC GEN 3********************
+
+
+
+
+
+
+
+
+
+Virtual Room 6
+
+
+
+
+
+
+
+
+
+
+
+Timetable generated with FET 6.3.4 on 1/21/24 2:13 PM
+
+
+
+
+Timetable generated with FET 6.3.4 on 1/21/24 2:13 PM
+
+
+********************BSC FM 2********************
+
+
+
+Timetable generated with FET 6.3.4 on 1/21/24 2:13 PM
+
+
+********************BSC ECON & STAT 1********************
+
+
+
+
+
+
+
+
+
+
+
+
+
+BSC CS 1, BSC GEN
+1, BSC ECON & STAT
+1, BSC IT 1, B. SWSA
+I August & January,
+BAPAM I August &
+January, LLB 1,
+B.ENVI.DES 1, BAFT
+I August, BCMHP I
+August
+Academic literacy and
+reading skills
+Justine Lugolobi
+Room 11
+
+
+BAMF I AUG 2023,
+BAM I AUG 2023, BSC
+ACC & FIN I AUG
+2023, BSC GEN 1, BSC
+ECON & STAT 1
+ECON1203 Managerial
+Economics II
+|Kimono Paul
+Room 11
+
+
+Timetable generated with FET 6.3.4 on 1/21/24 2:13 PM
+
+
+********************BSC ECON & STAT 2********************
+
+
+
+Original and Critical
+language skills
+Prof. Otala Laura
+
+
+January, BAPAM II
+August, LLB 3 SEM 1
+PEF 2201 ETHICS IN
+FOCUS
+Dr. Albert Luswata
+Room 11
+
+
+BSC ECON & STAT
+2, BSC GEN 2
+ECO 2202
+ECONOMETRICS II
+MUBIINZI
+GEOFFREY
+
+
+BSC GEN 2, BSC
+ECON & STAT 2,
+MATHEMATICS 2
+ECO1101
+Microeconomics I
+Kato Fredrick
+
+
+BSC GEN 2, BSC ECON
+& STAT 2
+ECO 2203 ECONOMICS
+OF AGRICULTURE
+NABASUMBA SYLVIA
+
+
+BSC ECON & STAT
+2, BSC GEN 3
+STA2102
+DEMOGRAPHIC &
+SOCIAL STATISTICS
+MUJUNI PEREZ
+Virtual Room 5
+
+
+STA1102 STATISTICAL
+ORGANISATION
+MUJUNI PEREZ
+
+
+BSC GEN 2,
+BSC ECON &
+STAT 2
+STA 1201 TIME
+SERIES &
+INDEX
+NUMBERS
+MUJUNI
+PEREZ
+
+
+Timetable generated with FET 6.3.4 on 1/21/24 2:13 PM
+
+
+********************BSC ECON & STAT 3********************
+
+
+
+ECO3202 PUBLIC
+SECTOR
+ECONOMICS
+Ms. NABASUMBA,
+Sylvia Mukiibi
+Virtual Room 12
+
+
+ECO 3201
+INTERMEDIATE
+MARCOECONOMIC
+THEORY
+MUBIINZI
+GEOFFREY
+
+
+Mubiinzi Geoffrey
+
+
+Mapeera 10
+
+
+BSC GEN 3, BSC
+ECON & STAT 3
+STA 3203
+NATIONAL INCOME
+ACCOUNTS
+Mr. Kato Bbosa John
+
+
+MATHEMATICS
+3, BSC ECON &
+STAT 3
+Monetary
+Economics/Money,
+Banking & Public
+Finance
+Kaddu Milly
+
+
+STA3202
+NATIONAL
+ACCOUNTS &
+INCOME
+ANALYSIS
+DR. MBABAZI
+FULGENSIA
+
+
+ECO3203
+MONETARY
+ECONOMICS
+KADDU
+MILLY
+
+
+MATHEMATICS 3,
+BSC ECON & STAT 3
+Intermediate/Advanced
+Macroeconomics
+Theory
+Kaddu Milly

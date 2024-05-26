@@ -86,7 +86,7 @@ class Session(tk.Frame):
         # self.treeScroll_x_style.configure("Custom.Scrollbar", height=30)
 
         self.treeScroll_x = ttk.Scrollbar(self.treeFrame, orient="horizontal")
-        self.treeScroll_x.pack(side="bottom", fill="x")
+        self.treeScroll_x.pack(side="bottom", fill="x",ipady=10)
         # self.treeScroll_x.configure(style="Custom.Scrollbar")
 
         # Define a custom style for the treeview
@@ -146,6 +146,7 @@ class Session(tk.Frame):
                     values.append("AUTO")
                 else:
                     pass
+
 
             self.treeview.insert('', tk.END, values=values)
 
