@@ -317,8 +317,6 @@ def main(
     else:
         # Assume we've been given a path to a .ttf file
         font_name = "CustomFont"
-        ### TODO: Use the basename of the filename as the font name?  (Could
-        ### that ever cause problems?)
         pdfmetrics.registerFont(TTFont(font_name, font))
     if portrait:
         page_width, page_height = pagesizes.portrait(pagesizes.letter)
@@ -373,6 +371,7 @@ def main(
     c.setFontSize(12)
     c.drawCentredString(300, 745, title)
     c.setFontSize(10)
+    c.setFillColorRGB(1, 1, 0)
     # print(infile)
     faculty_=" "
     for rows in grouper(data, max_rows_per_page):

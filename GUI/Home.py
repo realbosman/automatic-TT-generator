@@ -274,9 +274,9 @@ class Home(tk.Frame):
 
     def updateUI(self):
         if TimetableMetaData.isInfoSet:
-            # print(self.timeTableMetaData__.time_table_name)
-            # print(self.timeTableMetaData__.preferences_list[0])
-            self.project_name_var.set(TimetableMetaData.time_table_name)
+            print("UPDATING-Name",self.timeTableMetaData__.time_table_name)
+            print(self.timeTableMetaData__.preferences_list_[0])
+            self.project_name_var.set(Listener.timeTableNameListener)
             self.project_creator_var.set(TimetableMetaData.creator_name)
             self.project_email_var.set(TimetableMetaData.creators_email)
             self.project_institute_var.set(TimetableMetaData.institute_name)
@@ -293,6 +293,11 @@ class Home(tk.Frame):
         self.fri_status_var.set(mylist[4])
         self.sat_status_var.set(mylist[5])
         self.sun_status_var.set(mylist[6])
+
+        # print("LISTNERNAME_U", Listener.timeTableNameListener)
+        # print("ProjectNAMEU", self.project_name__)
+        # print("NAme=Meta_U", self.timeTableMetaData__.time_table_name)
+        self.project_name_var.set(Listener.timeTableNameListener)
 
     def on_mousewheel(self, event):
         # On mouse wheel event, scroll the canvas
@@ -341,7 +346,7 @@ class Home(tk.Frame):
             break_list=self.breaks_entry_variable.get().split(',', -1)
             for break_ in break_list:
                 Listener.breaks_entry_list.append(break_)
-            print("BREAKKK",Listener.breaks_entry_list)
+            # print("BREAKKK",Listener.breaks_entry_list)
             self.days__.clear()
             self.preference_lst__.clear()
             self.project_name__ = self.project_name_var.get()
@@ -378,6 +383,10 @@ class Home(tk.Frame):
                 self.days__,
                 self.preference_lst__
             )
+
+            # print("LISTNERNAME",Listener.timeTableNameListener)
+            # print("ProjectNAME",self.project_name__)
+            # print("NAme=Meta",self.timeTableMetaData__.time_table_name)
 
     def auto_save(self):
         count__ = 0

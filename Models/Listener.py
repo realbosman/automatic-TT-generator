@@ -22,16 +22,19 @@ class Listener:
     saveInstanceDict = {
 
     }
+
     breaks_entry_list = []
+
 
     @staticmethod
     def get_app_path_docs():
         # Static method to get the path to the app's documents folder
         documents_folder = os.path.join(os.environ["USERPROFILE"], "Documents")
-        app_documents_folder = os.path.join(documents_folder, "Automated TimeTable Generator/Generated timetables")
+        app_documents_folder = os.path.join(documents_folder, "Automated TimeTable Generator\Generated timetables")
         if not os.path.exists(app_documents_folder):
             os.makedirs(app_documents_folder)
         return app_documents_folder
+
 
     @staticmethod
     def get_app_path_files():

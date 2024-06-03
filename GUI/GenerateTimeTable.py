@@ -5,6 +5,7 @@ from pathlib import Path
 from PIL import Image, ImageTk, ImageSequence
 from itertools import cycle
 from pathlib import Path
+import os
 from tkinter import *
 from PIL import ImageTk, Image
 
@@ -84,7 +85,7 @@ class GenerateTimeTable(tk.Frame):
         self.queue_message = Queue()
         self.bind("<<CheckQueue_gen>>", self.Check_Queue)
         self.txt_var = tk.StringVar(value="Generating TimeTable: 0%")
-        self.txt_var_ = tk.StringVar()
+        self.txt_var_ = tk.StringVar(value='')
         self.global_stop_execution = False
 
         self.animate_()
@@ -93,7 +94,7 @@ class GenerateTimeTable(tk.Frame):
         self.ll = ttk.Label(self.frame_, textvariable=self.txt_var, background='black', font=16)
         self.ll.place(x=0, y=0, relx=0.4, rely=0.55)
         self.ll2 = ttk.Label(self.frame_, textvariable=self.txt_var_, background='black', font=16)
-        # self.ll2.place(x=0, y=0, relx=0.4, rely=0.65)
+        self.ll2.place(x=0, y=0, relx=0.4, rely=0.60)
 
         self.generate_thread()
 
@@ -132,11 +133,30 @@ class GenerateTimeTable(tk.Frame):
             if msg.ticket_value == 100:
                 # print("Before 100 ==", self.get_metadata.time_table_name, self.name_timetable)
                 self.txt_var.set(f'Generating TimeTable Done: 100%')
-                self.txt_var_.set(f'Preparing .....')
-                self.visualize_Time_table_thread()
+
+
                 # print("after 100  and thread==", self.get_metadata.time_table_name, self.name_timetable)
                 # print("Running")
-                self.unbind("<<CheckQueue_gen>>")
+                if  os.path.exists(rf'{Listener.get_app_path_docs()}\{Listener.timeTableNameListener}.pdf'):
+                    try:
+                        pdf_document_ = fitz.open(
+                            rf'{Listener.get_app_path_docs()}\{Listener.timeTableNameListener}.pdf')
+                        # print("FILE IS IS IS IS IS IS IS IS READY")
+
+                        pdf_document_=""
+                        self.visualize_Time_table_thread()
+                        self.unbind("<<CheckQueue_gen>>")
+                    except:
+                        # print("FILE EXISTS BUt NOT READY")
+                        self.txt_var_.set(f'Preparing .....')
+
+
+
+                else:
+                    # print("FILE  NOT  NOT  NOT NOT  NOT NOT READY")
+                    self.txt_var_.set(f'Preparing .....')
+
+
 
     def update_text(self):
         try:
@@ -209,10 +229,18 @@ class GenerateTimeTable(tk.Frame):
 
                 try:
                     # print("Listener.timeTableNameListener}======", Listener.timeTableNameListener)
+                    # TODO: check if file has been fully saved
+                    print("LISTENER NAME_BEFORE_ ",
+                          rf'{Listener.get_app_path_docs()}\{Listener.timeTableNameListener}.pdf', " ",
+                          Listener.timeTableNameListener)
                     pdf_document = fitz.open(rf'{Listener.get_app_path_docs()}\{Listener.timeTableNameListener}.pdf')
+                    print("LISTENER NAME_AFTER ",
+                          f'{Listener.get_app_path_docs()}\{Listener.timeTableNameListener}.pdf', " ",
+                          Listener.timeTableNameListener)
                     # print()
                 except:
-                    messagebox.showerror(title="Error", message="Timetable generation error invalid file name")
+                    # print("LISTENER NAME_Execp ",rf'{Listener.get_app_path_docs()}\{Listener.timeTableNameListener}.pdf'," ", Listener.timeTableNameListener)
+                    messagebox.showerror(title="Automatic TimeTable Generator", message="Timetable generation error invalid file name")
                     return
 
                 # Load and display each page of the PDF as a resized image
@@ -229,15 +257,13 @@ class GenerateTimeTable(tk.Frame):
                 self.frame_images.update_idletasks()
                 self.canvas.config(scrollregion=self.canvas.bbox("all"))
                 Listener.isTimeTableCreated = True
-                Listener.timeTableNameListener = name
+                # Listener.timeTableNameListener = name
                 # To set the timetable name from any frame
                 # TimeTableManager.set_time_table_name(name)
-
                 # To get the timetable name from any frame
-
                 # print("Name:", name)
                 # print("LISTENER NAME", Listener.timeTableNameListener)
-                # print("STATIC", TimeTableManager.get_time_table_name())
+
                 break
 
     def on_mousewheel(self, event):
@@ -252,7 +278,7 @@ class GenerateTimeTable(tk.Frame):
         new_thread_ = Thread(target=self.visualize_Time_table, daemon=True, args=(self.frame_,
                                                                                   Listener.timeTableNameListener,))  # I can pass args = "any" for the target
         new_thread_.start()
-        self.get_metadata.time_table_name = self.name_timetable
+        # self.get_metadata.time_table_name = Listener.timeTableNameListener
 
         # print("FROM VISUAL After==", self.get_metadata.time_table_name)
 

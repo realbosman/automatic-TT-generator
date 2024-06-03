@@ -344,7 +344,7 @@ class TkinterApp(tk.Tk):
             command=self.view_time_table
         )
         generator_time_table.options["Generate PDF"].config(
-            command=lambda: print("Generate PDF")
+            command=lambda: self.gen_time_table()
         )
 
         self.changeOnHover(generator_time_table.options["Generate TimeTable"], visualisation_frame_color_, sidebar_color_)
@@ -483,6 +483,21 @@ class TkinterApp(tk.Tk):
             if Listener.timeTableNameListener != "":
                 self.show_frame(View, "Time table Metadata", self.timetableMetadata,
                                 self.timeDimension, self.listener_)
+            else:
+                messagebox.showerror(title="Automatic Timetable Generator",
+                                     message="No timetable information available")
+        else:
+            messagebox.showerror(title="Automatic Timetable Generator", message="No timetable information available")
+
+    def gen_time_table(self):
+        self.listener__ = Listener()
+        if self.isTimetabecreatedMainThread:
+            # print("VIEWNAME __", Listener.timeTableNameListener)
+            # print("VIEWNAME _", Listener.timeTableNameListener)
+            # print("STATIC", TimeTableManager.get_time_table_name())
+            if Listener.timeTableNameListener != "":
+                messagebox.showinfo(title="Automatic Timetable Generator",
+                                     message=f'Path to the generated Timetable is: {Listener.get_app_path_docs()}\{Listener.timeTableNameListener}.pdf')
             else:
                 messagebox.showerror(title="Automatic Timetable Generator",
                                      message="No timetable information available")
@@ -857,7 +872,7 @@ class TkinterApp(tk.Tk):
             command=self.view_time_table
         )
         generator_time_table.options["Generate PDF"].config(
-            command=lambda: print("Generate PDF")
+            command=lambda: self.gen_time_table()
         )
 
         self.changeOnHover(generator_time_table.options["Generate TimeTable"], visualisation_frame_color_,
