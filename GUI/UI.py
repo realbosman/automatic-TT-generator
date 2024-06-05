@@ -504,7 +504,7 @@ class TkinterApp(tk.Tk):
         else:
             messagebox.showerror(title="Automatic Timetable Generator", message="No timetable information available")
 
-    # function to change properties of button on hover
+    # function to change properties of button on hover.
     def changeOnHover(self, view, colorOnHover, colorOnLeave):
 
 
