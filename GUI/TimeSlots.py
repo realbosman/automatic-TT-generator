@@ -1,6 +1,7 @@
+import re
 import time
 import tkinter as tk
-from tkinter import ttk
+from tkinter import ttk, messagebox
 
 from threading import Thread
 from queue import Queue
@@ -244,26 +245,74 @@ class TimeSlots(tk.Frame):
     def on_enter_press(self, e):
         new_text = e.widget.get()
         # TODO check whether valid time is entered
+        print("next====",new_text,' ',len(new_text))
 
-        if new_text == '':
+        if len(new_text) == 0:
             # TODO add a popup to alert tyhe user that this field in blank either fill it or leave it
             # print('Object is None ')
             new_text = '--------'
+            selected_iid = e.widget.editing_item_iid
+            column_index = e.widget.editing_column_index
+            current_values = self.treeview.item(selected_iid).get("values")
+            current_values[column_index] = new_text
+            self.treeview.item(selected_iid, values=current_values)
+            index_to_add = None
+            for index, child in enumerate(self.treeview.get_children()):
+                if child == selected_iid:
+                    index_to_add = index
+                    break
+            e.widget.destroy()
+            self.timeDimension__.edit_session(index_to_add, current_values)
+        elif  new_text == '--------':
+            new_text = '--------'
+            selected_iid = e.widget.editing_item_iid
+            column_index = e.widget.editing_column_index
+            current_values = self.treeview.item(selected_iid).get("values")
+            current_values[column_index] = new_text
+            self.treeview.item(selected_iid, values=current_values)
+            index_to_add = None
+            for index, child in enumerate(self.treeview.get_children()):
+                if child == selected_iid:
+                    index_to_add = index
+                    break
+            e.widget.destroy()
+            self.timeDimension__.edit_session(index_to_add, current_values)
 
-        selected_iid = e.widget.editing_item_iid
-        column_index = e.widget.editing_column_index
-        current_values = self.treeview.item(selected_iid).get("values")
-        current_values[column_index] = new_text
-        self.treeview.item(selected_iid, values=current_values)
-        index_to_add = None
-        for index, child in enumerate(self.treeview.get_children()):
-            if child == selected_iid:
-                index_to_add = index
-                break
-        e.widget.destroy()
-        self.timeDimension__.edit_session(index_to_add, current_values)
+        else:
+            user_input = str(new_text)
+            pattern = re.compile(r"^\d{1,2}:\d{1,2}-\d{1,2}:\d{1,2}$")
+            if pattern.match(user_input):
+                start_time, end_time = user_input.split('-')
+                start_hour, start_minute = map(int, start_time.split(':'))
+                end_hour, end_minute = map(int, end_time.split(':'))
+
+                if self.is_valid_time(start_hour, start_minute) and self.is_valid_time(end_hour, end_minute):
+                    selected_iid = e.widget.editing_item_iid
+                    column_index = e.widget.editing_column_index
+                    current_values = self.treeview.item(selected_iid).get("values")
+                    current_values[column_index] = new_text
+                    self.treeview.item(selected_iid, values=current_values)
+                    index_to_add = None
+                    for index, child in enumerate(self.treeview.get_children()):
+                        if child == selected_iid:
+                            index_to_add = index
+                            break
+                    e.widget.destroy()
+                    self.timeDimension__.edit_session(index_to_add, current_values)
+                else:
+                    messagebox.showwarning(title="Automatic Timetable Generator",
+                                           message="Invalid time values. Hours should be 0-23 and minutes should be 0-59. ")
+
+
+            else:
+                messagebox.showwarning(title="Automatic Timetable Generator",
+                                       message="Time should  be in this format xx:xx-xx:xx or x:x-x:x digits only. ")
+
 
         # print(current_values)
+
+    def is_valid_time(self,hour, minute):
+        return 0 <= hour < 24 and 0 <= minute < 60
 
     def onFocusOut(self, e):
         # print("running")

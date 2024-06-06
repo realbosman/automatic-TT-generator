@@ -1137,7 +1137,11 @@ class Ticket:
 
 # splash_=Splash()
 
-app = TkinterApp()
 
-# splash_.after(3000,app)
-app.mainloop()
+
+if __name__ == '__main__':
+    app = TkinterApp()
+
+    # splash_.after(3000,app)
+    app.mainloop()
+
