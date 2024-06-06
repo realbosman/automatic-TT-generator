@@ -371,7 +371,7 @@ def main(
     c.setFontSize(12)
     c.drawCentredString(300, 745, title)
     c.setFontSize(10)
-    c.setFillColorRGB(247/255.0, 178/255.0, 178/255.0)
+    # c.setFillColorRGB(247/255.0, 178/255.0, 178/255.0)
     # print(infile)
     faculty_=" "
     for rows in grouper(data, max_rows_per_page):
