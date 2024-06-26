@@ -17,7 +17,7 @@ class Listener:
     group_with_highest_session_=0
     get_time_slot_count=0
     isOptionsUpdated = False
-    preferenceList = ["TimeSlots", "Groups", "Classroom/Rooms/Space", "Course/Class/Session",
+    preferenceList = ["TimeSlots", "Programs", "Classroom/Rooms/Space", "Course/Class/Session",
                       "Instructor/Lecturer/Tutor"]
     saveInstanceDict = {
 
@@ -85,7 +85,7 @@ class Listener:
         Listener.isTimeTableCreated = False
         Listener.isWeekendInclusive = False
         Listener.isOptionsUpdated = False
-        Listener.preferenceList = ["TimeSlots", "Groups", "Classrooms/Rooms/Space", "Course/Class/Session",
+        Listener.preferenceList = ["TimeSlots", "Programs", "Classrooms/Rooms/Space", "Course/Class/Session",
                                    "Instructor/Lecturer/Tutor"]
         Listener.saveInstanceDict = {
 
@@ -100,6 +100,13 @@ class Listener:
         Listener.isWeekendInclusive = Listener.saveInstanceDict["Listener"]["isWeekendInclusive"]
         Listener.isOptionsUpdated = Listener.saveInstanceDict["Listener"]["isOptionsUpdated"]
         Listener.preferenceList = Listener.saveInstanceDict["Listener"]["preferenceList"]
+
+        # To cater for old versions with Groups submenu item
+        if (Listener.saveInstanceDict["Listener"]["preferenceList"][1]=="Groups"):
+            Listener.saveInstanceDict["Listener"]["preferenceList"][1] = "Programs"
+        else:
+            pass
+
         try:
           Listener.breaks_entry_list = Listener.saveInstanceDict["Listener"]["breaks_entry_list"]
         except:

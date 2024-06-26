@@ -316,15 +316,15 @@ class TkinterApp(tk.Tk):
         self.resource_submenu.options[Listener.preferenceList[3]].config(
             command=lambda: self.show_frame(Session, f"{Listener.preferenceList[3]}", self.lectures_, )
         )
-        self.resource_submenu.options["Groups"].config(
-            command=lambda: self.show_frame(Groups_, "Groups", self.lectures_, )
+        self.resource_submenu.options["Programs"].config(
+            command=lambda: self.show_frame(Groups_, "Programs", self.lectures_, )
         )
 
         self.changeOnHover(self.resource_submenu.options["TimeSlots"], visualisation_frame_color_, sidebar_color_)
         self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[2]], visualisation_frame_color_, sidebar_color_)
         self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[3]],  visualisation_frame_color_, sidebar_color_)
         self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[4]], visualisation_frame_color_, sidebar_color_)
-        self.changeOnHover(self.resource_submenu.options["Groups"],  visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(self.resource_submenu.options["Programs"],  visualisation_frame_color_, sidebar_color_)
 
         self.resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
 
@@ -801,13 +801,13 @@ class TkinterApp(tk.Tk):
                     self.resource_submenu.options[Listener.preferenceList[2]].config(background=sidebar_color_)
 
                 if str(cont).split(".", -1)[-1] == "Groups_'>":
-                    self.resource_submenu.options["Groups"].unbind("<Enter>")
-                    self.resource_submenu.options["Groups"].unbind("<Leave>")
-                    self.resource_submenu.options["Groups"].config(activebackground=visualisation_frame_color)
+                    self.resource_submenu.options["Programs"].unbind("<Enter>")
+                    self.resource_submenu.options["Programs"].unbind("<Leave>")
+                    self.resource_submenu.options["Programs"].config(activebackground=visualisation_frame_color)
                 else:
-                    self.changeOnHover(self.resource_submenu.options["Groups"],
+                    self.changeOnHover(self.resource_submenu.options["Programs"],
                                        visualisation_frame_color_, sidebar_color_)
-                    self.resource_submenu.options["Groups"].config(background=sidebar_color_)
+                    self.resource_submenu.options["Programs"].config(background=sidebar_color_)
 
                 if str(cont).split(".", -1)[-1] == "TimeSlots'>":
                     self.resource_submenu.options[Listener.preferenceList[0]].unbind("<Enter>")
@@ -844,15 +844,15 @@ class TkinterApp(tk.Tk):
         self.resource_submenu.options[Listener.preferenceList[3]].config(
             command=lambda: self.show_frame(Session, f"{Listener.preferenceList[3]}", self.lectures_, )
         )
-        self.resource_submenu.options["Groups"].config(
-            command=lambda: self.show_frame(Groups_, "Groups", self.lectures_, )
+        self.resource_submenu.options["Programs"].config(
+            command=lambda: self.show_frame(Groups_, "Programs", self.lectures_, )
         )
 
         self.changeOnHover(self.resource_submenu.options["TimeSlots"],  visualisation_frame_color_, sidebar_color_)
         self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[2]],  visualisation_frame_color_, sidebar_color_)
         self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[3]], visualisation_frame_color_, sidebar_color_)
         self.changeOnHover(self.resource_submenu.options[Listener.preferenceList[4]], visualisation_frame_color_, sidebar_color_)
-        self.changeOnHover(self.resource_submenu.options["Groups"],  visualisation_frame_color_, sidebar_color_)
+        self.changeOnHover(self.resource_submenu.options["Programs"],  visualisation_frame_color_, sidebar_color_)
 
         self.resource_submenu.place(relx=0, rely=0.025, relwidth=1, relheight=5)
 
