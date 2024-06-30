@@ -2,6 +2,8 @@ import re
 
 from Models.Listener import Listener
 from Models.Tutor_Model import TutorsManager
+from itertools import groupby
+
 
 
 class CourseUnitModel:
@@ -39,7 +41,7 @@ class SessionManager:
         self.faculty_set = set()
 
         self.Headers = {
-            "headers": ["Name", "Tutor", "Faculty", "Group", "Capacity"]
+            "headers": ["Name", "Tutor", "Faculty", "Program", "Capacity"]
         }
 
         self.Session_List = [
@@ -144,13 +146,15 @@ class SessionManager:
     def edit_session(self, index, new_session):
         self.Session_List[index] = new_session
         # TODO need  a thread and the append if at all a lecture teaches more than one
-        for lst in TutorsManager.get_tutors():
-            for i, Name in enumerate(lst):
-                if Name == new_session[1]:
-                    # TODO if at all a lecture teaches more than one
-                    return
-        lst_ = [f'{new_session[1]}', f'{new_session[0]}', '--------']
-        TutorsManager.add_new_tutor(lst_, index=None)
+        # print("NSHGSGSGJGS",new_session)
+        # for lst in TutorsManager.get_tutors():
+        #     for i, Name in enumerate(lst):
+        #         if Name == new_session[1]:
+        #             # TODO if at all a lecture teaches more than one
+        #             return
+        lst_ = [f'{new_session[1]}', f'{new_session[0]}', f'{new_session[2]}']
+        TutorsManager.add_new_tutor(lst_, index)
+        # print("lishshds,",lst_)
 
     def set_groups_cu(self):
         for index, lst in enumerate(self.Session_List):
@@ -193,8 +197,9 @@ class SessionManager:
 
     def add_new_session(self, new_session):
         self.Session_List.append(new_session)
-        lst = [f'{new_session[1]}', f'{new_session[0]}', '--------']
+        lst = [f'{new_session[1]}', f'{new_session[0]}', f'{new_session[2]}']
         TutorsManager.add_new_tutor(lst)
+        # print("lst new session",lst)
 
     def get_algo_reources(self) -> list:
         algo_list = list()
@@ -212,6 +217,8 @@ class SessionManager:
                 pass
             else:
                 algo_list.append(f'<{lst[2]}><{lst[3]}><{lst[0]}><{lst[1]}>')
+
+        # TutorsManager.Tutor_List=algo_list
         return algo_list
 
     def get_tutors_(self):
@@ -219,26 +226,71 @@ class SessionManager:
         lst2 = list()
 
         # getting the names of all Tutors to know who is already in the list
-        for n in TutorsManager.Space_List:
+        for n in TutorsManager.Tutor_List:
             for i in n:
                 lst2.append(n[0])
+                # print('This now  =-=',TutorsManager.Tutor_List )
+
 
         lst = self.update_tutor_list()
+
 
         for lecture in lst:
             if str(re.findall(r"<(.*?)>", lecture)[3]) in lst2:
                 pass
             else:
-                TutorsManager.Space_List.append(
-                    [str(re.findall(r"<(.*?)>", lecture)[3]), str(re.findall(r"<(.*?)>", lecture)[2]), '--------'], )
+                TutorsManager.Tutor_List.append(
+                    [str(re.findall(r"<(.*?)>", lecture)[3]), str(re.findall(r"<(.*?)>", lecture)[2]), str(re.findall(r"<(.*?)>", lecture)[0])], )
+                # print("This==", [str(re.findall(r"<(.*?)>", lecture)[3]), str(re.findall(r"<(.*?)>", lecture)[2]), str(re.findall(r"<(.*?)>", lecture)[0])])
 
-        return TutorsManager.Space_List
+        # Sort the list by the first element (tutor's name)
+        TutorsManager.Tutor_List.sort(key=lambda x: x[0].upper())
+
+        # Group the sorted list by the first element (tutor's name)
+        grouped_tutors = [list(group) for key, group in groupby(TutorsManager.Tutor_List, key=lambda x: x[0])]
+
+        # Flatten the grouped list back into the original format
+        TutorsManager.Tutor_List = [item for sublist in grouped_tutors for item in sublist]
+
+        # self.replace_lec(0,1)
+
+        # print("TutorsManager.Tutor_List ===",TutorsManager.Tutor_List)
+
+        return TutorsManager.Tutor_List
+
+    def replace_lec(self,index,next_index):
+        # print("NNN")
+        lect_pointer = TutorsManager.Tutor_List[index][0]
+        # print("NNN-",TutorsManager.Tutor_List[index])
+
+        if (len(TutorsManager.Tutor_List) > index+1):
+            if (len(TutorsManager.Tutor_List) > next_index):
+                # print("top;;;;;;")
+                if lect_pointer == TutorsManager.Tutor_List[next_index][0]:
+                    TutorsManager.Tutor_List[index + 1][0] = "->"
+                    self.replace_lec(index, next_index + 1)
+                    # print("Made it",TutorsManager.Tutor_List[index + 1])
+                else:
+                    self.replace_lec(next_index, next_index + 1)
+                    # print("Made Next")
+
+
+
+
+
+
+
+
+
 
     def check_for_empty_slots(self) -> bool:
         for lst in self.Session_List:
             for item in lst:
                 if item == '--------':
                     return True
+
+    def check_for_empty_slots_(self) -> bool:
+        return False
 
     def get_the_number_of_Tutor_sessions(self) -> int:
         Tutor_dict = dict()
@@ -321,11 +373,11 @@ class SessionManager:
         self.faculty_set = set()
 
         self.Headers = {
-            "headers": ["Name", "Tutor", "Faculty", "Group", "Capacity"]
+            "headers": ["Name", "Tutor", "Faculty", "Program", "Capacity"]
         }
 
         self.Session_List = [
-            ["Session Name", "Tutor Name", "Faculty Name", "Group Name", "AUTO"],
+            ['--------', '--------', '--------', '--------', '--------'],
 
         ]
         self.session_number_tracker = list()

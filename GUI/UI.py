@@ -61,7 +61,7 @@ image_path_ = Path(__file__).parent / 'assets'/'mmk.png'
 
 class TkinterApp(tk.Tk):
     """
-     The class creates a header and sidebar for the application. Also creates
+     This class creates a header and sidebar for the application. Also creates
     resources in the sidebar,
     """
 
@@ -635,6 +635,17 @@ class TkinterApp(tk.Tk):
         Listener.tutor_with_highest_session_ = num_tutor_tracker - 1
         Listener.group_with_highest_session_ = num_tracker - 1
         # Listener.get_time_slot_count=num_tracker-1
+
+        if self.lectures_.check_for_empty_slots():
+            messagebox.showerror(title="Automatic Timetable Generator",
+                                 message=f"{Listener.preferenceList[3]} fields are empty, please fill in some values "
+                                         f"to continue.")
+            return
+        if self.space_.check_for_empty_slots():
+            messagebox.showerror(title="Automatic Timetable Generator",
+                                 message=f"{Listener.preferenceList[2]} fields are empty, please fill in some values "
+                                         f"to continue.")
+            return
         length_time_slot = len(self.timeDimension.get_algo_reources())
         if length_time_slot < num_tracker:
             messagebox.showwarning(title="Automatic Timetable Generator",
@@ -723,7 +734,7 @@ class TkinterApp(tk.Tk):
 
 
         if self.current_frame == "Session'>":
-            if self.lectures_.check_for_empty_slots():
+            if self.lectures_.check_for_empty_slots_():
                 messagebox.showerror(title="Automatic Timetable Generator",
                                      message="Some fields are empty, Please fill them or delete the row.")
                 return

@@ -30,7 +30,7 @@ class TutorsManager:
         "headers": ["Name", "Session", "Faculty"]
     }
 
-    Space_List = [
+    Tutor_List = [
 
         # ["Mr.Kasozi", "OOP", "Science"],
         # ["Mr.TONY", "PYTHON", "Science"],
@@ -46,31 +46,31 @@ class TutorsManager:
 
     @staticmethod
     def get_tutors() -> list:
-        return TutorsManager.Space_List
+        return TutorsManager.Tutor_List
 
     @staticmethod
     def get_tutors_length() -> int:
-        return int(len(TutorsManager.Space_List))
+        return int(len(TutorsManager.Tutor_List))
 
     @staticmethod
     def edit_tutors(index, new_session):
-        TutorsManager.Space_List[index] = new_session
+        TutorsManager.Tutor_List[index] = new_session
 
     @staticmethod
     def delete_tutor(index):
-        TutorsManager.Space_List.pop(index + 1)
+        TutorsManager.Tutor_List.pop(index + 1)
 
     @staticmethod
     def add_new_tutor(new_session, index=None):
         if index is None:
-            TutorsManager.Space_List.append(new_session)
+            TutorsManager.Tutor_List.append(new_session)
         else:
-            TutorsManager.Space_List[index] = new_session
+            TutorsManager.Tutor_List[index] = new_session
 
     @staticmethod
     def get_algo_reources() -> list:
         algo_list = list()
-        for lst in TutorsManager.Space_List:
+        for lst in TutorsManager.Tutor_List:
             if lst[0] == '--------':
                 pass
             else:
@@ -80,17 +80,17 @@ class TutorsManager:
     @staticmethod
     def  save_instance_():
         Listener.saveInstanceDict["TutorsManager"]={
-            "Space_List": TutorsManager.Space_List
+            "Space_List": TutorsManager.Tutor_List
         }
 
     # Reset every variable to pepare new file
     @staticmethod
     def new_file_():
         TutorsManager.Headers = {
-            "headers": ["Name", "Session", "Faculty"]
+            "headers": ["Name", "Program", "Faculty"]
         }
 
-        TutorsManager.Space_List = [
+        TutorsManager.Tutor_List = [
 
             ["--------", "--------", "--------"],
 
@@ -98,7 +98,7 @@ class TutorsManager:
 
     @staticmethod
     def save_instance_reload():
-        TutorsManager.Space_List=Listener.saveInstanceDict["TutorsManager"]["Space_List"]
+        TutorsManager.Tutor_List=Listener.saveInstanceDict["TutorsManager"]["Space_List"]
 
 
 

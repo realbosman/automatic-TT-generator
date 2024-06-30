@@ -492,7 +492,10 @@ class TtGenerator:
 
                 for lecture in i:
                     # TODO if the rooms are over go get a brand new class rooms
-                    space_picked = random.choice(new_class_list)
+                    try:
+                      space_picked = random.choice(new_class_list)
+                    except:
+                        print("Space limit exceeded!!!!")
 
                     if len(new_class_list) != 0:
                         new_class_list.remove(space_picked)

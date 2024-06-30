@@ -133,7 +133,8 @@ class Tutor(tk.Frame):
             self.treeview.heading(col_,text=col_)
 
         # print(' self.cuModel.get_tutors_()',self.cuModel.get_tutors_())
-        for i in range(int(len(self.cuModel.get_tutors_()))):
+        length_list =int(len(self.cuModel.get_tutors_()))
+        for i in range(length_list):
             values = self.cuModel.get_tutors_()[i]
             for col_index, value in enumerate(values):
                 col_width = len(str(value)) * 10  # Adjust the multiplier as needed
@@ -144,8 +145,14 @@ class Tutor(tk.Frame):
             # self.tutorName=self.treeview.insert(parent="", index=tk.END, text="Name")
             # print(values[0])
             # print(self.tutorName)
+            allFalse=False
+            for numm,f in enumerate(values):
+                if f=='--------' and numm<2:
+                    allFalse=True
+            if allFalse is not  True:
+                self.treeview.insert(parent="", index=tk.END, values=(values[0], values[1], values[2]))
 
-            self.treeview.insert(parent="", index=tk.END, values=(values[0],values[1],values[2]))
+
 
     def add_new_session(self, event):
         values_lst = list()

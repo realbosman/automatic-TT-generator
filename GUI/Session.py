@@ -183,7 +183,7 @@ class Session(tk.Frame):
 
         if column_box[2] == self.storeWidth[-2]:
             # print("ON ME", column_box[0])
-            entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=list(self.session__.get_faculty_cu()))
+            entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=("AUTO",20,30,40,50,60,70,80,90,100))
             # record the column index and id
             entry_edit.editing_column_index = columnIndex
             entry_edit.editing_item_iid = selected_iid
@@ -203,7 +203,7 @@ class Session(tk.Frame):
             entry_edit.bind("<Return>", self.on_enter_press)
         elif column_box[2] == self.storeWidth[-1]:
             # print("ON ME", column_box[0])
-            entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=self.session__.get_sub_groups_commbo())
+            entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=(self.session__.get_sub_groups_commbo()))
             # record the column index and id
             entry_edit.editing_column_index = columnIndex
             entry_edit.editing_item_iid = selected_iid
@@ -294,6 +294,7 @@ class Session(tk.Frame):
             messagebox.showerror("Empty Field", message="This field should not be empty!")
             return
         else:
+            new_text=str(new_text)
             selected_iid = e.widget.editing_item_iid
             column_index = e.widget.editing_column_index
             current_values = self.treeview.item(selected_iid).get("values")
@@ -304,6 +305,9 @@ class Session(tk.Frame):
                 if child == selected_iid:
                     index_to_add = index
                     break
+
+            print("Cureent values:",current_values)
+            print("INDEXXX",index)
 
             self.session__.edit_session(index_to_add, current_values)
             e.widget.destroy()

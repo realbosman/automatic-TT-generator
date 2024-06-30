@@ -115,6 +115,10 @@ class SpaceManager:
                 algo_list.append(f'{lst[0]}')
         return algo_list
 
+    def check_for_empty_slots(self) -> bool:
+            if len(self.Space_List) == 0:
+                    return True
+
     def  save_instance_(self):
         Listener.saveInstanceDict["SpaceManager"]={
             "Space_List": self.Space_List
