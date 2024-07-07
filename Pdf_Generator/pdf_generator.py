@@ -161,9 +161,11 @@ class Schedule:
 
         # Lines across each hour:
         canvas.setDash([2], 0)
-        for i in hours:
+        for i in range(floor(min_time), ceil(max_time)):
             y = sched.uly - (i - min_time) * hour_height
             canvas.line(sched.ulx, y, sched.lrx, y)
+            y_30 = y - (hour_height / 2)
+            canvas.line(sched.ulx, y_30, sched.lrx, y_30)
 
         # Lines between each day:
         canvas.setDash([], 0)
@@ -173,11 +175,19 @@ class Schedule:
 
         if show_times:
             canvas.setFontSize(time_size)
-            for i in hours:
+            for i in range(floor(min_time), ceil(max_time) ):
+                y = sched.uly - (i - min_time) * hour_height
                 canvas.drawRightString(
                     sched.ulx - time_gap,
-                    sched.uly - (i - min_time) * hour_height - time_size / 2,
+                    y - time_size / 2,
                     f"{i}:00",
+                )
+                # Draw the 30-minute time labels
+                y_30 = y - (hour_height / 2)
+                canvas.drawRightString(
+                    sched.ulx - time_gap,
+                    y_30 - time_size / 2,
+                    f"{i}:30",
                 )
 
         # Events:
@@ -237,6 +247,8 @@ class Schedule:
                                  f'All time is in {Listener.timeZone}.')
 
 
+
+
 @attr.s
 class Event:
     start_time = attr.ib(validator=attr.validators.instance_of(time))
@@ -286,6 +298,15 @@ def grouper(iterable, n):
     args = [iter(iterable)] * n
     return itertools.zip_longest(*args)
 
+def eliminate_duplicates(data):
+        seen = set()
+        result = []
+        for item in data:
+            if item[0] not in seen:
+                result.append(item)
+                seen.add(item[0])
+        return result
+
 
 def main(
         infile: dict,
@@ -302,15 +323,18 @@ def main(
         font_size=9,
         title="Title",
         creator="creator",
-        breaks_list=None
+        breaks_list=None,
+        contact_info=None
 
 ) -> bool:
+
 
     """
     Weekly schedule typesetter
 
     Visit <https://github.com/jwodder/schedule> for more information.
     """
+    # print("EMAMAMAMAMMAM=",contact_info)
     ispdfCreated = False
     if font in available_fonts():
         font_name = font
@@ -357,14 +381,14 @@ def main(
 
     w, h = A4
     h = h - 100
-    max_rows_per_page = 35
+    max_rows_per_page = 30
     # Margin.
     x_offset = 50
     y_offset = 50
     # Space between rows.
     padding = 20
 
-    xlist = [x + x_offset for x in [0, 100, 100]]
+    xlist = [x + x_offset for x in [0, 130, 100]]
     ylist = [h - y_offset - i * padding for i in range(max_rows_per_page + 1)]
 
     bookmarks = []
@@ -465,6 +489,46 @@ def main(
                     title=title
                 )
                 c.showPage()
+    bookmarks = []
+    c.setFontSize(12)
+    c.drawCentredString(300, 745, "CONTACT INFORMATION")
+    c.setFontSize(10)
+
+    # print(infile)
+    faculty_ = " "
+    data2=list()
+    xlist = [x + x_offset for x in [0, 220, 100]]
+    ylist = [h - y_offset - i * padding for i in range(max_rows_per_page + 1)]
+
+
+    for item in contact_info:
+        data2.append([item[0],item[-1]])
+    data2 = eliminate_duplicates(data2)
+
+    max_rows_per_page=30
+    for rows in grouper(data2, max_rows_per_page):
+        rows = tuple(filter(bool, rows))
+        # print("Rows=====", rows)
+        # c.grid(xlist, ylist[:len(rows) + 1])
+        count = 0
+        # print("ylist >>",ylist)
+        for y, row in zip(ylist[:-1], rows):
+
+            count += 1
+            # print("Row", row)
+            # print("Row", row[0])
+            for i, (x, cell) in enumerate(zip(xlist, row)):
+                c.setFontSize(10)
+                # Check if the cell is the second value in the row
+                if i == 1:
+                    c.setFillColorRGB(0, 0, 1)  # Set color to blue
+                else:
+                    c.setFillColorRGB(0, 0, 0)  # Set color to black
+
+                c.drawString(x + 2, y - padding + 3, str(cell))
+
+
+        c.showPage()
     c.save()
     ispdfCreated=True
     return ispdfCreated

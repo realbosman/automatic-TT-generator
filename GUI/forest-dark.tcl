@@ -366,6 +366,8 @@ namespace eval ttk::theme::forest-dark {
                 active $I(hor-hover) \
             ] -sticky ew
 
+
+
         ttk::style element create Vertical.Scrollbar.trough image $I(vert-basic) \
             -sticky ns
 
@@ -375,6 +377,7 @@ namespace eval ttk::theme::forest-dark {
                 pressed $I(vert-hover) \
                 active $I(vert-hover) \
             ] -sticky ns
+
 
         # Scale
         ttk::style element create Horizontal.Scale.trough image $I(scale-hor) \
@@ -396,6 +399,15 @@ namespace eval ttk::theme::forest-dark {
                 pressed $I(thumb-vert-hover) \
                 active $I(thumb-vert-hover) \
             ] -sticky {}
+
+
+
+         # Configure the scrollbar size using -width and -height options
+         ttk::style configure TScrollbar -width 20
+
+
+
+
 
         # Progressbar
         ttk::style element create Horizontal.Progressbar.trough image $I(hor-basic) \

@@ -27,7 +27,7 @@ class TutorsManager:
 
 
     Headers = {
-        "headers": ["Name", "Session", "Faculty"]
+        "headers": ["NAME", "SESSION", "FACULTY","EMAIL"]
     }
 
     Tutor_List = [
@@ -87,12 +87,12 @@ class TutorsManager:
     @staticmethod
     def new_file_():
         TutorsManager.Headers = {
-            "headers": ["Name", "Program", "Faculty"]
+             "headers": ["NAME", "SESSION", "FACULTY","EMAIL"]
         }
 
         TutorsManager.Tutor_List = [
 
-            ["--------", "--------", "--------"],
+            ["--------", "--------", "--------", "--------"],
 
         ]
 

@@ -32,7 +32,7 @@ class Session(tk.Frame):
         self.combo2 = tk.StringVar()
         self.combo3 = tk.StringVar()
         # these are default values
-        self.storeWidth = [100, 100, 100, 100]
+        self.storeWidth = [100, 100, 100, 100,100, 100,100]
         # v = tk.Scrollbar(self)
 
 
@@ -131,21 +131,22 @@ class Session(tk.Frame):
 
         # print("heads", headings)
         for col_ in headings:
-            self.treeview.column(col_, width=100, anchor='w', stretch=tk.YES)
+            self.treeview.column(col_, width=150, anchor='w', stretch=tk.YES)
             self.treeview.heading(col_, text=col_)
 
         for i in range(int(self.session__.get_sessions_length())):
             values = self.session__.get_sessions()[i]
             for col_index, value in enumerate(values):
-                col_width = len(str(value)) * 10  # Adjust the multiplier as needed
+                col_width = len(str(value)) * 8  # Adjust the multiplier as needed
                 current_width = self.treeview.column(headings[col_index], option="width")
                 if col_width > current_width:
                     self.treeview.column(headings[col_index], width=col_width)
                     self.storeWidth[col_index] = col_width
-                if len(values) == 4:
-                    values.append("AUTO")
-                else:
-                    pass
+
+                # if len(values) == 4:
+                #     values.append("AUTO")
+                # else:
+                #     pass
 
 
             self.treeview.insert('', tk.END, values=values)

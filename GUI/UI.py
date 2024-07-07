@@ -72,6 +72,8 @@ class TkinterApp(tk.Tk):
 
         # Get the path to the Documents folder
 
+
+
         self.listener_ = Listener()
         self.isTimetabecreatedMainThread = False
         # print("Path to the Documents folder", self.listener_.get_app_path())
@@ -87,6 +89,16 @@ class TkinterApp(tk.Tk):
         self.isHomeSaved = True
         self.uname_var = tk.StringVar(master=self,value="")
         self.pass_var = tk.StringVar(master=self,value="")
+
+        # Maximize the window without covering the window controls
+        self.state('zoomed')
+
+        # Bind the Escape key to exit full screen mode
+        self.bind('<Escape>', self.end_fullscreen)
+
+        # Limit the window size
+        self.minsize(800, 600)  # Minimum size
+
 
         self.style = ttk.Style(self)
         self.call("source", PATH_)
@@ -109,6 +121,9 @@ class TkinterApp(tk.Tk):
         self.iconphoto(True, self.icon)
 
         # self.render_GUI()
+
+    def end_fullscreen(self,event=None):
+        self.attributes('-fullscreen', False)
 
     def welcome(self):
         # Welcome
@@ -630,10 +645,10 @@ class TkinterApp(tk.Tk):
             self.destroy()
 
     def start_time_table_generation(self):
-        num_tracker = self.lectures_.get_largest_session_number_in_a_subgroup() + 1  # Add 1 to prevent overlapping
-        num_tutor_tracker = self.lectures_.get_the_number_of_Tutor_sessions() + 1
-        Listener.tutor_with_highest_session_ = num_tutor_tracker - 1
-        Listener.group_with_highest_session_ = num_tracker - 1
+        num_tracker = self.lectures_.get_largest_session_number_in_a_subgroup()   # Add 1 to prevent overlapping
+        num_tutor_tracker = self.lectures_.get_the_number_of_Tutor_sessions()
+        Listener.tutor_with_highest_session_ = num_tutor_tracker
+        Listener.group_with_highest_session_ = num_tracker
         # Listener.get_time_slot_count=num_tracker-1
 
         if self.lectures_.check_for_empty_slots():

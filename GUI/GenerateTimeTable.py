@@ -71,6 +71,7 @@ class GenerateTimeTable(tk.Frame):
                 self.algorithm_ = arg
             if index == 5:
                 self.listener___ = arg
+        self.lectures_.get_tutors_()
         # print("FROM VISUAL After args ==", self.get_metadata.time_table_name)
 
         # print("cls>>>>",cls)
@@ -171,7 +172,7 @@ class GenerateTimeTable(tk.Frame):
 
         # This delay helps to relieve the  while and the processor
 
-    def gen_process(self, t_res, l_res, s_res, title, creator,tutor_lst):
+    def gen_process(self, t_res, l_res, s_res, title, creator,tutor_lst,tutor_list_email):
 
         self.timetableMetadata = TimetableMetaData(self.gen_time_dimension)
         # print("DDDDDAAAYAYAYYA", self.gen_time_dimension.Days["headers"])
@@ -180,7 +181,8 @@ class GenerateTimeTable(tk.Frame):
                                          s_res,
                                          title,
                                          creator,
-                                         tutor_lst
+                                         tutor_lst,
+                                         tutor_list_email
                                          )
 
     def update_thread(self):
@@ -192,7 +194,8 @@ class GenerateTimeTable(tk.Frame):
                             args=(self.gen_time_dimension.get_algo_reources(), self.lectures_.get_algo_reources(),
                                   self.space_.get_algo_reources(),
                                   self.get_metadata.time_table_name, self.get_metadata.creator_name,
-                                  self.lectures_.tutors_lst(),))  # I can pass args = "any" for the target
+                                  self.lectures_.tutors_lst(),
+                                  TutorsManager.Tutor_List))  # I can pass args = "any" for the target
         new_thread.start()
         self.update_thread()
 

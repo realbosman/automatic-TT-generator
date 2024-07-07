@@ -402,6 +402,8 @@ namespace eval ttk::theme::forest-light {
                 active $I(thumb-vert-hover) \
             ] -sticky {}
 
+
+
         # Progressbar
         ttk::style element create Horizontal.Progressbar.trough image $I(hor-basic) \
             -sticky ew

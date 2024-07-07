@@ -41,7 +41,8 @@ class SessionManager:
         self.faculty_set = set()
 
         self.Headers = {
-            "headers": ["Name", "Tutor", "Faculty", "Program", "Capacity"]
+            # "headers": ["NAME", "TUTOR", "FACULTY", "PROGRAM", "NO OF STUDENTS"]
+            "headers": ["NAME", "TUTOR", "FACULTY", "PROGRAM", "NO OF STUDENTS", 'MODE OF TEACHING', "TUTOR'S EMAIL"]
         }
 
         self.Session_List = [
@@ -207,7 +208,8 @@ class SessionManager:
             if lst[0] == '--------':
                 pass
             else:
-                algo_list.append(f'<{lst[2]}><{lst[3]}><{lst[0]}><{lst[1]}>')
+                FAC_=f'FACULTY OF {lst[2]}'
+                algo_list.append(f'<{FAC_}><{lst[3]}><{lst[0]}><{lst[1]}>')
         return algo_list
 
     def update_tutor_list(self) -> list:
@@ -216,7 +218,7 @@ class SessionManager:
             if lst[0] == '--------':
                 pass
             else:
-                algo_list.append(f'<{lst[2]}><{lst[3]}><{lst[0]}><{lst[1]}>')
+                algo_list.append(f'<{lst[2]}><{lst[3]}><{lst[0]}><{lst[1]}><{lst[6]}>')
 
         # TutorsManager.Tutor_List=algo_list
         return algo_list
@@ -225,6 +227,7 @@ class SessionManager:
         lst = list()
         lst2 = list()
 
+        TutorsManager.Tutor_List.clear()
         # getting the names of all Tutors to know who is already in the list
         for n in TutorsManager.Tutor_List:
             for i in n:
@@ -233,14 +236,18 @@ class SessionManager:
 
 
         lst = self.update_tutor_list()
+        # print("<><><><",lst)
+
+
 
 
         for lecture in lst:
             if str(re.findall(r"<(.*?)>", lecture)[3]) in lst2:
+                # print("Already in")
                 pass
             else:
                 TutorsManager.Tutor_List.append(
-                    [str(re.findall(r"<(.*?)>", lecture)[3]), str(re.findall(r"<(.*?)>", lecture)[2]), str(re.findall(r"<(.*?)>", lecture)[0])], )
+                    [str(re.findall(r"<(.*?)>", lecture)[3]), str(re.findall(r"<(.*?)>", lecture)[2]), str(re.findall(r"<(.*?)>", lecture)[0]),str(re.findall(r"<(.*?)>", lecture)[4])])
                 # print("This==", [str(re.findall(r"<(.*?)>", lecture)[3]), str(re.findall(r"<(.*?)>", lecture)[2]), str(re.findall(r"<(.*?)>", lecture)[0])])
 
         # Sort the list by the first element (tutor's name)
@@ -253,10 +260,39 @@ class SessionManager:
         TutorsManager.Tutor_List = [item for sublist in grouped_tutors for item in sublist]
 
         # self.replace_lec(0,1)
+        new_updatded_list=list()
+        last_index_for_lect=0
+        next_index=0
+
+        for index___,item in enumerate(TutorsManager.Tutor_List):
+            # print(item,index___)
+            # print("LLLKKLKLLKLKL")
+            # print(last_index_for_lect+next_index ,"==",index___)
+            equ_index=last_index_for_lect+next_index
+            if equ_index == index___:
+                next_index=index___
+                new_updatded_list.append(item)
+                for i, item_next in enumerate(TutorsManager.Tutor_List[index___ + 1:]):
+                    v0, v1, v2, v3 = item_next
+                    if item_next[0] == item[0]:
+                        new_updatded_list.append([" ", v1, v2, v3])
+                        # print("UU-====", last_index_for_lect," ",i, ["----", v1, v2, v3], index___)
+                    else:
+                        last_index_for_lect = i+1
+                        # print("N-====",last_index_for_lect,["----", v1, v2, v3],index___)
+                        # print(new_updatded_list)
+                        break
+
+
+
+
+
+
+
 
         # print("TutorsManager.Tutor_List ===",TutorsManager.Tutor_List)
 
-        return TutorsManager.Tutor_List
+        return new_updatded_list
 
     def replace_lec(self,index,next_index):
         # print("NNN")
@@ -373,11 +409,12 @@ class SessionManager:
         self.faculty_set = set()
 
         self.Headers = {
-            "headers": ["Name", "Tutor", "Faculty", "Program", "Capacity"]
+            # "headers": ["NAME", "TUTOR", "FACULTY", "PROGRAM", "NO OF STUDENTS"]
+            "headers": ["NAME", "TUTOR", "FACULTY", "PROGRAM", "NO OF STUDENTS", 'MODE OF TEACHING', "TUTOR'S EMAIL"]
         }
 
         self.Session_List = [
-            ['--------', '--------', '--------', '--------', '--------'],
+            ['--------', '--------', '--------', '--------', '--------', '--------', '--------'],
 
         ]
         self.session_number_tracker = list()
@@ -389,5 +426,77 @@ class SessionManager:
     def save_instance_reload(self):
 
         self.Session_List = Listener.saveInstanceDict["SessionManager"]["Session_List"]
-
-
+        # TutorsManager.Tutor_List.clear()
+#         self.Session_List=[['DIPS 2204 ETHICS IN AN IT ENVIROMENT', 'DR. CELESTINE SAFARI ', 'SCIENCE', 'DIP CS II', 10, 'BLENDED', 'snamagembe@umu.ac.ug'],
+# ['CSC 1204 COMPUTATIONAL STATISTICS', 'NAMAGEMBE OLIVIA', 'SCIENCE', 'BSC IT I,BSC CS I', 65, 'BLENDED', 'snamagembe@umu.ac.ug'],
+# ['MTC 2201 PARTIAL DIFFERENCIAL EQUATIONS ', 'DR. BOB SSENYANGE', 'SCIENCE', 'BSC GEN II,BSC FM II', 3, 'BLENDED', 'bssenyange@umu.ac.ug'],
+# ['MTC 3201 NUMERICAL ANALYSIS II', 'DR. HENRY KIWANUKA ', 'SCIENCE', 'BSC GEN III', 7, 'BLENDED', 'hkiwanuka@umu.ac.ug'],
+# ['DIPS1205 DATABASE PLANNING & MANAGEMENT', 'KALEMA PETER', 'SCIENCE', 'DIP CS I', 25, 'ONLINE', 'pkalema@umu.ac.ug'],
+# ['DIPS 2202 COMPUTER GRAPHICS & ANNIMATION', 'MUCHAKE BRIAN', 'SCIENCE', 'DIP CS II', 10, 'BLENDED', 'bmuchake@umu.ac.ug'],
+# ['CSC 1201 SYSTEM ANALYSIS & DESIGN', 'BABIRYE NANTEZA LUCY', 'SCIENCE', 'BSC CS I,BSC IT I', 65, 'BLENDED', 'nbabirye@umu.ac.ug'],
+# ['ECO 1202 PRINCIPLES OF DEVELOPMENT ECONOMICS', 'FREDRICK KATO', 'SCIENCE', 'BSC ECON & STAT I,BSC GEN I', 13, 'BLENDED', 'not available'],
+# ['CSC 2201 USER INTERFACE DESIGN & DEVELOPMENT', 'MIREMBE EVA', 'SCIENCE', 'BSC IT II,BSC CS II', 27, 'BLENDED', 'emirembe@umu.ac.ug'],
+# ['ECO 2201 MACROECONOMICS II', 'KIMONO PAUL', 'SCIENCE', 'BSC ECON & STAT II,BSC GEN II', 13, 'PHYSICAL ', 'paulkimono@yahoo.com'],
+# ['CSC 3201 COMPUTER GRAPHICS & ANNIMATIONS', 'MUCHAKE BRIAN', 'SCIENCE', 'BSC IT III,BSC CS III,BSC GEN III', 40, 'ONLINE', 'bmuchake@umu.ac.ug'],
+# ['ECO3202 PUBLIC SECTOR ECONOMICS', 'KAKUNGULU MOSES', 'SCIENCE', 'BSC ECON & STAT III', 11, 'BLENDED', 'mkakungulu@umu.ac.ug'],
+# ['COMPUTER ARCHITECTURE', 'LUBOWA SAMUEL', 'SCIENCE', 'DIP CS I', 25, 'ONLINE', 'slubowa@umu.ac.ug'],
+# ['COMPUTER ARCHITECTURE & ORGANISATION', 'LUBOWA SAMUEL', 'SCIENCE', 'BSC IT I', 45, 'ONLINE', 'slubowa@umu.ac.ug'],
+# ['MTC 1201 CALCULUS II', 'DR. BOB SSENYANGE ', 'SCIENCE', 'BSC ECON & STAT I,BSC GEN I', 13, 'BLENDED', 'bssenyange@umu.ac.ug'],
+# ['CSC 2206 COMPILER DESIGN & CONSTRUCTION', 'xxxx', 'SCIENCE', 'BSC CS II', 7, 'BLENDED', 'not available'],
+# ['STA 2201 PROBABILITY THEORY', 'LOKOLIMOI JOHN BOSCO', 'SCIENCE', 'BSC GEN II', 1, 'BLENDED', 'jblokolimoi@umu.ac.ug'],
+# ['STA2102 DEMOGRAPHIC & SOCIAL STATISTICS', 'MUJUNI PEREZ', 'SCIENCE', 'BSC ECON & STAT II', 11, 'BLENDED', 'pmujuni@umu.ac.ug'],
+# ['STA 2201 PROBABILITY THEORY', 'LOKOLIMOI JOHN BOSCO', 'SCIENCE', 'BSC FM II', 2, 'BLENDED', 'jblokolimoi@umu.ac.ug'],
+# ['CSC 3203 ENTREPRENEURSHIP', 'BYARUGABA BENJAMIN', 'SCIENCE', 'BSC IT III,BSC CS III', 33, 'BLENDED', 'not available'],
+# ['STA 3201 DEMOGRAPHIC & SOCIAL STATISTICS', 'MUJUNI PEREZ', 'SCIENCE', 'BSC GEN III', 7, 'BLENDED', 'pmujuni@umu.ac.ug'],
+# ['DIPS 2204 PROGRAMMING METHODOOGY WITH VB.NET', 'BABIRYE NANTEZA LUCY', 'SCIENCE', 'DIP CS II', 10, 'BLENDED', 'nbabirye@umu.ac.ug'],
+# ['CSC 1205 LOGIC PROGRAMMING', 'xxxx', 'SCIENCE', 'BSC CS I', 20, 'BLENDED', 'not available'],
+# ['STA1202 MATHEMATHICAL STATISTICS 1', 'LOKOLIMOI JOHN BOSCO', 'SCIENCE', 'BSC ECON & STAT I', 12, 'BLENDED', 'jblokolimoi@umu.ac.ug'],
+# ['CLS 2201 ORIGINAL & CRITICAL LANGUAGE SKILLS', 'PROF. LAURA OTAALA', 'SCIENCE', 'BSC IT II,BSC CS II,BSC GEN II,BSC ECON & STAT II,BSC FM II', 41, 'BLENDED', 'lotaala@umu.ac.ug'],
+# ['CSC 3202 SOFTWARE ENGINEERING', 'LUBOWA SAMUEL', 'SCIENCE', 'BSC CS III,BSC GEN III', 16, 'BLENDED', 'slubowa@umu.ac.ug '],
+# ['DIPS1202 INTERNET TECHNOLOGIES & WEB AUTHORING', 'LUWAGA DENIS', 'SCIENCE', 'DIP CS I', 25, 'ONLINE', 'dluwaga@umu.ac.ug'],
+# ['CSC 1202  OBJECT ORIENTED PROGRAMMING ', 'SSEMWEZI ANDREW', 'SCIENCE', 'BSC IT I,BSC CS I', 65, 'ONLINE', 'assemwezi@umu.ac.ug'],
+# ['CSC1201 COMPUTER PROGRAMMING', 'KUBANJA MARTIN ', 'SCIENCE', 'BSC ECON & STAT I,BSC IT II,BSC CS II,BSC GEN II', 40, 'ONLINE', 'mkubanja@umu.ac.ug'],
+# ['ECO 3201 INTERMEDIATE MARCOECONOMIC THEORY', 'MUBIINZI GEOFFREY', 'SCIENCE', 'BSC GEN III,BSC ECON & STAT III', 18, 'BLENDED', 'gmubiinzi@umu.ac.ug'],
+# ['DIPS1103 INTRODUCTION TO PROGRAMMING', 'KASOZI BRIAN', 'SCIENCE', 'DIP CS I', 25, 'ONLINE', 'bkasozi@umu.ac.ug'],
+# ['CSC1104 PRINCIPLES OF PROGRAMMING', 'KASOZI BRIAN', 'SCIENCE', 'BSC IT I', 45, 'ONLINE', 'bkasozi@umu.ac.ug'],
+# ['STA1102 STATISTICAL ORGANISATION ', 'NAMAGEMBE CHARLOTTEE ', 'SCIENCE', 'BSC ECON & STAT I,BSC GEN I', 13, 'BLENDED', 'snamagembe@umu.ac.ug'],
+# ['MTC 1202 ORDINARY EQUSTIONS I', 'DR. OLIVIA NABAWANDA', 'SCIENCE', 'BSC GEN II', 1, 'BLENDED', 'onabawanda@umu.ac.ug'],
+# ['STA1102 STATISTICAL ORGANISATION ', 'NAMAGEMBE CHARLOTTEE ', 'SCIENCE', 'BSC ECON & STAT II', 11, 'BLENDED', 'onabawanda@umu.ac.ug'],
+# ['STA 3203 NATIONAL INCOME ACCOUNTS', 'DR. MBABAZI FULGENSIA', 'SCIENCE', 'BSC GEN III', 7, 'ONLINE', 'fmbabazi@umu.ac.ug'],
+# ['STA3202 NATIONAL ACCOUNTS & INCOME ANALYSIS', 'DR. MBABAZI FULGENSIA', 'SCIENCE', 'BSC ECON & STAT III', 11, 'ONLINE', 'fmbabazi@umu.ac.ug'],
+# ['WEB DEVELOPMENT TECHNOLOGIES', 'MIREMBE EVA', 'SCIENCE', 'BSC IT I', 45, 'ONLINE', 'emirembe@umu.ac.ug'],
+# ['MATHEMATHICAL STATISTICS II', 'LOKOLIMOI JOHN BOSCO', 'SCIENCE', 'BSC ECON & STAT I', 12, 'BLENDED', 'jblokolimoi@umu.ac.ug'],
+# ['TIME SERIES & REGRESSION ANALYSIS ', 'MUJUNI PEREZ', 'SCIENCE', 'BSC FM II,BSC GEN II', 3, 'BLENDED', 'pmujuni@umu.ac.ug'],
+# ['STA 3201 SAMPLING THEORY', 'MUJUNI PEREZ', 'SCIENCE', 'BSC GEN III', 7, 'BLENDED', 'pmujuni@umu.ac.ug'],
+# ['DIPS1204 DISCOVER I NETWORKING BASICS', 'NAIGENDE DUNCAN', 'SCIENCE', 'DIP CS I', 25, 'BLENDED', 'dnaigende@umu.ac.ug'],
+# ['CSC 1203 DATABASE MANAGEMENT SYSTEMS', 'KALEMA PETER', 'SCIENCE', 'BSC IT I,BSC CS I', 65, 'ONLINE', 'pkalema@umu.ac.ug'],
+# ['CSC 2203 RESEARCH METHODS IN IT', 'DR. SHEBA NYAKAISIKI', 'SCIENCE', 'BSC IT II,BSC CS II', 27, 'ONLINE', 'snyakaisiki@umu.ac.ug'],
+# ['COC 2201 RESEARCH METHODOLOGY  & DATA ANALYSIS', 'DR. MBABAZI FULGENSIA', 'SCIENCE', 'BSC ECON & STAT II,BSC GEN II', 12, 'ONLINE', 'fmbabazi@umu.ac.ug'],
+# ['ECO 3203 MONEY, BANKING & PUBLIC FINANCE', 'KADDU MILLY', 'SCIENCE', 'BSC GEN III', 7, 'BLENDED', 'mkaddu@umu.ac.ug'],
+# ['ECO3203 MONETARY ECONOMICS', 'KADDU MILLY', 'SCIENCE', 'BSC ECON & STAT III', 11, 'BLENDED', 'mkaddu@umu.ac.ug'],
+# ['DIPS 2203 ELECTRONIC COMMERCE & ELECTRONIC BUSINESS FUNDAMENTALS ', 'xxxx', 'SCIENCE', 'DIP CS II', 10, 'BLENDED', 'not available'],
+# ['STA 1201 TIME SERIES & INDEX NUMBERS', 'MUJUNI PEREZ', 'SCIENCE', 'BSC ECON & STAT II,BSC GEN II', 12, 'BLENDED', 'pmujuni@umu.ac.ug'],
+# ['LITERATURE & COMPOSITION', 'NAKYEJJWE CHRISTINE', 'SCIENCE', 'BSC IT I,BSC ECON & STAT I,BSC GEN I,BSC CS I', 68, 'BLENDED', 'cnakyejjwe@umu.ac.ug'],
+# ['ECO 2202 ECONOMETRICS', 'MUBIINZI GEOFFREY', 'SCIENCE', 'BSC ECON & STAT II,BSC GEN II', 13, 'BLENDED', 'gmubiinzi@umu.ac.ug'],
+# ['CSC 3204  SCIENCE, TECHNOLOGY  & ETHICS', 'DR. WILLIAM KAGGWA', 'SCIENCE', 'BSC IT III,BSC GEN III,BSC CS III', 40, 'BLENDED', 'mwkaggwa@umu.ac.ug'],
+# ['STA3203 STATISTICAL METHODS', 'NAMAGEMBE CHARLOTTEE', 'SCIENCE', 'BSC ECON & STAT III', 11, 'BLENDED', 'cnamagembe@umu.ac.ug'],
+# ['DIPS1203 COMPUTER MAINTANANCE & TROUBLE SHOOTING', 'NAGAWA VIOLET', 'SCIENCE', 'DIP CS I', 25, 'BLENDED', 'vnagawa@umu.ac.ug'],
+# ['ECO 1201 MACROECONOMICS I', 'KIMONO PAUL', 'SCIENCE', 'BSC ECON & STAT I,BSC GEN I', 13, 'BLENDED', 'paulkimono@yahoo.com'],
+# ['CSC 2204 MOBILE COMPUTING & NET WORKS', 'DR. SANYA RAHMAN', 'SCIENCE', 'BSC IT II,BSC GEN II,BSC CS II', 28, 'ONLINE', 'rsanya@umu.ac.ug'],
+# ['STA3201 ECONOMETRICS II', 'MUBIINZI GEOFFREY', 'SCIENCE', 'BSC ECON & STAT III', 11, 'BLENDED', 'gmubiinzi@umu.ac.ug'],
+# ['DIPS 2202 COMPUTER GRAPHICS & ANNIMATIONS', 'MUCHAKE BRIAN', 'SCIENCE', 'DIP CS II', 10, 'BLENDED', 'bmuchake@umu.ac.ug'],
+# ['NUMERICAL METHODS', 'SSEMBATYA FRANCIS', 'SCIENCE', 'BSC CS I', 20, 'BLENDED', 'fssembatya@umu.ac.ug'],
+# ['CSC 2205 LINEAR PROGRAMMING', 'NAMAGEMBE CHARLOTTEE', 'SCIENCE', 'BSC CS II', 7, 'BLENDED', 'cnamagembe@umu.ac.ug'],
+# ['MTC 2202 LENEAR PROGRAMMING', 'NAMAGEMBE CHARLOTTEE', 'SCIENCE', 'BSC FM II,BSC GEN II', 3, 'BLENDED', 'cnamagembe@umu.ac.ug'],
+# ['COC 3201 SCIENCE, ECONOMICS & ETHICS', 'DR. WILLIAM KAGGWA', 'SCIENCE', 'BSC ECON & STAT III,BSC GEN III', 18, 'BLENDED', 'mwkaggwa@umu.ac.ug'],
+# ['DIPS  2201 DEVELOPMENT RESEARCH (INDIVIDUAL PROJECT)', 'KALEMA PETER', 'SCIENCE', 'DIP CS II', 10, 'BLENDED', 'pkalema@umu.ac.ug'],
+# ['CSC 1206 DIGITAL ELECTRONICS', 'xxxx', 'SCIENCE', 'BSC CS I', 20, 'BLENDED', 'not available'],
+# ['STA 1202 ELEMENTS OF PROBABILITY', 'LOKOLIMOI JOHN BOSCO', 'SCIENCE', 'BSC GEN I', 1, 'BLENDED', 'jblokolimoi@umu.ac.ug'],
+# ['PEF 2201 ETHICS IN FOCUS', 'ENZAMA REMIJO', 'SCIENCE', 'BSC IT II,BSC FM II,BSC ECON & STAT II,BSC GEN II,BSC CS II', 41, 'BLENDED', 'renzama@umu.ac.ug'],
+# ['DIPS1201 INTRODUCTION TO COMPUTER SCIENCE & TECHNOLOGY II', 'BABIRYE NANTEZA LUCY', 'SCIENCE', 'DIP CS I', 25, 'BLENDED', 'nbabirye@umu.ac.ug'],
+# ['CSC 2202 WEB BASED SYSTEMS PROGRAMMING', 'MIREMBE EVA', 'SCIENCE', 'BSC IT II,BSC GEN II,BSC CS II', 28, 'BLENDED', 'emirembe@umu.ac.ug'],
+# ['MTF 2201 LIFE & NON LIFE INSSURANCE MATHEMATHICS', 'xxxx', 'SCIENCE', 'BSC FM II', 2, 'BLENDED', 'not available'],
+# ['ECO 2203 ECONOMICS OF AGRICULTURE', 'NABASUMBA SYLVIA', 'SCIENCE', 'BSC ECON & STAT II,BSC GEN II', 12, 'BLENDED', 'snabasumba@umu.ac.ug ']
+# ]
+#
+#

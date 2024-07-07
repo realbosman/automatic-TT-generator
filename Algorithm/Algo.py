@@ -45,7 +45,7 @@ class TtGenerator:
         self.created_lectures_details_lst = list()
         self.list_of_groups_by_Tutor = list()
 
-    def random_generator(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst, title, creator, tutor_lst):
+    def random_generator(self, timeslots_lst, created_lectures_details_lst, class_rooms_lst, title, creator, tutor_lst,tutor_lst_email):
         """
         This method generates the time table through the combiation of the functions in this class
         :param timeslots_lst:
@@ -104,7 +104,7 @@ class TtGenerator:
         try:
             # print("self.Full_Time_table_list ===", self.Full_Time_table_list)
             Listener.ispdf_generated = generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,
-                                                             no_weekends=Listener.isWeekendInclusive,breaks_list=llt)
+                                                             no_weekends=Listener.isWeekendInclusive,breaks_list=llt,contact_info=tutor_lst_email)
             # print("ISPDF generated====", Listener.ispdf_generated)
         except:
             print("Exception occurred in the algorithm",)

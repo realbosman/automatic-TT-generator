@@ -134,6 +134,7 @@ class Tutor(tk.Frame):
 
         # print(' self.cuModel.get_tutors_()',self.cuModel.get_tutors_())
         length_list =int(len(self.cuModel.get_tutors_()))
+
         for i in range(length_list):
             values = self.cuModel.get_tutors_()[i]
             for col_index, value in enumerate(values):
@@ -150,7 +151,7 @@ class Tutor(tk.Frame):
                 if f=='--------' and numm<2:
                     allFalse=True
             if allFalse is not  True:
-                self.treeview.insert(parent="", index=tk.END, values=(values[0], values[1], values[2]))
+                self.treeview.insert(parent="", index=tk.END, values=(values[0], values[1], values[2],values[3]))
 
 
 
