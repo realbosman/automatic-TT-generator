@@ -491,16 +491,26 @@ class TtGenerator:
                     new_class_list.append(class_)
 
                 for lecture in i:
+                    print("HEHEHEHE=====",lecture)
                     # TODO if the rooms are over go get a brand new class rooms
-                    try:
-                      space_picked = random.choice(new_class_list)
-                    except:
-                        print("Space limit exceeded!!!!")
-
-                    if len(new_class_list) != 0:
-                        new_class_list.remove(space_picked)
+                    if str(re.findall(r"<(.*?)>", lecture)[-1])=="ONLINE":
+                        space_picked="ONLINE"
                     else:
-                        space_picked = "VIRTUAL ROOM"
+                        try:
+                            space_picked = random.choice(new_class_list)
+
+                            if len(new_class_list) != 0:
+                                new_class_list.remove(space_picked)
+                            if str(re.findall(r"<(.*?)>", lecture)[-1]) == "BLENDED":
+                                space_picked = space_picked +"(BLENDED)"
+                        except:
+                            space_picked = "VIRTUAL ROOM"
+                            print("Space limit exceeded!!!!")
+
+
+
+
+
 
                     self.Full_Time_table_list.append(
                         # Packing the values into a list to hold all the occurrences

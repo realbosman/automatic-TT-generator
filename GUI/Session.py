@@ -182,9 +182,9 @@ class Session(tk.Frame):
 
         # TODO Test this with bigger row tex to ensure that this below stands out
 
-        if column_box[2] == self.storeWidth[-2]:
+        if column_box[2] == self.storeWidth[-3]:
             # print("ON ME", column_box[0])
-            entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=("AUTO",20,30,40,50,60,70,80,90,100))
+            entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=(10,20,30,40,50,60,70,80,90,100))
             # record the column index and id
             entry_edit.editing_column_index = columnIndex
             entry_edit.editing_item_iid = selected_iid
@@ -202,7 +202,7 @@ class Session(tk.Frame):
 
             entry_edit.bind("<FocusOut>", self.onFocusOut)
             entry_edit.bind("<Return>", self.on_enter_press)
-        elif column_box[2] == self.storeWidth[-1]:
+        elif column_box[2] == self.storeWidth[-4]:
             # print("ON ME", column_box[0])
             entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=(self.session__.get_sub_groups_commbo()))
             # record the column index and id
@@ -284,7 +284,14 @@ class Session(tk.Frame):
 
     def on_enter_press(self, e):
         new_text = e.widget.get()
-        new_text = new_text.upper()
+
+        # print("nn=",new_text[-5:])
+        # print("nn=", new_text[-3:])
+        if new_text[-4:]==".com" or new_text[-3:]==".ug":
+            pass
+        else:
+            new_text = new_text.upper()
+
 
 
         if new_text == '':
@@ -307,8 +314,8 @@ class Session(tk.Frame):
                     index_to_add = index
                     break
 
-            print("Cureent values:",current_values)
-            print("INDEXXX",index)
+            # print("Cureent values:",current_values)
+            # print("INDEXXX",index)
 
             self.session__.edit_session(index_to_add, current_values)
             e.widget.destroy()

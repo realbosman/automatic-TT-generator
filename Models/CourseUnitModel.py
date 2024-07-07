@@ -209,7 +209,7 @@ class SessionManager:
                 pass
             else:
                 FAC_=f'FACULTY OF {lst[2]}'
-                algo_list.append(f'<{FAC_}><{lst[3]}><{lst[0]}><{lst[1]}>')
+                algo_list.append(f'<{FAC_}><{lst[3]}><{lst[0]}><{lst[1]}><{lst[4]}><{lst[5]}>')
         return algo_list
 
     def update_tutor_list(self) -> list:
