@@ -103,7 +103,7 @@ class TtGenerator:
 
         try:
             # print("self.Full_Time_table_list ===", self.Full_Time_table_list)
-            Listener.ispdf_generated = generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,
+              Listener.ispdf_generated = generate_pdf_schedule(self.get__pdf_resources(), title=title, creator=creator,
                                                              no_weekends=Listener.isWeekendInclusive,breaks_list=llt,contact_info=tutor_lst_email)
             # print("ISPDF generated====", Listener.ispdf_generated)
         except:
@@ -163,10 +163,10 @@ class TtGenerator:
                                 dict_ = {
                                 }
 
-                                a, b, c, d, e, f, g = re.findall(r'<(.*?)>', item)
+                                a, b, c, d, e, f, g,link= re.findall(r'<(.*?)>', item)
                                 # print("+++",self.TimeTable[key][i])
                                 name = d + "," + " " + a + "," + " " + g + "," + " " + c
-                                dict_['name'] = name
+                                dict_['name'] = f'<{name}><{link}>'
                                 dict_['days'] = day
                                 dict_['time'] = f
                                 dict_['color'] = "eb8f8f"
@@ -196,10 +196,10 @@ class TtGenerator:
                             dict_ = {
                             }
 
-                            a, b, c, d, e, f, g = re.findall(r'<(.*?)>', item)
+                            a, b, c, d, e, f, g,link= re.findall(r'<(.*?)>', item)
                             # print("+++",self.TimeTable[key][i])
                             name = d + "," + " " + a + "," + " " + g + "," + " " + c
-                            dict_['name'] = name
+                            dict_['name'] = f'<{name}><{link}>'
                             dict_['days'] = day
                             dict_['time'] = f
                             dict_['color'] = "eb8f8f"
@@ -491,21 +491,33 @@ class TtGenerator:
                     new_class_list.append(class_)
 
                 for lecture in i:
-                    print("HEHEHEHE=====",lecture)
+                    # print("HEHEHEHE=====",lecture)
                     # TODO if the rooms are over go get a brand new class rooms
-                    if str(re.findall(r"<(.*?)>", lecture)[-1])=="ONLINE":
+                    if str(re.findall(r"<(.*?)>", lecture)[-3])=="ONLINE":
                         space_picked="ONLINE"
                     else:
                         try:
-                            space_picked = random.choice(new_class_list)
+                            space_picked="HOLD-ON"
+                            for spaceZ in new_class_list:
+                                num=int(re.findall(r"<(.*?)>", spaceZ)[1])
+                                # print("SPACE: " ,num  ,int(re.findall(r"<(.*?)>", lecture)[-1]))
+                                if int(re.findall(r"<(.*?)>", spaceZ)[1]) >= int(re.findall(r"<(.*?)>", lecture)[-1]):
+                                    space_picked=str(re.findall(r"<(.*?)>", spaceZ)[0])
+                                    if len(new_class_list) != 0:
+                                        new_class_list.remove(spaceZ)
+                                    break
+                            if space_picked=="HOLD-ON":
+                                space_picked_ = random.choice(new_class_list)
+                                space_picked=str(re.findall(r"<(.*?)>", space_picked_)[0])
+                                if len(new_class_list) != 0:
+                                    new_class_list.remove(space_picked_)
+                                if str(re.findall(r"<(.*?)>", lecture)[-3]) == "BLENDED":
+                                    space_picked = space_picked + "(BLENDED)"
 
-                            if len(new_class_list) != 0:
-                                new_class_list.remove(space_picked)
-                            if str(re.findall(r"<(.*?)>", lecture)[-1]) == "BLENDED":
-                                space_picked = space_picked +"(BLENDED)"
                         except:
                             space_picked = "VIRTUAL ROOM"
-                            print("Space limit exceeded!!!!")
+                            # print("Space limit exceeded!!!!")
+                    # print(space_picked)
 
 
 
@@ -514,8 +526,9 @@ class TtGenerator:
 
                     self.Full_Time_table_list.append(
                         # Packing the values into a list to hold all the occurrences
-                        f'<{re.findall(r"<(.*?)>", lecture)[2]}><{re.findall(r"<(.*?)>", lecture)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture)[1]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[0]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[1]}><{re.findall(r"<(.*?)>", lecture)[3]}>'
+                        f'<{re.findall(r"<(.*?)>", lecture)[2]}><{re.findall(r"<(.*?)>", lecture)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture)[1]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[0]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[1]}><{re.findall(r"<(.*?)>", lecture)[3]}><{re.findall(r"<(.*?)>", lecture)[6]}>'
                     )
+                    # print(">>>>>>",f'<{re.findall(r"<(.*?)>", lecture)[2]}><{re.findall(r"<(.*?)>", lecture)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture)[1]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[0]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[1]}><{re.findall(r"<(.*?)>", lecture)[3]}><{re.findall(r"<(.*?)>", lecture)[6]}>')
                 # print("Timeslots", timeslots_count)
                 # print(
                 #     f'<{re.findall(r"<(.*?)>", lecture)[2]}><{re.findall(r"<(.*?)>", lecture)[0]}><{space_picked}><{re.findall(r"<(.*?)>", lecture)[1]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[0]}><{re.findall(r"<(.*?)>", timeslots[timeslots_count])[1]}><{re.findall(r"<(.*?)>", lecture)[3]}>')

@@ -28,7 +28,7 @@ class SpaceManager:
 
     def __init__(self):
         self.Headers = {
-            "headers": ["Name", "Faculty", "Capacity"]
+            "headers": ["NAME", "FACULTY", "CAPACITY"]
         }
 
         self.Space_List = [
@@ -112,7 +112,7 @@ class SpaceManager:
             if lst[0] == '--------':
                 pass
             else:
-                algo_list.append(f'{lst[0]}')
+                algo_list.append(f'<{lst[0]}><{lst[2]}>')
         return algo_list
 
     def check_for_empty_slots(self) -> bool:
@@ -127,7 +127,7 @@ class SpaceManager:
     # Reset every variable to pepare new file
     def new_file_(self):
         self.Headers = {
-            "headers": ["Name", "Faculty", "Capacity"]
+            "headers": ["NAME", "FACULTY", "CAPACITY"]
         }
 
         self.Space_List = [

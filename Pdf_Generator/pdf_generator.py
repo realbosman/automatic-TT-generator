@@ -175,7 +175,7 @@ class Schedule:
 
         if show_times:
             canvas.setFontSize(time_size)
-            for i in range(floor(min_time), ceil(max_time) ):
+            for i in range(floor(min_time), ceil(max_time)):
                 y = sched.uly - (i - min_time) * hour_height
                 canvas.drawRightString(
                     sched.ulx - time_gap,
@@ -214,6 +214,18 @@ class Schedule:
                 # Event text:
                 ### TODO: Use PLATYPUS or whatever for this part:
                 text = sum((wrap(t, line_width) for t in ev.text), [])
+                link_url = "NO LINK"
+                try:
+
+                    new_event = str(re.findall(r"<(.*?)>", ev.text[0])[0])
+                    link_url = str(re.findall(r"<(.*?)>", ev.text[0])[1])
+
+                    text = sum((wrap(t, line_width) for t in [new_event]), [])
+                    # print("text===", new_event)
+                except:
+                    pass
+                    # print("Exception in  pdf generation")
+
                 tmp_size = None
                 if len(text) * line_height > ebox.height:
                     tmp_size = ebox.height / len(text) / 1.2
@@ -228,13 +240,18 @@ class Schedule:
                 for t in text:
                     y -= line_height
                     canvas.drawCentredString(ebox.ulx + day_width / 2, y, t)
+
+                    if link_url != "NO LINK":
+                        canvas.linkURL(link_url, (
+                            ebox.ulx - (day_width / 100), y - line_height, ebox.ulx + (day_width / 1.1), y + line_height))
+
                 if tmp_size is not None:
                     canvas.setFontSize(font_size)
                     line_height = font_size * 1.2
 
         if True:
             # Background color is too dark; print text in white
-            canvas.setFillColorRGB(0,0,0)
+            canvas.setFillColorRGB(0, 0, 0)
         canvas.setFontSize(header_size)
         canvas.drawCentredString(300, 745, title)
         canvas.drawCentredString(300, 730, subgroup)
@@ -245,8 +262,6 @@ class Schedule:
                                  f'Email: {Listener.cEmail}.')
         canvas.drawCentredString(300, 10,
                                  f'All time is in {Listener.timeZone}.')
-
-
 
 
 @attr.s
@@ -298,14 +313,15 @@ def grouper(iterable, n):
     args = [iter(iterable)] * n
     return itertools.zip_longest(*args)
 
+
 def eliminate_duplicates(data):
-        seen = set()
-        result = []
-        for item in data:
-            if item[0] not in seen:
-                result.append(item)
-                seen.add(item[0])
-        return result
+    seen = set()
+    result = []
+    for item in data:
+        if item[0] not in seen:
+            result.append(item)
+            seen.add(item[0])
+    return result
 
 
 def main(
@@ -327,8 +343,6 @@ def main(
         contact_info=None
 
 ) -> bool:
-
-
     """
     Weekly schedule typesetter
 
@@ -371,8 +385,9 @@ def main(
     data = list()
     # print("infile.keys()==",infile.keys())
 
-    for faculty in infile.keys():
-        for i, sub_group in enumerate(infile[faculty].keys()):
+    for faculty in sorted(infile.keys()):
+
+        for i, sub_group in enumerate(sorted(infile[faculty].keys())):
             if i == 0:
                 data.append((f"{faculty}", f'{sub_group}'))
             else:
@@ -397,7 +412,7 @@ def main(
     c.setFontSize(10)
     # c.setFillColorRGB(247/255.0, 178/255.0, 178/255.0)
     # print(infile)
-    faculty_=" "
+    faculty_ = " "
     for rows in grouper(data, max_rows_per_page):
         rows = tuple(filter(bool, rows))
         # print("Rows=====", rows)
@@ -408,12 +423,12 @@ def main(
             count += 1
             # print("Row", row)
             # print("Row", row[0])
-            if row[0] !="-":
-                faculty_=row[0]
+            if row[0] != "-":
+                faculty_ = row[0]
             for x, cell in zip(xlist, row):
                 # Check if the cell is the name field
                 if str(cell) in infile.keys():
-                        c.drawString(x + 2, y - padding + 3, str(cell))
+                    c.drawString(x + 2, y - padding + 3, str(cell))
                 else:
                     for sub_group in infile[faculty_].keys():
                         if sub_group == str(cell):
@@ -422,7 +437,7 @@ def main(
                             dest_name = str(cell)
                             # print("dest", dest_name)
                             # print(y,"<<<<y")
-                            Rect_cords = (x + 2, y -10, 400, y - 20)
+                            Rect_cords = (x + 2, y - 10, 400, y - 20)
                             c.drawString(x + 2, y - padding + 3, toc_item)
                             # c.rect(*Rect_cords)
                             c.linkAbsolute(toc_item, dest_name, Rect=Rect_cords)
@@ -442,17 +457,15 @@ def main(
                     sched_time.add_event(ev)
 
     start_time = max(
-            min(time2hours(ev.start_time) for ev in sched_time.all_events()) - 0.5, 0
-        )
+        min(time2hours(ev.start_time) for ev in sched_time.all_events()) - 0.5, 0
+    )
     end_time = min(
-            max(time2hours(ev.end_time) for ev in sched_time.all_events()) + 0.5, 24
-        )
+        max(time2hours(ev.end_time) for ev in sched_time.all_events()) + 0.5, 24
+    )
 
-    for faculty in infile.keys():
+    for faculty in sorted(infile.keys()):
 
-
-
-        for sub_group in infile[faculty].keys():
+        for sub_group in sorted(infile[faculty].keys()):
             sched = Schedule(week)
             if len(infile[faculty][sub_group]) != 0:
                 for ev in read_events(infile[faculty][sub_group], colors=colors):
@@ -472,7 +485,7 @@ def main(
                     title=title
                 )
 
-                for ev in read_events(breaks_list,colors=colors):
+                for ev in read_events(breaks_list, colors=colors):
                     sched.add_event(ev)
                 sched.render(
                     c,
@@ -496,16 +509,15 @@ def main(
 
     # print(infile)
     faculty_ = " "
-    data2=list()
+    data2 = list()
     xlist = [x + x_offset for x in [0, 220, 100]]
     ylist = [h - y_offset - i * padding for i in range(max_rows_per_page + 1)]
 
-
     for item in contact_info:
-        data2.append([item[0],item[-1]])
+        data2.append([item[0], item[-1]])
     data2 = eliminate_duplicates(data2)
 
-    max_rows_per_page=30
+    max_rows_per_page = 30
     for rows in grouper(data2, max_rows_per_page):
         rows = tuple(filter(bool, rows))
         # print("Rows=====", rows)
@@ -527,12 +539,10 @@ def main(
 
                 c.drawString(x + 2, y - padding + 3, str(cell))
 
-
         c.showPage()
     c.save()
-    ispdfCreated=True
+    ispdfCreated = True
     return ispdfCreated
-
 
 
 def read_events(list_dict, colors):
@@ -581,4 +591,3 @@ def timediff(t1, t2):
 
 def available_fonts():
     return Canvas("").getAvailableFonts()
-

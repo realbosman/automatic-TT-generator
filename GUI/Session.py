@@ -32,7 +32,7 @@ class Session(tk.Frame):
         self.combo2 = tk.StringVar()
         self.combo3 = tk.StringVar()
         # these are default values
-        self.storeWidth = [100, 100, 100, 100,100, 100,100]
+        self.storeWidth = [100, 100, 100, 100,100, 100,100,100]
         # v = tk.Scrollbar(self)
 
 
@@ -182,7 +182,7 @@ class Session(tk.Frame):
 
         # TODO Test this with bigger row tex to ensure that this below stands out
 
-        if column_box[2] == self.storeWidth[-3]:
+        if column_box[2] == self.storeWidth[-4]:
             # print("ON ME", column_box[0])
             entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=(10,20,30,40,50,60,70,80,90,100))
             # record the column index and id
@@ -202,7 +202,7 @@ class Session(tk.Frame):
 
             entry_edit.bind("<FocusOut>", self.onFocusOut)
             entry_edit.bind("<Return>", self.on_enter_press)
-        elif column_box[2] == self.storeWidth[-4]:
+        elif column_box[2] == self.storeWidth[-5]:
             # print("ON ME", column_box[0])
             entry_edit = ttk.Combobox(self.treeview, width=column_box[2], values=(self.session__.get_sub_groups_commbo()))
             # record the column index and id
@@ -286,8 +286,8 @@ class Session(tk.Frame):
         new_text = e.widget.get()
 
         # print("nn=",new_text[-5:])
-        # print("nn=", new_text[-3:])
-        if new_text[-4:]==".com" or new_text[-3:]==".ug":
+        print("nn=", new_text[0:4])
+        if new_text[-4:]==".com" or new_text[-3:]==".ug" or new_text[0:4]=="http":
             pass
         else:
             new_text = new_text.upper()
