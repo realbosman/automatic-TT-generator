@@ -503,6 +503,8 @@ class TtGenerator:
                                 # print("SPACE: " ,num  ,int(re.findall(r"<(.*?)>", lecture)[-1]))
                                 if int(re.findall(r"<(.*?)>", spaceZ)[1]) >= int(re.findall(r"<(.*?)>", lecture)[-1]):
                                     space_picked=str(re.findall(r"<(.*?)>", spaceZ)[0])
+                                    if str(re.findall(r"<(.*?)>", lecture)[-3]) == "BLENDED":
+                                        space_picked = space_picked + "(BLENDED)"
                                     if len(new_class_list) != 0:
                                         new_class_list.remove(spaceZ)
                                     break
