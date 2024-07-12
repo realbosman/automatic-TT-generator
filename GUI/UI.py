@@ -228,17 +228,15 @@ class TkinterApp(tk.Tk):
 
 
     def loginn(self):
-        print(self.uname_var.get())
+        # print(self.uname_var.get())
         if self.uname_var.get()=="Admin" and self.pass_var.get()=="admin":
             for widget in self.winfo_children():
                 widget.destroy()
+
+            self.style.theme_use("forest-dark")
             self.render_GUI()
         else:
-            for widget in self.winfo_children():
-                widget.destroy()
-                self.style.theme_use("forest-dark")
-            self.render_GUI()
-            # messagebox.showwarning(title="Automatic Timetable Generator",message="Login failed ,please try again.")
+            messagebox.showwarning(title="Automatic Timetable Generator",message="Login failed ,please try again.")
 
 
 

@@ -45,26 +45,35 @@ class Session(tk.Frame):
         self.widgets_frame = ttk.LabelFrame(self, text="Current TimeSlots")
         self.widgets_frame.pack(expand=1, fill='x')
 
-        self.label1 = ttk.Label(self.widgets_frame, text="Add Row")
+        self.label1 = ttk.Label(self.widgets_frame, text="Add Row",foreground=TEXT_COLOR)
         self.label1.pack(expand=0, fill='y', side=tk.LEFT)
         self.label1.bind("<Button-1>", self.add_new_session)
 
         self.separator = ttk.Separator(self.widgets_frame, orient='vertical')
         self.separator.pack(expand=0, fill='y', side=tk.LEFT, padx=10)
 
-        self.label2 = ttk.Label(self.widgets_frame, text="Save")
+        self.label2 = ttk.Label(self.widgets_frame, text="Save",foreground=TEXT_COLOR)
         self.label2.pack(expand=0, fill='y', side=tk.LEFT)
         self.label2.bind("<Button-1>", self.on_save)
 
-        self.label3 = ttk.Label(self.widgets_frame, text="Delete selected Row")
-        self.label3.pack(expand=0, fill='y', side=tk.RIGHT, padx=10)
-        self.label3.bind("<Button-1>", self.delete_row_)
+        self.separator2 = ttk.Separator(self.widgets_frame, orient='vertical')
+        self.separator2.pack(expand=0, fill='y', side=tk.LEFT, padx=10)
+
+        self.label2_ = ttk.Label(self.widgets_frame, text="Allocate More",foreground=TEXT_COLOR)
+        self.label2_.pack(expand=0, fill='y', side=tk.LEFT)
+        self.label2_.bind("<Button-1>", self.on_more_allocate)
+
+        self.label3 = ttk.Label(self.widgets_frame, text="Delete selected Row",foreground=TEXT_COLOR)
+        self.label3.pack(expand=0, fill='y', side=tk.RIGHT, padx=10,)
+        self.label3.bind("<Button-1>", self.delete_row_,)
 
         self.changeOnHover(self.label3, visualisation_frame_color_,
                            sidebar_color_)
         self.changeOnHover(self.label2, visualisation_frame_color_,
                            sidebar_color_)
         self.changeOnHover(self.label1, visualisation_frame_color_,
+                           sidebar_color_)
+        self.changeOnHover(self.label2_, visualisation_frame_color_,
                            sidebar_color_)
 
         self.warnings_frame=tk.Frame(self)
@@ -75,8 +84,19 @@ class Session(tk.Frame):
         self.separator = ttk.Separator(self)
         self.separator.pack()
 
+
+
         self.treeFrame = ttk.Frame(self)
         self.treeFrame.pack(expand=1, anchor=tk.CENTER, fill=tk.BOTH, pady=(0, 15), padx=(10, 10))
+
+        # self.allocate_more = tk.Frame(self,border=1,background="green")
+        # self.allocate_more.pack(expand=1, anchor=tk.CENTER, fill=tk.BOTH, pady=(0, 15), padx=(10, 10))
+        #
+        # # Add form to allocate_more frame
+        # self.create_form(self.allocate_more)
+
+
+
         # self.treeFrame.place(relx=.3, rely=.05, relwidth=.7, relheight=.85)
         self.treeScroll = ttk.Scrollbar(self.treeFrame)
         self.treeScroll.pack(side="right", fill="y")
@@ -119,11 +139,11 @@ class Session(tk.Frame):
         # adjusting backgroung of the widget
         # background on entering widget
         view.bind("<Enter>", func=lambda e: view.config(
-            background=colorOnHover))
+            background=colorOnHover,foreground=visualisation_frame_color))
 
         # background color on leving widget
         view.bind("<Leave>", func=lambda e: view.config(
-            background=colorOnLeave))
+            background=colorOnLeave,foreground=TEXT_COLOR))
 
     def updateUI(self):
 
@@ -333,3 +353,31 @@ class Session(tk.Frame):
 
     def on_save(self, event):
         print("Save clicked")
+
+    def on_more_allocate(self, event):
+        print("more allocate clicked")
+        # self.allocate_more.tkraise(self.treeFrame)
+
+    def create_form(self, parent):
+        # Create form elements
+        ttk.Label(parent, text="Name:").grid(row=0, column=0, padx=10, pady=5)
+        self.name_entry = ttk.Entry(parent)
+        self.name_entry.grid(row=0, column=1, padx=10, pady=5)
+
+        ttk.Label(parent, text="Age:").grid(row=1, column=0, padx=10, pady=5)
+        self.age_entry = ttk.Entry(parent)
+        self.age_entry.grid(row=1, column=1, padx=10, pady=5)
+
+        ttk.Label(parent, text="Email:").grid(row=2, column=0, padx=10, pady=5)
+        self.email_entry = ttk.Entry(parent)
+        self.email_entry.grid(row=2, column=1, padx=10, pady=5)
+
+        submit_button = ttk.Button(parent, text="Submit", command=self.on_submit)
+        submit_button.grid(row=3, columnspan=2, pady=10)
+
+    def on_submit(self):
+        name = self.name_entry.get()
+        age = self.age_entry.get()
+        email = self.email_entry.get()
+        print(f"Name: {name}, Age: {age}, Email: {email}")
+
